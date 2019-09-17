@@ -11,7 +11,7 @@ public class HotStore {
     private String storeName;
     private String locationStr;
     private int count;
-    private int distance;
+    private double distance;
 
     public HotStore() {
     }
@@ -65,11 +65,11 @@ public class HotStore {
         this.count = count;
     }
 
-    public int getDistance() {
+    public double getDistance() {
         return distance;
     }
 
-    public void setDistance(int distance) {
+    public void setDistance(double distance) {
         this.distance = distance;
     }
 }

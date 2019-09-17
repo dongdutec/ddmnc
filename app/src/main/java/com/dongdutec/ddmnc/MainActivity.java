@@ -3,7 +3,6 @@ package com.dongdutec.ddmnc;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -154,9 +153,7 @@ public class MainActivity extends BaseActivity {
 
     private void changeColor(int index) {
 
-        Log.e("errrrrror", "changeColor:  imageViews.size() =  " + imageViews.size());
         for (int i = 0; i < imageViews.size(); i++) {
-            Log.e("errrrrror", "changeColor:  i = " + i);
             ((ImageView) imageViews.get(i)).setImageResource(unselectedMipmap[i]);
 
         }

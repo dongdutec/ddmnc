@@ -31,18 +31,32 @@ public class HomeItemViewProvider extends ItemViewProvider<HotStore, HomeItemVie
 
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder holder, @NonNull final HotStore hotStore) {
-
+//        Glide.with(context).load(hotStore.getImageUrl()).into(holder.main_listimg);
+        holder.main_storename.setText(hotStore.getStoreName());
+        holder.tv_location.setText(hotStore.getLocationStr());
+        holder.tv_count.setText("记账人数：" + hotStore.getCount());
+        holder.tv_distance.setText("距当前：" + hotStore.getCount() + "Km");
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         @NonNull
-        private ImageView dianpu_rlv_img;
+        private ImageView main_listimg;
         @NonNull
-        private TextView dianpu_tv_type;
+        private TextView main_storename;
+        @NonNull
+        private TextView tv_location;
+        @NonNull
+        private TextView tv_count;
+        @NonNull
+        private TextView tv_distance;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            /*this.dianpu_rlv_img = (ImageView) itemView.findViewById(R.id.dianpu_rlv_img);*/
+            this.main_listimg = (ImageView) itemView.findViewById(R.id.main_listimg);
+            this.main_storename = (TextView) itemView.findViewById(R.id.main_storename);
+            this.tv_location = (TextView) itemView.findViewById(R.id.tv_location);
+            this.tv_count = (TextView) itemView.findViewById(R.id.tv_count);
+            this.tv_distance = (TextView) itemView.findViewById(R.id.tv_distance);
         }
     }
 }

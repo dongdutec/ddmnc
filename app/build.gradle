@@ -74,4 +74,6 @@ dependencies {
     implementation 'io.reactivex:rxandroid:1.2.0'
     implementation 'com.jakewharton.rxbinding:rxbinding:0.4.0'
     implementation 'me.drakeet.multitype:multitype:2.2.2'
+    implementation 'com.squareup.okhttp3:okhttp:4.0.1'
+    implementation 'com.lzy.net:okgo:3.0.4'
 }

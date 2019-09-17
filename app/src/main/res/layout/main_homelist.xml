@@ -1,6 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/d10"
+                android:layout_marginLeft="@dimen/d10"
+                android:layout_marginRight="@dimen/d10"
+                android:orientation="horizontal">
+    <View
+        android:id="@+id/line"
+        android:background="@color/c1"
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"/>
 
-</FrameLayout>
+    <ImageView
+        android:layout_marginTop="@dimen/d15"
+        android:id="@+id/main_listimg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/d5"
+        android:src="@mipmap/tu"/>
+
+    <TextView
+        android:id="@+id/main_storename"
+        android:layout_marginTop="@dimen/d15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/main_listimg"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="东度科技青岛测试店"
+        android:textColor="@color/c7"
+        android:textSize="@dimen/s14"/>
+
+    <LinearLayout
+        android:id="@+id/ll_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/main_storename"
+        android:layout_marginTop="@dimen/d5"
+        android:layout_toRightOf="@+id/main_listimg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/img_mainlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/dizhi"/>
+
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d2"
+            android:text="青岛市·黄岛区·长江路·国贸大厦"
+            android:textColor="@color/c16"
+            android:textSize="@dimen/s12"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_main"
+        android:layout_marginTop="@dimen/d10"
+        android:layout_toRightOf="@+id/main_listimg"
+        android:text="记账人数：0"
+        android:textSize="@dimen/s12"/>
+
+    <TextView
+        android:id="@+id/tv_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_main"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/d10"
+        android:text="距当前：1.0Km"
+        android:textSize="@dimen/s12"/>
+
+
+</RelativeLayout>
