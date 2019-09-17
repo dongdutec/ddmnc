@@ -1,0 +1,77 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.dongdutec.ddmnc"
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        flavorDimensions "channel"//test
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    //签名
+    signingConfigs {
+        debugConfig {
+            storeFile file("../ddmnc.jks")      //签名文件
+            storePassword "123456"
+            keyAlias "key0"
+            keyPassword "123456"  //签名密码
+        }
+        release {
+            storeFile file("../ddmnc.jks")      //签名文件
+            storePassword "123456"
+            keyAlias "key0"
+            keyPassword "123456"  //签名密码
+        }
+    }
+
+    buildTypes {
+        release {
+            shrinkResources false
+            minifyEnabled false
+            signingConfig signingConfigs.release //解决unsigned
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        huawei {
+            //buildConfigField("String", "APP_CHANNEL", "${huawei_channel}")
+        }
+        xiaomi {
+            //buildConfigField("String", "APP_CHANNEL", "${xiaomi_channel}")
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    //头条适配方案
+    implementation 'me.jessyan:autosize:1.1.2'
+
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0'
+    implementation 'com.ldoublem.loadingview:loadingviewlib:1.0'
+    implementation 'org.xutils:xutils:3.6.16'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.github.bumptech.glide:glide:4.2.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.0'
+    implementation 'io.reactivex:rxandroid:1.2.0'
+    implementation 'com.jakewharton.rxbinding:rxbinding:0.4.0'
+    implementation 'me.drakeet.multitype:multitype:2.2.2'
+}

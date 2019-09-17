@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DDMNC</string>
+    <string name="main_home">首页</string>
+    <string name="main_browser">浏览器</string>
+    <string name="main_wallet">钱包</string>
+    <string name="main_my">我的</string>
+</resources>
