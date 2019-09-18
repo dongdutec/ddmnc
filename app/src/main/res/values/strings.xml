@@ -4,4 +4,6 @@
     <string name="main_browser">浏览器</string>
     <string name="main_wallet">钱包</string>
     <string name="main_my">我的</string>
+
+    <string name="changeimg">点击修改头像</string>
 </resources>

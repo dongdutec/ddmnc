@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/c"
+    android:orientation="vertical"
+    tools:context=".ui.my.activity.SettingActivity">
+
+    <include layout="@layout/state_bar"/>
+
+    <include layout="@layout/common_bar"/>
+
+    <!--平台简介-->
+    <RelativeLayout
+        android:id="@+id/rl_jianjie"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40"
+        android:background="@color/theme_primary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d10"
+            android:text="平台简介"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s14"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/d10"
+            android:src="@mipmap/jiantou"/>
+    </RelativeLayout>
+
+    <!--版本信息-->
+    <RelativeLayout
+        android:id="@+id/rl_version"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40"
+        android:layout_marginTop="0.2dp"
+        android:background="@color/theme_primary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d10"
+            android:text="版本信息"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s14"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/d10"
+            android:text="V1.0"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s14"/>
+    </RelativeLayout>
+
+    <!--修改密码-->
+    <RelativeLayout
+        android:id="@+id/rl_password"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40"
+        android:layout_marginTop="0.2dp"
+        android:background="@color/theme_primary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d10"
+            android:text="修改密码"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s14"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/d10"
+            android:src="@mipmap/jiantou"/>
+    </RelativeLayout>
+
+    <!--联系电话-->
+    <RelativeLayout
+        android:id="@+id/rl_phone"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40"
+        android:layout_marginTop="0.2dp"
+        android:background="@color/theme_primary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d10"
+            android:text="联系电话"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s14"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/d10"
+            android:text="0532-1234567"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s14"/>
+    </RelativeLayout>
+
+
+</LinearLayout>

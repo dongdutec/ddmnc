@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dongdutec.ddmnc.base.BaseActivity;
 import com.dongdutec.ddmnc.ui.browser.fragment.BrowserFragment;
@@ -31,6 +32,7 @@ public class MainActivity extends BaseActivity {
 
     int[] unselectedMipmap = {R.mipmap.home, R.mipmap.browser, R.mipmap.wallet, R.mipmap.my};
     int[] selectedMipmap = {R.mipmap.home_check, R.mipmap.browser_check, R.mipmap.wallet_check, R.mipmap.my_check};
+    private long exitTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,12 +115,7 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    /*
-
-    切换fragment性能优化,使每个fragment只实例化一次
-
-     */
-
+    //切换fragment性能优化,使每个fragment只实例化一次
     private void showFragment(int page) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
@@ -171,4 +168,16 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if ((System.currentTimeMillis() - exitTime) > 2000) {
+            Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            //记录最后一次按键时间
+            exitTime = System.currentTimeMillis();
+        } else {
+            MainActivity.this.finish();
+            //终止虚拟机
+            System.exit(0);
+        }
+    }
 }

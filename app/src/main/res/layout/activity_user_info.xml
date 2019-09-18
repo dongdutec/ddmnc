@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/c"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    tools:context=".ui.my.activity.UserInfoActivity">
+
+    <include layout="@layout/state_bar"/>
+
+    <include layout="@layout/common_bar"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/theme_primary"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/userimg"
+            android:layout_width="@dimen/d50"
+            android:layout_height="@dimen/d50"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/d20"
+            android:src="@mipmap/touxiang"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/d5"
+            android:layout_marginBottom="@dimen/d20"
+            android:text="@string/changeimg"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s12"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/d40"
+        android:layout_marginTop="@dimen/d5"
+        android:background="@color/theme_primary">
+
+        <TextView
+            android:id="@+id/nic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d10"
+            android:text="昵称"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s12"/>
+
+        <EditText
+            android:id="@+id/et_nickname"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/d80"
+            android:layout_toRightOf="@+id/nic"
+            android:background="@null"
+            android:cursorVisible="true"
+            android:textColor="@color/c5"
+            android:textCursorDrawable="@drawable/white"
+            android:textSize="@dimen/s14"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/save"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40"
+        android:layout_marginLeft="@dimen/d10"
+        android:layout_marginTop="@dimen/d60"
+        android:layout_marginRight="@dimen/d10"
+        android:background="@drawable/save_btn_blue"
+        android:gravity="center"
+        android:text="保存"
+        android:textColor="@color/theme_primary"
+        android:textSize="@dimen/s12"/>
+</LinearLayout>

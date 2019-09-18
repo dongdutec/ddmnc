@@ -1,6 +1,7 @@
 package com.dongdutec.ddmnc.ui.home.multitype;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.dongdutec.ddmnc.R;
+import com.dongdutec.ddmnc.ui.home.activity.HomeBtnListActivity;
+import com.dongdutec.ddmnc.ui.home.activity.HomeBtnMoreActivity;
 import com.dongdutec.ddmnc.ui.home.multitype.model.MidButtons;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 
@@ -35,7 +38,64 @@ public class MidButtonItemViewProvider extends ItemViewProvider<MidButtons, MidB
         RxViewAction.clickNoDouble(holder.ll_meishi).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-//                Intent intent = new Intent(context,);
+                Intent intent = new Intent(context, HomeBtnListActivity.class);
+                intent.putExtra("type", "美食");
+                context.startActivity(intent);
+            }
+        });
+        RxViewAction.clickNoDouble(holder.ll_xiuxian).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(context, HomeBtnListActivity.class);
+                intent.putExtra("type", "休闲");
+                context.startActivity(intent);
+            }
+        });
+        RxViewAction.clickNoDouble(holder.ll_yule).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(context, HomeBtnListActivity.class);
+                intent.putExtra("type", "娱乐");
+                context.startActivity(intent);
+            }
+        });
+        RxViewAction.clickNoDouble(holder.ll_xuexi).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(context, HomeBtnListActivity.class);
+                intent.putExtra("type", "学习");
+                context.startActivity(intent);
+            }
+        });
+        RxViewAction.clickNoDouble(holder.ll_gouwu).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(context, HomeBtnListActivity.class);
+                intent.putExtra("type", "购物");
+                context.startActivity(intent);
+            }
+        });
+        RxViewAction.clickNoDouble(holder.ll_dianying).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(context, HomeBtnListActivity.class);
+                intent.putExtra("type", "电影");
+                context.startActivity(intent);
+            }
+        });
+        RxViewAction.clickNoDouble(holder.ll_jiudian).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(context, HomeBtnListActivity.class);
+                intent.putExtra("type", "酒店");
+                context.startActivity(intent);
+            }
+        });
+        RxViewAction.clickNoDouble(holder.ll_gengduo).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(context, HomeBtnMoreActivity.class);
+                context.startActivity(intent);
             }
         });
     }

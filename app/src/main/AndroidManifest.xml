@@ -5,7 +5,7 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,7 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <!--autosize尺寸配置-->
+
+        <!-- autosize尺寸配置 -->
         <meta-data
             android:name="design_width_in_dp"
             android:value="360"/>
@@ -30,6 +31,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".base.BaseActivity">
+        </activity>
+        <activity android:name=".ui.home.activity.HomeBtnListActivity">
+        </activity>
+        <activity android:name=".ui.home.activity.HomeBtnMoreActivity">
+        </activity>
+        <activity android:name=".ui.my.activity.UserInfoActivity">
+        </activity>
+        <activity android:name=".ui.my.activity.SettingActivity">
+        </activity>
+        <activity android:name=".ui.my.activity.DailiActivity">
         </activity>
     </application>
 
