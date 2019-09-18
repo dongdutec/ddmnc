@@ -146,7 +146,7 @@
                 android:id="@+id/img_dianying"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/xx"/>
+                android:src="@mipmap/dianying"/>
 
             <TextView
                 android:id="@+id/tv_dianying"
@@ -168,7 +168,7 @@
                 android:id="@+id/img_jiudian"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/yule"/>
+                android:src="@mipmap/jiudian"/>
 
             <TextView
                 android:id="@+id/tv_jiudian"

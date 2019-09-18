@@ -5,6 +5,8 @@
     <color name="colorAccent">#D81B60</color>
 
     <color name="theme_primary">#ffffff</color>
+    <color name="main_sousuo">#81ffffff</color>
+    <color name="main_sousuoline">#a1ffffff</color>
     <color name="c">#f9f7f7</color>
     <color name="c0">#f7f7f7</color>
     <color name="c1">#f1f1f1</color>

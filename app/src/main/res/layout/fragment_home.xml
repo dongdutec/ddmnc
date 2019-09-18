@@ -55,10 +55,11 @@
                     android:layout_marginLeft="@dimen/d10"
                     android:layout_marginRight="@dimen/d10"
                     android:layout_toLeftOf="@+id/img_saoyisao"
+                    android:background="@drawable/main_sousuo"
                     android:layout_toRightOf="@+id/tv_city"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="@dimen/d5">
+                    android:padding="@dimen/d6">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -81,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/d10"
+                    android:layout_marginRight="@dimen/d5"
                     android:src="@mipmap/saoma"/>
 
             </RelativeLayout>

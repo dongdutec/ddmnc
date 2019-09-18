@@ -10,8 +10,10 @@ import android.widget.LinearLayout;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.ui.home.multitype.model.MidButtons;
+import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 
 import me.drakeet.multitype.ItemViewProvider;
+import rx.functions.Action1;
 
 
 public class MidButtonItemViewProvider extends ItemViewProvider<MidButtons, MidButtonItemViewProvider.ViewHolder> {
@@ -30,7 +32,12 @@ public class MidButtonItemViewProvider extends ItemViewProvider<MidButtons, MidB
 
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder holder, @NonNull final MidButtons midButtons) {
-
+        RxViewAction.clickNoDouble(holder.ll_meishi).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+//                Intent intent = new Intent(context,);
+            }
+        });
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
