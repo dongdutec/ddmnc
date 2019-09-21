@@ -25,10 +25,11 @@
 
         <!--选择市区-->
         <LinearLayout
+            android:id="@+id/ll_choosecity"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/d10">
 
@@ -41,7 +42,7 @@
                 android:textSize="@dimen/s12"/>
 
             <ImageView
-                android:id="@+id/choose_city_img"
+                android:id="@+id/img_choosecity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d2"
@@ -49,10 +50,11 @@
         </LinearLayout>
         <!--最先发布-->
         <LinearLayout
+            android:id="@+id/ll_first"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
@@ -64,7 +66,7 @@
                 android:textSize="@dimen/s12"/>
 
             <ImageView
-                android:id="@+id/choose_first_img"
+                android:id="@+id/img_first"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d2"
@@ -72,10 +74,11 @@
         </LinearLayout>
         <!--距离-->
         <LinearLayout
+            android:id="@+id/ll_distance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
@@ -87,7 +90,7 @@
                 android:textSize="@dimen/s12"/>
 
             <ImageView
-                android:id="@+id/choose_distance_img"
+                android:id="@+id/img_distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d2"
@@ -95,10 +98,11 @@
         </LinearLayout>
         <!--价格-->
         <LinearLayout
+            android:id="@+id/ll_price"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
@@ -110,7 +114,7 @@
                 android:textSize="@dimen/s12"/>
 
             <ImageView
-                android:id="@+id/choose_price_img"
+                android:id="@+id/img_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d2"
@@ -118,10 +122,11 @@
         </LinearLayout>
         <!--销量-->
         <LinearLayout
+            android:id="@+id/ll_sellcount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <TextView
@@ -133,7 +138,7 @@
                 android:textSize="@dimen/s12"/>
 
             <ImageView
-                android:id="@+id/choose_ocunt_img"
+                android:id="@+id/img_sellcount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/d2"

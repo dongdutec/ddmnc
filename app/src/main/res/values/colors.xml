@@ -23,6 +23,7 @@
     <color name="c11">#ffe8e7</color>
     <color name="c12">#ffffff</color>
     <color name="c13">#9FCEF5</color>
+    <color name="c13a">#8cc3f2</color>
     <color name="c14">#96D996</color>
     <color name="c15">#F29C24</color>
     <color name="c16">#0079FF</color>
@@ -52,6 +53,7 @@
     <color name="white">#FFFFFF</color>
     <color name="app_white_color">#FAFAFA</color>
     <color name="lightgray">#F0F0F0</color>
+    <color name="blue1">#9ccae7</color>
     <color name="gray1">#d0d0d0</color>
     <color name="gray2">#BEBEBE</color>
     <color name="gray3">#ADADAD</color>

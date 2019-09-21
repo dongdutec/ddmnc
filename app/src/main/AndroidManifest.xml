@@ -5,6 +5,9 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
 
     <application
         android:allowBackup="true"
@@ -23,13 +26,7 @@
             android:name="design_height_in_dp"
             android:value="640"/>
 
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
+        <activity android:name=".MainActivity"/>
         <activity android:name=".base.BaseActivity">
         </activity>
         <activity android:name=".ui.home.activity.HomeBtnListActivity">
@@ -41,6 +38,38 @@
         <activity android:name=".ui.my.activity.SettingActivity">
         </activity>
         <activity android:name=".ui.my.activity.DailiActivity">
+        </activity>
+        <activity android:name=".ui.home.activity.SearchActivity">
+        </activity>
+        <activity android:name=".ui.home.activity.ScanActivity">
+        </activity>
+        <activity android:name=".ui.home.activity.ScanResultActiviity">
+        </activity>
+        <activity
+            android:name="com.zaaach.citypicker.CityPickerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CityPicker.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
+        <activity android:name=".common.CommonListActivity">
+        </activity>
+        <activity android:name=".ui.my.activity.HistoryActivity"/>
+        <activity android:name=".ui.my.activity.MyStarActivity"/>
+        <activity android:name=".ui.my.activity.MyXiaofeiActivity">
+        </activity>
+        <activity android:name=".ui.login.activity.LaunchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.login.activity.GuideActivity">
+        </activity>
+        <activity android:name=".ui.login.activity.LoginActivity">
+        </activity>
+        <activity android:name=".ui.login.activity.RegisterActivity">
+        </activity>
+        <activity android:name=".ui.login.activity.ForgetPWActivity">
         </activity>
     </application>
 

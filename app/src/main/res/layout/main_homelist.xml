@@ -1,36 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/rl_views"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/d10"
                 android:layout_marginLeft="@dimen/d10"
                 android:layout_marginRight="@dimen/d10"
+                android:layout_marginBottom="@dimen/d10"
                 android:orientation="horizontal">
+
     <View
         android:id="@+id/line"
-        android:background="@color/c1"
         android:layout_width="match_parent"
-        android:layout_height="0.2dp"/>
+        android:layout_height="0.2dp"
+        android:background="@color/c1"/>
 
     <ImageView
-        android:layout_marginTop="@dimen/d15"
         android:id="@+id/main_listimg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d15"
         android:layout_marginRight="@dimen/d5"
         android:src="@mipmap/tu"/>
 
     <TextView
         android:id="@+id/main_storename"
-        android:layout_marginTop="@dimen/d15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d15"
         android:layout_toRightOf="@+id/main_listimg"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="东度科技青岛测试店"
         android:textColor="@color/c7"
         android:textSize="@dimen/s14"/>
+
+    <ImageView
+        android:id="@+id/img_star"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/main_storename"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/d5"
+        android:padding="@dimen/d5"
+        android:src="@mipmap/star_"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/ll_main"

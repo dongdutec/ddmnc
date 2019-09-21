@@ -1,6 +1,8 @@
 package com.dongdutec.ddmnc.ui.home.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,5 +53,11 @@ public class HomeBtnMoreActivity extends BaseActivity {
     @Override
     protected void bindView() {
 
+    }
+
+    public void moreclick(View view) {
+        Intent intent = new Intent(getApplicationContext(), HomeBtnListActivity.class);
+        intent.putExtra("type", "娱乐");
+        startActivity(intent);
     }
 }

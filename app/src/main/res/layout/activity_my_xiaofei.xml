@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.my.activity.MyXiaofeiActivity">
+
+    <include layout="@layout/state_bar"/>
+
+    <include layout="@layout/common_bar"/>
+
+    <ImageView
+        android:id="@+id/img_guanggao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/d10"
+        android:layout_marginRight="@dimen/d10"
+        android:scaleType="fitXY"
+        android:src="@mipmap/guanggao2"/>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40"
+        app:tabIndicatorColor="@color/c16"
+        app:tabIndicatorHeight="0.5dp"/>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager_"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

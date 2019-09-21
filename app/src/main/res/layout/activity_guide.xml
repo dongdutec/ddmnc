@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".ui.login.activity.GuideActivity">
+
+    <View
+        android:id="@+id/state"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/statebar"
+        android:background="@color/transparent"/>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/state"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"/>
+
+    <TextView
+        android:id="@+id/tv_jupm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/state"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/d10"
+        android:layout_marginRight="@dimen/d15"
+        android:background="@drawable/blue_coner_content"
+        android:paddingLeft="@dimen/d15"
+        android:paddingTop="@dimen/d5"
+        android:paddingRight="@dimen/d15"
+        android:paddingBottom="@dimen/d5"
+        android:text="跳过"
+        android:textColor="@color/theme_primary"
+        android:textSize="@dimen/s12"/>
+
+</RelativeLayout>

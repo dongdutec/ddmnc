@@ -9,6 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         flavorDimensions "channel"//test
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     //签名
@@ -60,10 +61,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-
     //头条适配方案
     implementation 'me.jessyan:autosize:1.1.2'
-
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0'
     implementation 'com.ldoublem.loadingview:loadingviewlib:1.0'
     implementation 'org.xutils:xutils:3.6.16'
@@ -76,4 +75,9 @@ dependencies {
     implementation 'me.drakeet.multitype:multitype:2.2.2'
     implementation 'com.squareup.okhttp3:okhttp:4.0.1'
     implementation 'com.lzy.net:okgo:3.0.4'
+    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
+    implementation 'com.google.zxing:core:3.3.0'
+    implementation project(':citypicker')
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'org.greenrobot:eventbus:3.0.0'
 }

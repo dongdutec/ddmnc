@@ -1,6 +1,7 @@
 package com.dongdutec.ddmnc.ui.home.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,9 +9,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseFragment;
+import com.dongdutec.ddmnc.ui.home.activity.ScanActivity;
+import com.dongdutec.ddmnc.ui.home.activity.SearchActivity;
 import com.dongdutec.ddmnc.ui.home.multitype.BigLineItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.HeadImgItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.HomeItemViewProvider;
@@ -23,13 +29,18 @@ import com.dongdutec.ddmnc.ui.home.multitype.model.HotStore;
 import com.dongdutec.ddmnc.ui.home.multitype.model.MidBanner;
 import com.dongdutec.ddmnc.ui.home.multitype.model.MidButtons;
 import com.dongdutec.ddmnc.ui.home.multitype.model.MidRemen;
+import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
+import com.google.zxing.integration.android.IntentIntegrator;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.zaaach.citypicker.CityPickerActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import me.drakeet.multitype.MultiTypeAdapter;
+import rx.functions.Action1;
 
+import static android.app.Activity.RESULT_OK;
 import static me.drakeet.multitype.MultiTypeAsserts.assertAllRegistered;
 import static me.drakeet.multitype.MultiTypeAsserts.assertHasTheSameAdapter;
 
@@ -49,6 +60,12 @@ public class HomeFragment extends BaseFragment {
     private boolean isLoadMoreSingle = false;//上拉单次标志位
     private boolean isFirstLoad = true;
 
+    private LinearLayout ll_souyisou;
+    private ImageView img_saoyisao;
+    private TextView tv_city;
+
+    private static final int REQUEST_CODE_PICK_CITY = 9912;
+
 
     @Nullable
     @Override
@@ -67,7 +84,34 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     protected void bindView() {
-
+        //搜一搜
+        RxViewAction.clickNoDouble(ll_souyisou).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(getContext(), SearchActivity.class);
+                startActivity(intent);
+            }
+        });
+        //扫一扫
+        RxViewAction.clickNoDouble(img_saoyisao).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                /*以下是启动我们自定义的扫描活动*/
+                IntentIntegrator intentIntegrator = new IntentIntegrator(getActivity());
+                intentIntegrator.setBeepEnabled(true);
+                /*设置启动我们自定义的扫描活动，若不设置，将启动默认活动*/
+                intentIntegrator.setCaptureActivity(ScanActivity.class);
+                intentIntegrator.initiateScan();
+            }
+        });
+        //定位
+        RxViewAction.clickNoDouble(tv_city).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                startActivityForResult(new Intent(getActivity(), CityPickerActivity.class),
+                        REQUEST_CODE_PICK_CITY);
+            }
+        });
     }
 
     @Override
@@ -112,6 +156,9 @@ public class HomeFragment extends BaseFragment {
     protected void initView() {
         main_rlv = getView().findViewById(R.id.main_rlv);
         main_refresh = getView().findViewById(R.id.main_refresh);
+        ll_souyisou = getView().findViewById(R.id.ll_souyisou);
+        img_saoyisao = getView().findViewById(R.id.img_saoyisao);
+        tv_city = getView().findViewById(R.id.tv_city);
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         main_rlv.setLayoutManager(manager);
@@ -125,5 +172,18 @@ public class HomeFragment extends BaseFragment {
         main_rlv.setAdapter(multiTypeAdapter);
         assertHasTheSameAdapter(main_rlv, multiTypeAdapter);
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_CODE_PICK_CITY && resultCode == RESULT_OK) {
+            if (data != null) {
+                String city = data.getStringExtra(CityPickerActivity.KEY_PICKED_CITY);
+                tv_city.setText(city);
+            }
+        } else {
+
+        }
     }
 }

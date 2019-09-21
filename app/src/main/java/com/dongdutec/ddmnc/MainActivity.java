@@ -1,6 +1,8 @@
 package com.dongdutec.ddmnc;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.ImageView;
@@ -10,10 +12,14 @@ import android.widget.Toast;
 
 import com.dongdutec.ddmnc.base.BaseActivity;
 import com.dongdutec.ddmnc.ui.browser.fragment.BrowserFragment;
+import com.dongdutec.ddmnc.ui.home.activity.ScanResultActiviity;
 import com.dongdutec.ddmnc.ui.home.fragment.HomeFragment;
 import com.dongdutec.ddmnc.ui.my.fragment.MyFragment;
 import com.dongdutec.ddmnc.ui.wallet.fragment.WalletFragment;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+import com.zaaach.citypicker.CityPickerActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +27,8 @@ import java.util.List;
 import rx.functions.Action1;
 
 public class MainActivity extends BaseActivity {
+
+    private static final int REQUEST_CODE_PICK_CITY = 0;
 
     private TextView homeTv, browerTv, walletTv, myTv;
     private ImageView homeIv, browerIv, walletIv, myIv;
@@ -180,4 +188,23 @@ public class MainActivity extends BaseActivity {
             System.exit(0);
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                //跳转扫描结果操作页面
+                Intent intent = new Intent(MainActivity.this, ScanResultActiviity.class);
+                startActivity(intent);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+
+    }
+
 }

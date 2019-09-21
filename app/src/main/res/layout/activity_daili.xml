@@ -5,11 +5,115 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/theme_primary"
     android:orientation="vertical"
     tools:context=".ui.my.activity.DailiActivity">
 
     <include layout="@layout/state_bar"/>
 
     <include layout="@layout/common_bar"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@mipmap/beijing2">
+
+        <TextView
+            android:id="@+id/tv_qu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/d5"
+            android:drawableLeft="@mipmap/dizhi2"
+            android:padding="@dimen/d5"
+            android:text=" 黄岛区"
+            android:textColor="@color/theme_primary"
+            android:textSize="@dimen/s12"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/shouyi"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" 代理收益：￥"
+                android:textColor="@color/theme_primary"
+                android:textSize="@dimen/s16"/>
+
+            <TextView
+                android:id="@+id/tv_shouyi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5200.00"
+                android:textColor="@color/theme_primary"
+                android:textSize="@dimen/s16"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <include layout="@layout/lines"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d15"
+        android:layout_marginBottom="@dimen/d10">
+
+        <TextView
+            android:id="@+id/tv_usernum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/d5"
+            android:layout_marginRight="@dimen/d5"
+            android:drawableLeft="@mipmap/lineshu"
+            android:padding="@dimen/d5"
+            android:text="  区域用户数(100)"
+            android:textColor="@color/c7"
+            android:textSize="@dimen/s14"/>
+
+        <TextView
+            android:id="@+id/tv_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="@dimen/d10"
+            android:text="查看更多>"
+            android:textColor="@color/c16"
+            android:textSize="@dimen/s12"/>
+    </FrameLayout>
+
+    <include layout="@layout/line"/>
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/homebtn_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:srlEnablePreviewInEditMode="true">
+
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/homebtn_rlv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/theme_primary"/>
+
+        <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
 </LinearLayout>

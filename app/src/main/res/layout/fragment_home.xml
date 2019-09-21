@@ -50,6 +50,7 @@
                     android:src="@mipmap/xiala"/>
 
                 <LinearLayout
+                    android:id="@+id/ll_souyisou"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/d10"

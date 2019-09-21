@@ -5,6 +5,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.dongdutec.ddmnc.R;
 
@@ -21,7 +23,12 @@ public class BaseActivity extends AppCompatActivity {
 
         }
         //去除ActionBar
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+        if (getActionBar() != null) {
+            getActionBar().hide();
+        }
         setContentView(R.layout.activity_base);
 
     }
@@ -44,5 +51,23 @@ public class BaseActivity extends AppCompatActivity {
 
     protected void initView() {
 
+    }
+
+    /**
+     * 透明状态栏,透明导航栏
+     * 使用了SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION,表示会让应用的主体内容占用
+     * 系统导航栏的空间
+     * 然后又调用了setNavigationBarColor()方法将导航栏设置成透明色
+     */
+    public void setStatus(int colorRes) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return;
+        } else {
+            Window window = this.getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);//设置状态栏字体深色
+            window.setStatusBarColor(getResources().getColor(colorRes));
+        }
     }
 }

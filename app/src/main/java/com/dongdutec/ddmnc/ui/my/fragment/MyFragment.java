@@ -14,6 +14,9 @@ import android.widget.TextView;
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseFragment;
 import com.dongdutec.ddmnc.ui.my.activity.DailiActivity;
+import com.dongdutec.ddmnc.ui.my.activity.HistoryActivity;
+import com.dongdutec.ddmnc.ui.my.activity.MyStarActivity;
+import com.dongdutec.ddmnc.ui.my.activity.MyXiaofeiActivity;
 import com.dongdutec.ddmnc.ui.my.activity.SettingActivity;
 import com.dongdutec.ddmnc.ui.my.activity.UserInfoActivity;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
@@ -28,6 +31,11 @@ public class MyFragment extends BaseFragment {
     private ImageView edit;
     private LinearLayout ll_shezhi;
     private LinearLayout ll_dailishuju;
+    private LinearLayout ll_wodeshoucang;
+    private LinearLayout ll_liulanlishi;
+    private LinearLayout ll_user_daijizhang;
+    private LinearLayout ll_user_yijizhang;
+    private LinearLayout ll_user_all;
 
     @Nullable
     @Override
@@ -53,6 +61,11 @@ public class MyFragment extends BaseFragment {
         edit = getView().findViewById(R.id.edit);
         ll_shezhi = getView().findViewById(R.id.ll_shezhi);
         ll_dailishuju = getView().findViewById(R.id.ll_dailishuju);
+        ll_wodeshoucang = getView().findViewById(R.id.ll_wodeshoucang);
+        ll_liulanlishi = getView().findViewById(R.id.ll_liulanlishi);
+        ll_user_daijizhang = getView().findViewById(R.id.ll_user_daijizhang);
+        ll_user_yijizhang = getView().findViewById(R.id.ll_user_yijizhang);
+        ll_user_all = getView().findViewById(R.id.ll_user_all);
 
         my_title.setText("我的");
         my_back.setVisibility(View.INVISIBLE);
@@ -97,6 +110,51 @@ public class MyFragment extends BaseFragment {
             @Override
             public void call(Void aVoid) {
                 Intent intent = new Intent(getContext(), DailiActivity.class);
+                startActivity(intent);
+            }
+        });
+        //我的收藏
+        RxViewAction.clickNoDouble(ll_wodeshoucang).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(getContext(), MyStarActivity.class);
+                intent.putExtra("type", "我的收藏");
+                startActivity(intent);
+            }
+        });
+        //浏览历史
+        RxViewAction.clickNoDouble(ll_liulanlishi).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(getContext(), HistoryActivity.class);
+                intent.putExtra("type", "浏览历史");
+                startActivity(intent);
+            }
+        });
+        //我是商家-待记账
+        RxViewAction.clickNoDouble(ll_user_daijizhang).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(getContext(), MyXiaofeiActivity.class);
+                intent.putExtra("page", 1);
+                startActivity(intent);
+            }
+        });
+        //我是商家-已记账
+        RxViewAction.clickNoDouble(ll_user_yijizhang).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(getContext(), MyXiaofeiActivity.class);
+                intent.putExtra("page", 2);
+                startActivity(intent);
+            }
+        });
+        //我是商家-查看全部
+        RxViewAction.clickNoDouble(ll_user_all).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(getContext(), MyXiaofeiActivity.class);
+                intent.putExtra("page", 0);
                 startActivity(intent);
             }
         });
