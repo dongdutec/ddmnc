@@ -19,7 +19,6 @@ import com.dongdutec.ddmnc.ui.wallet.fragment.WalletFragment;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.zaaach.citypicker.CityPickerActivity;
 
 import java.util.ArrayList;
 import java.util.List;

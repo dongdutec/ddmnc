@@ -46,6 +46,13 @@
     <color name="transparent">#00ffffff</color>
 
 
+
+
+
+    <!--cityPicker-->
+    <color name="cp_colorAccent">#F3F3F3</color>
+    <color name="cp_colorPrimary">@color/cp_colorAccent</color>
+    <color name="cp_colorPrimaryDark">@color/cp_colorAccent</color>
     <color name="lightblue">#0066CC</color>
     <color name="darkblue">#0000C6</color>
     <color name="darkgray">#808080</color>
@@ -59,4 +66,16 @@
     <color name="gray3">#ADADAD</color>
     <color name="light_main">#fff3f3</color>
     <color name="black">#333333</color>
+
+
+
+    <color name="cp_divider">#E5E5E5</color>
+    <color name="cp_shadow">#AAEBEBEB</color>
+    <color name="cp_common_bg">#FAFAFA</color>
+    <color name="cp_content_bg">@color/cp_colorAccent</color>
+    <color name="cp_gray">#8c8c8c</color>
+    <color name="cp_gray_deep">#5c5c5c</color>
+    <color name="cp_alpha_gray">#CC646464</color>
+    <color name="cp_theme_gray">#646464</color>
+    <color name="businesstop">#FFFFFF</color>
 </resources>

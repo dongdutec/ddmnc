@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dongdutec.ddmnc.MainActivity;
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
@@ -200,7 +201,7 @@ public class LoginActivity extends BaseActivity {
                 if (b) {
                     dt_password.setInputType(InputType.TYPE_CLASS_TEXT);
                 } else {
-                    dt_password.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    dt_password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 }
             }
         });
@@ -228,6 +229,9 @@ public class LoginActivity extends BaseActivity {
                 //判断通过
                 //post
                 Toast.makeText(LoginActivity.this, "测试登录!", Toast.LENGTH_SHORT).show();
+
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
 
             }
         });

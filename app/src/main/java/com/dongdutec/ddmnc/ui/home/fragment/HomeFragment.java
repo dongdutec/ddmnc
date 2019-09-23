@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseFragment;
+import com.dongdutec.ddmnc.citypicker.CityPickerActivity;
 import com.dongdutec.ddmnc.ui.home.activity.ScanActivity;
 import com.dongdutec.ddmnc.ui.home.activity.SearchActivity;
 import com.dongdutec.ddmnc.ui.home.multitype.BigLineItemViewProvider;
@@ -32,7 +33,6 @@ import com.dongdutec.ddmnc.ui.home.multitype.model.MidRemen;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.zaaach.citypicker.CityPickerActivity;
 
 import java.util.ArrayList;
 import java.util.List;
