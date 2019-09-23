@@ -16,7 +16,12 @@ import android.widget.Toast;
 import com.dongdutec.ddmnc.MainActivity;
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
+import com.dongdutec.ddmnc.db.DbConfig;
+import com.dongdutec.ddmnc.db.model.User;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
+
+import org.xutils.DbManager;
+import org.xutils.ex.DbException;
 
 import rx.functions.Action1;
 
@@ -229,13 +234,37 @@ public class LoginActivity extends BaseActivity {
                 //判断通过
                 //post
                 Toast.makeText(LoginActivity.this, "测试登录!", Toast.LENGTH_SHORT).show();
-
+                saveUserToDbTest();
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();
 
             }
         });
     }
+
+    //保存用户到数据库
+    private void saveUserToDbTest() {
+
+        User user = new User();
+        try {
+            user.setId(1);
+            user.setToken("GYGS8UI78828237878DJKAJ");
+            user.setUpdateTime("2019-09-23");
+            user.setPhone("12345678910");
+            user.setHeadimgurl("");
+            user.setIsstore("1");
+            user.setIsLogin("1");
+            DbConfig dbConfig = new DbConfig(getApplicationContext());
+            DbManager db = dbConfig.getDbManager();
+
+
+            db.saveOrUpdate(user);
+        } catch (DbException e) {
+
+        }
+    }
+
+
 
     /**
      * 修改登录按钮显示状态

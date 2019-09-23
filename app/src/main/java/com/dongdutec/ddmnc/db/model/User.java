@@ -13,6 +13,9 @@ public class User {
     @Column(name = "carid")
     private int carId;        //用户名
 
+    @Column(name = "isstore")
+    private String isstore;        //是否注册商家 0 未注册 1 已注册
+
     @Column(name = "nick")
     private String nick;        //用户名
 
@@ -72,6 +75,14 @@ public class User {
     private int firstAddCar;
 
     public User() {
+    }
+
+    public String getIsstore() {
+        return isstore;
+    }
+
+    public void setIsstore(String isstore) {
+        this.isstore = isstore;
     }
 
     public int getCarId() {
