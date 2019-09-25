@@ -1,10 +1,12 @@
 package com.dongdutec.ddmnc.ui.login.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -18,10 +20,17 @@ import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
 import com.dongdutec.ddmnc.db.DbConfig;
 import com.dongdutec.ddmnc.db.model.User;
+import com.dongdutec.ddmnc.http.RequestUrls;
+import com.dongdutec.ddmnc.utils.piccode.CodeUtils;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.DbManager;
+import org.xutils.common.Callback;
 import org.xutils.ex.DbException;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 import rx.functions.Action1;
 
@@ -39,11 +48,15 @@ public class LoginActivity extends BaseActivity {
     private TextView tv_login;
     private CheckBox ck_tiaokuan;
     private TextView tv_tiaokuan;
+    private ImageView img_tp_yanzhengma;
 
     private boolean canLogin_phone = false;
     private boolean canLogin_password = false;
     private boolean canLogin_yanzhengma = false;
     private boolean canLogin_tiaokuan = false;
+    private String TAG = LoginActivity.class.getSimpleName();
+
+    private CodeUtils codeUtils;
 
 
     @Override
@@ -71,6 +84,7 @@ public class LoginActivity extends BaseActivity {
         tv_login = findViewById(R.id.tv_login);
         ck_tiaokuan = findViewById(R.id.ck_tiaokuan);
         tv_tiaokuan = findViewById(R.id.tv_tiaokuan);
+        img_tp_yanzhengma = findViewById(R.id.img_tp_yanzhengma);
 
         back.setImageResource(R.mipmap.back_login);
         bar_title.setText("登录");
@@ -79,6 +93,9 @@ public class LoginActivity extends BaseActivity {
 
         ck_yanjing.setVisibility(View.GONE);
         img_cha.setVisibility(View.GONE);
+
+
+        getCode();
     }
 
     @Override
@@ -86,8 +103,22 @@ public class LoginActivity extends BaseActivity {
 
     }
 
+    //获取验证码
+    private void getCode() {
+        codeUtils = CodeUtils.getInstance();
+        Bitmap bitmap = codeUtils.createBitmap();
+        img_tp_yanzhengma.setImageBitmap(bitmap);
+    }
+
     @Override
     protected void bindView() {
+        //图片验证码
+        RxViewAction.clickNoDouble(img_tp_yanzhengma).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                getCode();
+            }
+        });
         //返回
         RxViewAction.clickNoDouble(back).subscribe(new Action1<Void>() {
             @Override
@@ -224,46 +255,100 @@ public class LoginActivity extends BaseActivity {
                     return;
                 }
                 if (dt_tp_yanzhengma.getText().toString().length() < 4) {
-                    Toast.makeText(LoginActivity.this, "请输入正确的验证码!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "请输入正确的图片验证码!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                /*if () { //TODO 校检图形验证码
+                if (!dt_tp_yanzhengma.getText().toString().equals(codeUtils.getCode())) {
+                    Log.e(TAG, "call: dt_tp_yanzhengma.getText().toString() = " + dt_tp_yanzhengma.getText().toString() + " codeUtils.getCode() = " + codeUtils.getCode());
+                    Toast.makeText(LoginActivity.this, "请输入正确的图片验证码!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                }*/
+
+
+                tv_login.setBackgroundResource(R.drawable.save_btn_gray1);
+                tv_login.setClickable(false);
 
                 //判断通过
                 //post
-                Toast.makeText(LoginActivity.this, "测试登录!", Toast.LENGTH_SHORT).show();
-                saveUserToDbTest();
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                finish();
+                RequestParams params = new RequestParams(RequestUrls.userLogin());
+                params.addBodyParameter("phone", dt_phone.getText().toString());
+                params.addBodyParameter("password", dt_password.getText().toString());
+                params.setConnectTimeout(5000);
+                x.http().post(params, new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "onSuccess:  result = " + result);
+                        try {
+                            JSONObject object = new JSONObject(result);
+                            String msg = object.getString("msg");
+                            int code = object.getInt("code");
+                            Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
+                            if (code == 0) {
+                                JSONObject data = object.getJSONObject("data");
+                                //存储用户信息到本地数据库
+                                saveUserToDb(data);
+
+
+                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                finish();
+                            } else {
+                                //dialog
+
+
+                                tv_login.setBackgroundResource(R.drawable.save_btn_blue);
+                                tv_login.setClickable(true);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+                        Toast.makeText(LoginActivity.this, "网络异常!", Toast.LENGTH_SHORT).show();
+
+
+                        tv_login.setBackgroundResource(R.drawable.save_btn_blue);
+                        tv_login.setClickable(true);
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
 
             }
         });
+
+
+        tv_login.setClickable(false);
     }
 
     //保存用户到数据库
-    private void saveUserToDbTest() {
+    private void saveUserToDb(JSONObject data) {
 
         User user = new User();
         try {
-            user.setId(1);
-            user.setToken("GYGS8UI78828237878DJKAJ");
-            user.setUpdateTime("2019-09-23");
-            user.setPhone("12345678910");
-            user.setHeadimgurl("");
-            user.setIsstore("1");
+            user.setToken(data.getString("token"));
             user.setIsLogin("1");
             DbConfig dbConfig = new DbConfig(getApplicationContext());
             DbManager db = dbConfig.getDbManager();
 
 
             db.saveOrUpdate(user);
+        } catch (JSONException e) {
         } catch (DbException e) {
 
         }
     }
-
 
 
     /**
@@ -273,8 +358,10 @@ public class LoginActivity extends BaseActivity {
         tv_login.setLinksClickable(canLogin_phone && canLogin_password && canLogin_yanzhengma && canLogin_tiaokuan);
         if (canLogin_phone && canLogin_password && canLogin_yanzhengma && canLogin_tiaokuan) {
             tv_login.setBackgroundResource(R.drawable.save_btn_blue);
+            tv_login.setClickable(true);
         } else {
             tv_login.setBackgroundResource(R.drawable.save_btn_gray1);
+            tv_login.setClickable(false);
         }
     }
 }

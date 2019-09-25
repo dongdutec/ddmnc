@@ -40,6 +40,7 @@ public class MainActivity extends BaseActivity {
     int[] unselectedMipmap = {R.mipmap.home, R.mipmap.browser, R.mipmap.wallet, R.mipmap.my};
     int[] selectedMipmap = {R.mipmap.home_check, R.mipmap.browser_check, R.mipmap.wallet_check, R.mipmap.my_check};
     private long exitTime = 0;
+    private String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

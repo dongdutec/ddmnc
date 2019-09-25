@@ -7,6 +7,7 @@ import android.os.Message;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -17,7 +18,14 @@ import android.widget.Toast;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
+import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 import rx.functions.Action1;
 
@@ -68,6 +76,7 @@ public class ForgetPWActivity extends BaseActivity {
             }
         }
     };
+    private String TAG = ForgetPWActivity.class.getSimpleName();
 
 
     @Override
@@ -272,9 +281,6 @@ public class ForgetPWActivity extends BaseActivity {
                     Toast.makeText(ForgetPWActivity.this, "请输入正确的短信验证码!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                /*if () { //TODO 校检短信验证码 The Last!  post
-
-                }*/
 
                 if (dt_password.getText().toString().length() < 6) {
                     Toast.makeText(ForgetPWActivity.this, "密码长度至少为6位!", Toast.LENGTH_SHORT).show();
@@ -289,17 +295,58 @@ public class ForgetPWActivity extends BaseActivity {
                     return;
                 }
 
-                /*if (dt_tuijianren.getText().toString().length() != 11) {
-                    Toast.makeText(RegisterActivity.this, "请输入正确的推荐人手机号!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (){//TODO 校检推荐人手机号   post
 
-                }*/
+                tv_queren.setBackgroundResource(R.drawable.save_btn_gray1);
+                tv_queren.setClickable(false);
 
                 //判断通过
                 //post
-                Toast.makeText(ForgetPWActivity.this, "测试修改密码!", Toast.LENGTH_SHORT).show();
+                RequestParams params = new RequestParams(RequestUrls.forgetpassword());
+                params.setConnectTimeout(5000);
+                params.addBodyParameter("phone", dt_phone.getText().toString());
+                params.addBodyParameter("code", dt_yanzhengma.getText().toString());
+                params.addBodyParameter("password", dt_password.getText().toString());
+                params.addBodyParameter("repeatPassword", dt_password_second.getText().toString());
+                x.http().post(params, new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "onSuccess: result = " + result);
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            String msg = jsonObject.getString("msg");
+                            int code = jsonObject.getInt("code");
+                            Toast.makeText(ForgetPWActivity.this, msg, Toast.LENGTH_SHORT).show();
+
+                            if (code == 0) {
+                                finish();
+                            } else {
+                                tv_queren.setBackgroundResource(R.drawable.save_btn_blue);
+                                tv_queren.setClickable(true);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+                        Toast.makeText(ForgetPWActivity.this, "网络异常!", Toast.LENGTH_SHORT).show();
+
+                        tv_queren.setBackgroundResource(R.drawable.save_btn_blue);
+                        tv_queren.setClickable(true);
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
 
             }
         });
@@ -314,9 +361,63 @@ public class ForgetPWActivity extends BaseActivity {
                 }
 
                 mHandler.sendEmptyMessage(0);
+
+                RequestParams params = new RequestParams(RequestUrls.getMsgCode());
+                params.setConnectTimeout(5000);
+                params.addBodyParameter("phone", dt_phone.getText().toString());
+                params.addBodyParameter("smsType", "2");
+                Log.e(TAG, "boomer call:  params.toString() = " + params.toString());
+                x.http().post(params, new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            Log.e(TAG, "boomer onSuccess: result = " + result);
+                            JSONObject object = new JSONObject(result);
+                            String msg = object.getString("msg");
+                            int code = object.getInt("code");
+                            Toast.makeText(ForgetPWActivity.this, msg, Toast.LENGTH_SHORT).show();
+                            if (code != 0) {
+                                errorSengMsg();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+                        Toast.makeText(ForgetPWActivity.this, "发送失败,请重试!", Toast.LENGTH_SHORT).show();
+
+                        errorSengMsg();
+                        Log.e(TAG, "boomer onError:  ex.toString() = " + ex.toString());
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
             }
         });
+
+
+        tv_queren.setClickable(false);
     }
+
+    private void errorSengMsg() {
+        mHandler.removeMessages(0);
+        tv_yanzhengma.setText("重新发送");
+        tv_yanzhengma.setClickable(true);
+        tv_yanzhengma.setBackgroundResource(R.drawable.blue_coner);
+        numCount = 60;
+    }
+
 
     /**
      * 修改登录按钮显示状态
@@ -325,8 +426,10 @@ public class ForgetPWActivity extends BaseActivity {
         tv_queren.setLinksClickable(canLogin_phone && canLogin_yanzhengma && canLogin_password && canLogin_password_second && canLogin_tiaokuan);
         if (canLogin_phone && canLogin_yanzhengma && canLogin_password && canLogin_password_second && canLogin_tiaokuan) {
             tv_queren.setBackgroundResource(R.drawable.save_btn_blue);
+            tv_queren.setClickable(true);
         } else {
             tv_queren.setBackgroundResource(R.drawable.save_btn_gray1);
+            tv_queren.setClickable(false);
         }
     }
 }

@@ -1,12 +1,14 @@
 package com.dongdutec.ddmnc.ui.login.activity;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -17,7 +19,15 @@ import android.widget.Toast;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
+import com.dongdutec.ddmnc.http.RequestUrls;
+import com.dongdutec.ddmnc.utils.piccode.CodeUtils;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 import rx.functions.Action1;
 
@@ -37,6 +47,7 @@ public class RegisterActivity extends BaseActivity {
     private ImageView img_cha_tuijainren;
     private TextView tv_register;
     private CheckBox ck_tiaokuan;
+    private ImageView img_tp_yanzhengma;
 
     private boolean canLogin_phone = false;
     private boolean canLogin_password = false;
@@ -46,6 +57,9 @@ public class RegisterActivity extends BaseActivity {
     private boolean canLogin_tiaokuan = false;
 
     private int numCount = 60;
+
+    private CodeUtils codeUtils;
+
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -70,6 +84,7 @@ public class RegisterActivity extends BaseActivity {
             }
         }
     };
+    private String TAG = RegisterActivity.class.getSimpleName();
 
 
     @Override
@@ -98,6 +113,7 @@ public class RegisterActivity extends BaseActivity {
         img_cha_tuijainren = findViewById(R.id.img_cha_tuijainren);
         tv_register = findViewById(R.id.tv_register);
         ck_tiaokuan = findViewById(R.id.ck_tiaokuan);
+        img_tp_yanzhengma = findViewById(R.id.img_tp_yanzhengma);
 
         back.setImageResource(R.mipmap.back_login);
         bar_title.setText("注册");
@@ -107,6 +123,8 @@ public class RegisterActivity extends BaseActivity {
         ck_yanjing.setVisibility(View.GONE);
         img_cha.setVisibility(View.GONE);
         img_cha_tuijainren.setVisibility(View.GONE);
+
+        getCode();
     }
 
     @Override
@@ -114,8 +132,22 @@ public class RegisterActivity extends BaseActivity {
 
     }
 
+    //获取验证码
+    private void getCode() {
+        codeUtils = CodeUtils.getInstance();
+        Bitmap bitmap = codeUtils.createBitmap();
+        img_tp_yanzhengma.setImageBitmap(bitmap);
+    }
+
     @Override
     protected void bindView() {
+        //图片验证码
+        RxViewAction.clickNoDouble(img_tp_yanzhengma).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                getCode();
+            }
+        });
         //返回
         RxViewAction.clickNoDouble(back).subscribe(new Action1<Void>() {
             @Override
@@ -291,32 +323,71 @@ public class RegisterActivity extends BaseActivity {
                     return;
                 }
                 if (dt_tp_tp_yanzhengma.getText().toString().length() < 4) {
-                    Toast.makeText(RegisterActivity.this, "请输入正确的验证码!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "请输入正确的图片验证码!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                /*if () { //TODO 校检图形验证码
 
-                }*/
+                if (!dt_tp_tp_yanzhengma.getText().toString().equals(codeUtils.getCode())) {
+                    Log.e(TAG, "call: dt_tp_yanzhengma.getText().toString() = " + dt_tp_tp_yanzhengma.getText().toString() + " codeUtils.getCode() = " + codeUtils.getCode());
+                    Toast.makeText(RegisterActivity.this, "请输入正确的图片验证码!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 if (dt_yanzhengma.getText().toString().length() < 6) {
                     Toast.makeText(RegisterActivity.this, "请输入正确的短信验证码!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                /*if () { //TODO 校检短信验证码 The Last!  post
 
-                }*/
 
-                /*if (dt_tuijianren.getText().toString().length() != 11) {
-                    Toast.makeText(RegisterActivity.this, "请输入正确的推荐人手机号!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (){//TODO 校检推荐人手机号   post
-
-                }*/
+                tv_register.setBackgroundResource(R.drawable.save_btn_gray1);
+                tv_register.setClickable(false);
 
                 //判断通过
-                //post
-                Toast.makeText(RegisterActivity.this, "测试注册!", Toast.LENGTH_SHORT).show();
+                //post注册
+                RequestParams params = new RequestParams(RequestUrls.userRegister());
+                params.addBodyParameter("phone", dt_phone.getText().toString());
+                params.addBodyParameter("password", dt_password.getText().toString());
+                params.addBodyParameter("code", dt_yanzhengma.getText().toString());
+                params.addBodyParameter("parentPhone", dt_tuijianren.getText().toString());
+                params.addBodyParameter("type", "1");
+                params.setConnectTimeout(5000);
+                x.http().post(params, new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e(TAG, "onSuccess: result = " + result);
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            String msg = jsonObject.getString("msg");
+                            int code = jsonObject.getInt("code");
+                            Toast.makeText(RegisterActivity.this, msg, Toast.LENGTH_SHORT).show();
+                            if (code == 0) {
+                                finish();
+                            } else {
+                                tv_register.setBackgroundResource(R.drawable.save_btn_blue);
+                                tv_register.setClickable(true);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+                        Toast.makeText(RegisterActivity.this, "请求超时,请重试!", Toast.LENGTH_SHORT).show();
+                        tv_register.setBackgroundResource(R.drawable.save_btn_blue);
+                        tv_register.setClickable(true);
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
 
             }
         });
@@ -330,17 +401,66 @@ public class RegisterActivity extends BaseActivity {
                     return;
                 }
                 if (dt_tp_tp_yanzhengma.getText().toString().length() < 4) {
-                    Toast.makeText(RegisterActivity.this, "请输入正确的验证码!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "请输入正确的图片验证码!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                /*if () { //TODO 校检图形验证码
-
-                }*/
-
 
                 mHandler.sendEmptyMessage(0);
+
+                RequestParams params = new RequestParams(RequestUrls.getMsgCode());
+                params.setConnectTimeout(5000);
+                params.addBodyParameter("phone", dt_phone.getText().toString());
+                params.addBodyParameter("smsType", "1");
+                Log.e(TAG, "boomer call:  params.toString() = " + params.toString());
+                x.http().post(params, new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            Log.e(TAG, "boomer onSuccess: result = " + result);
+                            JSONObject object = new JSONObject(result);
+                            String msg = object.getString("msg");
+                            int code = object.getInt("code");
+                            Toast.makeText(RegisterActivity.this, msg, Toast.LENGTH_SHORT).show();
+                            if (code != 0) {
+                                errorSengMsg();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+                        Toast.makeText(RegisterActivity.this, "发送失败,请重试!", Toast.LENGTH_SHORT).show();
+
+                        errorSengMsg();
+                        Log.e(TAG, "boomer onError:  ex.toString() = " + ex.toString());
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
             }
         });
+
+
+        tv_register.setClickable(false);
+    }
+
+    private void errorSengMsg() {
+        mHandler.removeMessages(0);
+        tv_yanzhengma.setText("重新发送");
+        tv_yanzhengma.setClickable(true);
+        tv_yanzhengma.setBackgroundResource(R.drawable.blue_coner);
+        numCount = 60;
     }
 
     /**
@@ -350,8 +470,10 @@ public class RegisterActivity extends BaseActivity {
         tv_register.setLinksClickable(canLogin_phone && canLogin_password && canLogin_tpyanzhengma && canLogin_yanzhengma && canLogin_tuijianren && canLogin_tiaokuan);
         if (canLogin_phone && canLogin_password && canLogin_tpyanzhengma && canLogin_yanzhengma && canLogin_tuijianren && canLogin_tiaokuan) {
             tv_register.setBackgroundResource(R.drawable.save_btn_blue);
+            tv_register.setClickable(true);
         } else {
             tv_register.setBackgroundResource(R.drawable.save_btn_gray1);
+            tv_register.setClickable(false);
         }
     }
 }

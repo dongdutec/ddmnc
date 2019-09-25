@@ -10,6 +10,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.ui.home.multitype.model.HotStore;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
@@ -34,7 +37,13 @@ public class HomeItemViewProvider extends ItemViewProvider<HotStore, HomeItemVie
 
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder holder, @NonNull final HotStore hotStore) {
-//        Glide.with(context).load(hotStore.getImageUrl()).into(holder.main_listimg);
+
+        RoundedCorners roundedCorners = new RoundedCorners(10);
+        RequestOptions options = RequestOptions.bitmapTransform(roundedCorners);
+        Glide.with(context).load(hotStore.getImageUrl())
+                .apply(options)
+                .into(holder.main_listimg);
+
         holder.main_storename.setText(hotStore.getStoreName());
         holder.tv_location.setText(hotStore.getLocationStr());
         holder.tv_count.setText("记账人数：" + hotStore.getCount());

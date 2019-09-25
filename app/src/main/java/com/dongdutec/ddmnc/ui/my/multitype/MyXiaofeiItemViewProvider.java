@@ -2,16 +2,18 @@ package com.dongdutec.ddmnc.ui.my.multitype;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dongdutec.ddmnc.R;
+import com.dongdutec.ddmnc.cell.MNCTransparentDialog;
 import com.dongdutec.ddmnc.ui.my.multitype.model.MyXiaofei;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 
@@ -21,6 +23,7 @@ import rx.functions.Action1;
 
 public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXiaofeiItemViewProvider.ViewHolder> {
     private Context context;
+    private MNCTransparentDialog mncTransDialog;
 
     public MyXiaofeiItemViewProvider(Context context) {
         this.context = context;
@@ -46,14 +49,14 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
         RxViewAction.clickNoDouble(holder.tv_quxaio).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                showQuxiaoDialog(myXiaofei);
+                showNoDialog(myXiaofei);
             }
         });
         //确认记账
         RxViewAction.clickNoDouble(holder.tv_queren).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                showQuerenDialog(myXiaofei);
+                showYesDialog(myXiaofei);
             }
         });
 
@@ -90,9 +93,41 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
         }
     }
 
+    private void showYesDialog(final MyXiaofei myXiaofei) {
+        mncTransDialog = new MNCTransparentDialog(context);
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_querenjizhang, null,false);
+        TextView message_text = (TextView) dialogView.findViewById(R.id.message_text);
+        TextView tv_quxiao = (TextView) dialogView.findViewById(R.id.tv_left);
+        TextView tv_queren = (TextView) dialogView.findViewById(R.id.tv_right);
+        tv_quxiao.setText("取消");
+        tv_queren.setText("确认");
+        message_text.setText("确认记账？");
+        //取消
+        RxViewAction.clickNoDouble(tv_quxiao).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                mncTransDialog.dismiss();
+            }
+        });
+        //确认
+        RxViewAction.clickNoDouble(tv_queren).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Toast.makeText(context, "记账成功!", Toast.LENGTH_SHORT).show();
+                mncTransDialog.dismiss();
+            }
+        });
 
-    private void showQuxiaoDialog(final MyXiaofei myXiaofei) {
-        final AlertDialog dialog = new AlertDialog.Builder(context).create();
+
+        mncTransDialog.show();
+        Window window = mncTransDialog.getWindow();//对话框窗口
+        window.setGravity(Gravity.CENTER);//设置对话框显示在屏幕中间
+        window.setWindowAnimations(R.style.dialog_style);//添加动画
+        window.setContentView(dialogView);
+    }
+
+    private void showNoDialog(final MyXiaofei myXiaofei) {
+        mncTransDialog = new MNCTransparentDialog(context);
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_querenjizhang, null);
         TextView message_text = (TextView) dialogView.findViewById(R.id.message_text);
         TextView tv_quxiao = (TextView) dialogView.findViewById(R.id.tv_left);
@@ -104,7 +139,7 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
         RxViewAction.clickNoDouble(tv_quxiao).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                dialog.dismiss();
+                mncTransDialog.dismiss();
             }
         });
         //确认
@@ -112,50 +147,16 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
             @Override
             public void call(Void aVoid) {
                 Toast.makeText(context, "取消成功!", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
+                mncTransDialog.dismiss();
             }
         });
 
-        dialog.setView(dialogView);
 
-        dialog.show();
-        //设置按钮颜色
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.theme_primary));
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.theme_primary));
-
+        mncTransDialog.show();
+        Window window = mncTransDialog.getWindow();//对话框窗口
+        window.setGravity(Gravity.CENTER);//设置对话框显示在屏幕中间
+        window.setWindowAnimations(R.style.dialog_style);//添加动画
+        window.setContentView(dialogView);
     }
 
-    private void showQuerenDialog(final MyXiaofei myXiaofei) {
-        final AlertDialog dialog = new AlertDialog.Builder(context).create();
-        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_querenjizhang, null);
-        TextView message_text = (TextView) dialogView.findViewById(R.id.message_text);
-        TextView tv_quxiao = (TextView) dialogView.findViewById(R.id.tv_left);
-        TextView tv_queren = (TextView) dialogView.findViewById(R.id.tv_right);
-        tv_quxiao.setText("取消");
-        tv_queren.setText("确认");
-        message_text.setText("确认记账？");
-        //取消
-        RxViewAction.clickNoDouble(tv_quxiao).subscribe(new Action1<Void>() {
-            @Override
-            public void call(Void aVoid) {
-                dialog.dismiss();
-            }
-        });
-        //确认
-        RxViewAction.clickNoDouble(tv_queren).subscribe(new Action1<Void>() {
-            @Override
-            public void call(Void aVoid) {
-                Toast.makeText(context, "记账成功!", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-            }
-        });
-
-        dialog.setView(dialogView);
-
-        dialog.show();
-        //设置按钮颜色
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(context.getResources().getColor(R.color.theme_primary));
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(context.getResources().getColor(R.color.theme_primary));
-
-    }
 }

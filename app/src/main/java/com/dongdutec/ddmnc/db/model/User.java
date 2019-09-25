@@ -28,6 +28,14 @@ public class User {
     @Column(name = "age")
     private String age;         //年龄
 
+    @Column(name = "longitude")
+    private double longitude;    //经度
+
+
+    @Column(name = "latitude")
+    private double latitude;    //纬度
+
+
     @Column(name = "birthday")
     private String birthday;    //出生日期
 
@@ -75,6 +83,22 @@ public class User {
     private int firstAddCar;
 
     public User() {
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
     public String getIsstore() {

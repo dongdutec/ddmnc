@@ -36,6 +36,8 @@ public class MyFragment extends BaseFragment {
     private LinearLayout ll_user_daijizhang;
     private LinearLayout ll_user_yijizhang;
     private LinearLayout ll_user_all;
+    private LinearLayout ll_store_daijizhang;
+    private LinearLayout ll_store_all;
 
     @Nullable
     @Override
@@ -66,6 +68,8 @@ public class MyFragment extends BaseFragment {
         ll_user_daijizhang = getView().findViewById(R.id.ll_user_daijizhang);
         ll_user_yijizhang = getView().findViewById(R.id.ll_user_yijizhang);
         ll_user_all = getView().findViewById(R.id.ll_user_all);
+        ll_store_daijizhang = getView().findViewById(R.id.ll_store_daijizhang);
+        ll_store_all = getView().findViewById(R.id.ll_store_all);
 
         my_title.setText("我的");
         my_back.setVisibility(View.INVISIBLE);
@@ -131,7 +135,7 @@ public class MyFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
-        //我是商家-待记账
+        //我的消费-待记账
         RxViewAction.clickNoDouble(ll_user_daijizhang).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
@@ -140,7 +144,7 @@ public class MyFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
-        //我是商家-已记账
+        //我的消费-已记账
         RxViewAction.clickNoDouble(ll_user_yijizhang).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
@@ -149,8 +153,26 @@ public class MyFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
-        //我是商家-查看全部
+        //我的消费-查看全部
         RxViewAction.clickNoDouble(ll_user_all).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(getContext(), MyXiaofeiActivity.class);
+                intent.putExtra("page", 0);
+                startActivity(intent);
+            }
+        });
+        //我是商家-待记账
+        RxViewAction.clickNoDouble(ll_store_daijizhang).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(getContext(), MyXiaofeiActivity.class);
+                intent.putExtra("page", 1);
+                startActivity(intent);
+            }
+        });
+        //我是商家-查看全部
+        RxViewAction.clickNoDouble(ll_store_all).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
                 Intent intent = new Intent(getContext(), MyXiaofeiActivity.class);

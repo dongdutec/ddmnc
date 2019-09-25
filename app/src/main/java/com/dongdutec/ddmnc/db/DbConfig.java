@@ -22,27 +22,28 @@ public class DbConfig {
                 .setDbName("ddmnc.db")
                 .setAllowTransaction(true)
                 .setDbDir(context.getFilesDir())
-              //  .setDbDir(Environment.getExternalStorageDirectory())
+                //  .setDbDir(Environment.getExternalStorageDirectory())
                 .setDbVersion(1);
 
         return daoConfig;
     }
-    public DbManager getDbManager(){
+
+    public DbManager getDbManager() {
         DbManager.DaoConfig daoConfig = getDaoConfig();
         DbManager db = x.getDb(daoConfig);
         return db;
     }
 
-    public User getUserByPhone(String phone){
+    public User getUserByPhone(String phone) {
         DbManager.DaoConfig daoConfig = getDaoConfig();
         DbManager db = x.getDb(daoConfig);
         try {
             List<User> users = db.selector(User.class)
                     .findAll();
-            if (users != null){
+            if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getPhone().equals(phone)){
+                    if (user.getPhone().equals(phone)) {
                         return user;
                     }
                 }
@@ -53,16 +54,16 @@ public class DbConfig {
         return null;
     }
 
-    public User getUser(){
+    public User getUser() {
         DbManager.DaoConfig daoConfig = getDaoConfig();
         DbManager db = x.getDb(daoConfig);
         try {
             List<User> users = db.selector(User.class)
                     .findAll();
-            if (users != null){
+            if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getIsLogin().equals("1")){
+                    if (user.getIsLogin().equals("1")) {
                         return user;
                     }
                 }
@@ -72,16 +73,17 @@ public class DbConfig {
         }
         return null;
     }
-    public Boolean getIsLogin(){
+
+    public Boolean getIsLogin() {
         DbManager.DaoConfig daoConfig = getDaoConfig();
         DbManager db = x.getDb(daoConfig);
         try {
             List<User> users = db.selector(User.class)
                     .findAll();
-            if (users!=null){
+            if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getIsLogin().equals("1")){
+                    if (user.getIsLogin().equals("1")) {
                         return true;
                     }
                 }
@@ -92,16 +94,16 @@ public class DbConfig {
         return false;
     }
 
-    public String getToken(){
+    public String getToken() {
         DbManager.DaoConfig daoConfig = getDaoConfig();
         DbManager db = x.getDb(daoConfig);
         try {
             List<User> users = db.selector(User.class)
                     .findAll();
-            if (users!=null){
+            if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getIsLogin().equals("1")){
+                    if (user.getIsLogin().equals("1")) {
                         String token = user.getToken();
                         return token;
                     }
@@ -113,16 +115,16 @@ public class DbConfig {
         return null;
     }
 
-    public int getId(){
+    public int getId() {
         DbManager.DaoConfig daoConfig = getDaoConfig();
         DbManager db = x.getDb(daoConfig);
         try {
-            List<User> users =  db.selector(User.class)
+            List<User> users = db.selector(User.class)
                     .findAll();
-            if (users!=null){
+            if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getIsLogin().equals("1")){
+                    if (user.getIsLogin().equals("1")) {
                         int id = user.getId();
                         return id;
                     }
@@ -134,16 +136,57 @@ public class DbConfig {
         return 0;
     }
 
-    public String getPhone(){
+    public double getLatitude() {
         DbManager.DaoConfig daoConfig = getDaoConfig();
         DbManager db = x.getDb(daoConfig);
         try {
             List<User> users = db.selector(User.class)
                     .findAll();
-            if (users != null){
+            if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getIsLogin().equals("1")){
+                    if (user.getIsLogin().equals("1")) {
+                        double latitude = user.getLatitude();
+                        return latitude;
+                    }
+                }
+            }
+
+        } catch (DbException e) {
+        }
+        return 0;
+    }
+    public double getLongitude() {
+        DbManager.DaoConfig daoConfig = getDaoConfig();
+        DbManager db = x.getDb(daoConfig);
+        try {
+            List<User> users = db.selector(User.class)
+                    .findAll();
+            if (users != null) {
+                for (int i = 0; i < users.size(); i++) {
+                    User user = users.get(i);
+                    if (user.getIsLogin().equals("1")) {
+                        double longitude = user.getLongitude();
+                        return longitude;
+                    }
+                }
+            }
+
+        } catch (DbException e) {
+        }
+        return 0;
+    }
+
+    public String getPhone() {
+        DbManager.DaoConfig daoConfig = getDaoConfig();
+        DbManager db = x.getDb(daoConfig);
+        try {
+            List<User> users = db.selector(User.class)
+                    .findAll();
+            if (users != null) {
+                for (int i = 0; i < users.size(); i++) {
+                    User user = users.get(i);
+                    if (user.getIsLogin().equals("1")) {
                         String phone = user.getPhone();
                         return phone;
                     }

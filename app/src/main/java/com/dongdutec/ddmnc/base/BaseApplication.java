@@ -22,7 +22,7 @@ import org.xutils.x;
  */
 public class BaseApplication extends Application {
 
-    private static BaseApplication mBaseApplication;
+
 
     @Override
     public void onCreate() {
@@ -53,11 +53,7 @@ public class BaseApplication extends Application {
     }
 
 
-    private BaseApplication() {
-        mBaseApplication = this;
-    }
-
-    public static Context getInstance() {
-        return mBaseApplication;
+    public Context getInstance() {
+        return BaseApplication.this;
     }
 }

@@ -13,6 +13,7 @@ import rx.functions.Action1;
 public class UserInfoActivity extends BaseActivity {
     private ImageView bar_left_img;
     private TextView bar_title_text;
+    private ImageView userimg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,7 @@ public class UserInfoActivity extends BaseActivity {
     protected void initView() {
         bar_left_img = findViewById(R.id.bar_left_img);
         bar_title_text = findViewById(R.id.bar_title_text);
+        userimg = findViewById(R.id.userimg);
 
         bar_title_text.setText("个人信息");
     }
@@ -44,6 +46,13 @@ public class UserInfoActivity extends BaseActivity {
             @Override
             public void call(Void aVoid) {
                 finish();
+            }
+        });
+        //修改头像
+        RxViewAction.clickNoDouble(userimg).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+
             }
         });
     }

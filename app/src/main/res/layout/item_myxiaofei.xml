@@ -79,57 +79,64 @@
 
     </RelativeLayout>
 
-    <include layout="@layout/line"/>
-
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/ll_has_jizhang"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/d10"
-        android:layout_marginTop="@dimen/d5"
-        android:layout_marginRight="@dimen/d10"
-        android:layout_marginBottom="@dimen/d10">
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_phone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="来自：170****5214"
-            android:textColor="@color/c6"
-            android:textSize="@dimen/s14"/>
+        <include layout="@layout/line"/>
 
-        <TextView
-            android:id="@+id/tv_quxaio"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d10"
+            android:layout_marginTop="@dimen/d5"
             android:layout_marginRight="@dimen/d10"
-            android:layout_toLeftOf="@+id/tv_queren"
-            android:background="@drawable/blue_stoke"
-            android:paddingLeft="@dimen/d10"
-            android:paddingTop="@dimen/d5"
-            android:paddingRight="@dimen/d10"
-            android:paddingBottom="@dimen/d5"
-            android:text="取消记账"
-            android:textColor="@color/c16"
-            android:textSize="@dimen/s12"/>
+            android:layout_marginBottom="@dimen/d10">
 
-        <TextView
-            android:id="@+id/tv_queren"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/blue_stoke"
-            android:paddingLeft="@dimen/d10"
-            android:paddingTop="@dimen/d5"
-            android:paddingRight="@dimen/d10"
-            android:paddingBottom="@dimen/d5"
-            android:text="确认记账"
-            android:textColor="@color/c16"
-            android:textSize="@dimen/s12"/>
+            <TextView
+                android:id="@+id/tv_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="来自：170****5214"
+                android:textColor="@color/c6"
+                android:textSize="@dimen/s14"/>
+
+            <TextView
+                android:id="@+id/tv_quxaio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/d10"
+                android:layout_toLeftOf="@+id/tv_queren"
+                android:background="@drawable/blue_stoke"
+                android:paddingLeft="@dimen/d10"
+                android:paddingTop="@dimen/d5"
+                android:paddingRight="@dimen/d10"
+                android:paddingBottom="@dimen/d5"
+                android:text="取消记账"
+                android:textColor="@color/c16"
+                android:textSize="@dimen/s12"/>
+
+            <TextView
+                android:id="@+id/tv_queren"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/blue_stoke"
+                android:paddingLeft="@dimen/d10"
+                android:paddingTop="@dimen/d5"
+                android:paddingRight="@dimen/d10"
+                android:paddingBottom="@dimen/d5"
+                android:text="确认记账"
+                android:textColor="@color/c16"
+                android:textSize="@dimen/s12"/>
 
 
-    </RelativeLayout>
+        </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

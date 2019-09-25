@@ -16,11 +16,11 @@
 
     <ImageView
         android:id="@+id/main_listimg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/d100"
+        android:layout_height="@dimen/d80"
+        android:scaleType="fitXY"
         android:layout_marginTop="@dimen/d15"
-        android:layout_marginRight="@dimen/d5"
-        android:src="@mipmap/tu"/>
+        android:layout_marginRight="@dimen/d5"/>
 
     <TextView
         android:id="@+id/main_storename"
@@ -30,7 +30,7 @@
         android:layout_toRightOf="@+id/main_listimg"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="东度科技青岛测试店"
+        android:text=""
         android:textColor="@color/c7"
         android:textSize="@dimen/s14"/>
 
@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/d2"
-            android:text="青岛市·黄岛区·长江路·国贸大厦"
+            android:text=""
             android:textColor="@color/c16"
             android:textSize="@dimen/s12"/>
     </LinearLayout>
@@ -78,7 +78,7 @@
         android:layout_below="@+id/ll_main"
         android:layout_marginTop="@dimen/d10"
         android:layout_toRightOf="@+id/main_listimg"
-        android:text="记账人数：0"
+        android:text=""
         android:textSize="@dimen/s12"/>
 
     <TextView
@@ -88,7 +88,7 @@
         android:layout_below="@+id/ll_main"
         android:layout_alignParentRight="true"
         android:layout_marginTop="@dimen/d10"
-        android:text="距当前：1.0Km"
+        android:text=""
         android:textSize="@dimen/s12"/>
 
 

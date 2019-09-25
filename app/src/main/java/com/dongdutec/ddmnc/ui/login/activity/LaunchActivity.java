@@ -16,6 +16,13 @@ import android.widget.Toast;
 import com.dongdutec.ddmnc.MainActivity;
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
+import com.dongdutec.ddmnc.db.DbConfig;
+import com.dongdutec.ddmnc.http.RequestUrls;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 public class LaunchActivity extends BaseActivity {
 
@@ -27,7 +34,7 @@ public class LaunchActivity extends BaseActivity {
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(final Message msg) {
 
             switch (msg.what) {
                 case GO_NEXT://权限申请成功回调后
@@ -40,14 +47,54 @@ public class LaunchActivity extends BaseActivity {
 
                     } else {//再次进入
 
-                        //TODO 验证登录状态
-                        if (true) {
-                            startActivity(new Intent(LaunchActivity.this, MainActivity.class));
-                            finish();
-                        } else {
-                            startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
-                            finish();
-                        }
+                        RequestParams params = new RequestParams(RequestUrls.judgelogin());
+                        params.setConnectTimeout(5000);
+                        params.addBodyParameter("token", new DbConfig(LaunchActivity.this).getToken());
+                        x.http().post(params, new org.xutils.common.Callback.CommonCallback<String>() {
+                            @Override
+                            public void onSuccess(String result) {
+                                Log.e(TAG, "onSuccess: result = " + result);
+                                try {
+                                    JSONObject jsonObject = new JSONObject(result);
+                                    int code = jsonObject.getInt("code");
+                                    String message = jsonObject.getString("msg");
+                                    Toast.makeText(LaunchActivity.this, message, Toast.LENGTH_SHORT).show();
+
+                                    if (code == 0) {
+                                        //自动登录成功
+                                        startActivity(new Intent(LaunchActivity.this, MainActivity.class));
+                                        finish();
+
+                                    } else {
+                                        //登录信息失效 跳转登录页面
+                                        startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
+                                        finish();
+                                    }
+
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable ex, boolean isOnCallback) {
+                                Toast.makeText(LaunchActivity.this, "网络异常,请重新登录!", Toast.LENGTH_SHORT).show();
+                                //网络异常 跳转登录页面
+                                startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
+                                finish();
+                            }
+
+                            @Override
+                            public void onCancelled(CancelledException cex) {
+
+                            }
+
+                            @Override
+                            public void onFinished() {
+
+                            }
+                        });
                     }
                     break;
             }

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -11,16 +12,25 @@ import android.widget.TextView;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
+import com.dongdutec.ddmnc.db.DbConfig;
+import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.home.multitype.HomeItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.model.HotStore;
+import com.dongdutec.ddmnc.utils.location.LocationUtils;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import me.drakeet.multitype.MultiTypeAdapter;
 import rx.functions.Action1;
@@ -72,7 +82,63 @@ public class MyStarActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        //http
+        //获取收藏列表
+        final RequestParams params = new RequestParams(RequestUrls.getStarList());
+        params.setConnectTimeout(5000);
+        params.addBodyParameter("token", new DbConfig(MyStarActivity.this).getToken());
+        params.addBodyParameter("phone", "");
+        Log.e("boomer", "onSuccess: params.toString() = " + params.toString());
+        x.http().post(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                try {
+                    Log.e("boomer", "onSuccess: result = " + result);
+                    JSONArray jsonArray = new JSONArray(result);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject object = (JSONObject) jsonArray.get(i);
+                        HotStore hotStore = new HotStore();
+                        hotStore.setImageUrl(object.getString("image"));
+                        hotStore.setStoreName(object.getString("shopName"));
+                        hotStore.setLocationStr(object.getString("address"));
+                        hotStore.setCount(Integer.parseInt(object.getString("count")));
+                        String advertLatitude = object.getString("latitude");
+                        String advertLongitude = object.getString("longitude");
+                        double longitude_store = Double.parseDouble(advertLongitude);
+                        double latitude_store = Double.parseDouble(advertLatitude);
+                        hotStore.setLantitude(latitude_store);
+                        hotStore.setLongitude(longitude_store);
+                        DbConfig dbConfig = new DbConfig(MyStarActivity.this);
+                        double distance = LocationUtils.getDistance(dbConfig.getLongitude(), dbConfig.getLatitude(), longitude_store, latitude_store);
+                        hotStore.setDistance(distance);
+
+                        mHotStoreList.add(hotStore);
+                    }
+
+                    updataData();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+
+
+        /*// testhttp
 
         Random ran = new Random();
         int radom = ran.nextInt(100);
@@ -95,7 +161,7 @@ public class MyStarActivity extends BaseActivity {
             }
             mHotStoreList.add(hotStore);
         }
-        updataData();
+        updataData();*/
 
 
     }
