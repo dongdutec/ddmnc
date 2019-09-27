@@ -7,7 +7,10 @@ import java.math.BigDecimal;
 
 @Table(name = "user")
 public class User {
-    @Column(name = "id", isId = true, autoGen = false)
+    @Column(name = "phone", isId = true, autoGen = false)
+    private String phone;       //手机号
+
+    @Column(name = "id")
     private int id;
 
     @Column(name = "carid")
@@ -21,9 +24,6 @@ public class User {
 
     @Column(name = "password")
     private String password;    //密码
-
-    @Column(name = "phone")
-    private String phone;       //手机号
 
     @Column(name = "age")
     private String age;         //年龄

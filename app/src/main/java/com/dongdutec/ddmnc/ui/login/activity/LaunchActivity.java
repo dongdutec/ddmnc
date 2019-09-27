@@ -50,6 +50,7 @@ public class LaunchActivity extends BaseActivity {
                         RequestParams params = new RequestParams(RequestUrls.judgelogin());
                         params.setConnectTimeout(5000);
                         params.addBodyParameter("token", new DbConfig(LaunchActivity.this).getToken());
+                        Log.e(TAG, "handleMessage:  params.toString() = " + params.toString());
                         x.http().post(params, new org.xutils.common.Callback.CommonCallback<String>() {
                             @Override
                             public void onSuccess(String result) {

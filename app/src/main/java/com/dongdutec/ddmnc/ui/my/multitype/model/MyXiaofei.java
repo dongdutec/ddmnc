@@ -13,11 +13,12 @@ public class MyXiaofei {
     private String title;
     private double price;
     private String phone;
+    private String isStore = "1";//1用户 2商家
 
     public MyXiaofei() {
     }
 
-    public MyXiaofei(String orderId, String times, String orderState, String imgUrl, String title, double price, String phone) {
+    public MyXiaofei(String orderId, String times, String orderState, String imgUrl, String title, double price, String phone, String isStore) {
         this.orderId = orderId;
         this.times = times;
         this.orderState = orderState;
@@ -25,6 +26,15 @@ public class MyXiaofei {
         this.title = title;
         this.price = price;
         this.phone = phone;
+        this.isStore = isStore;
+    }
+
+    public String getIsStore() {
+        return isStore;
+    }
+
+    public void setIsStore(String isStore) {
+        this.isStore = isStore;
     }
 
     public String getOrderId() {

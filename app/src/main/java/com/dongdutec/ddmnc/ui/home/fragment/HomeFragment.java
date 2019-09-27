@@ -49,6 +49,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -96,6 +97,7 @@ public class HomeFragment extends BaseFragment {
 
     private double mLatitude = 36.263682;
     private double mLongitude = 120.307086;
+    private AVLoadingIndicatorView loading;
 
     //声明定位回调监听器
     public AMapLocationListener mLocationListener = new AMapLocationListener() {
@@ -131,7 +133,7 @@ public class HomeFragment extends BaseFragment {
     };
 
     private void saveUserLocationToDb(double latitude, double longitude) {
-        User user = new User();
+        User user = new DbConfig(getContext()).getUser();
         try {
             user.setLatitude(latitude);
             user.setLongitude(longitude);
@@ -220,6 +222,7 @@ public class HomeFragment extends BaseFragment {
         params.addBodyParameter("token", new DbConfig(getContext()).getToken());
         params.addBodyParameter("type", "1");
         Log.e(TAG, "init: params.toString() = " + params.toString());
+        showLoading();
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -240,6 +243,7 @@ public class HomeFragment extends BaseFragment {
 
                     } else {
                         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                        loading.hide();
                     }
 
                 } catch (JSONException e) {
@@ -275,6 +279,7 @@ public class HomeFragment extends BaseFragment {
     private void getHotData() {
         RequestParams requestParams = new RequestParams(RequestUrls.homeHotList());
         requestParams.setConnectTimeout(5000);
+        showLoading();
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -312,6 +317,7 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
 
+                updataData();
             }
 
             @Override
@@ -343,6 +349,7 @@ public class HomeFragment extends BaseFragment {
         }
         assertAllRegistered(multiTypeAdapter, items);
         multiTypeAdapter.notifyDataSetChanged();
+        hindLoading();
     }
 
     @Override
@@ -352,6 +359,7 @@ public class HomeFragment extends BaseFragment {
         ll_souyisou = getView().findViewById(R.id.ll_souyisou);
         img_saoyisao = getView().findViewById(R.id.img_saoyisao);
         tv_city = getView().findViewById(R.id.tv_city);
+        loading = getView().findViewById(R.id.loading);
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         main_rlv.setLayoutManager(manager);
@@ -404,5 +412,13 @@ public class HomeFragment extends BaseFragment {
         mLocationClient.setLocationOption(mLocationOption);
         //启动定位
         mLocationClient.startLocation();
+    }
+
+    public void showLoading() {
+        loading.show();
+    }
+
+    public void hindLoading() {
+        loading.hide();
     }
 }

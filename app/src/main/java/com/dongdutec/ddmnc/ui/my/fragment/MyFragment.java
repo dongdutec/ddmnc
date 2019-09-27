@@ -4,6 +4,7 @@ package com.dongdutec.ddmnc.ui.my.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseFragment;
+import com.dongdutec.ddmnc.db.DbConfig;
+import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.my.activity.DailiActivity;
 import com.dongdutec.ddmnc.ui.my.activity.HistoryActivity;
 import com.dongdutec.ddmnc.ui.my.activity.MyStarActivity;
@@ -20,6 +23,10 @@ import com.dongdutec.ddmnc.ui.my.activity.MyXiaofeiActivity;
 import com.dongdutec.ddmnc.ui.my.activity.SettingActivity;
 import com.dongdutec.ddmnc.ui.my.activity.UserInfoActivity;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
+
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 import rx.functions.Action1;
 
@@ -38,6 +45,7 @@ public class MyFragment extends BaseFragment {
     private LinearLayout ll_user_all;
     private LinearLayout ll_store_daijizhang;
     private LinearLayout ll_store_all;
+    private String TAG = MyFragment.class.getSimpleName();
 
     @Nullable
     @Override
@@ -77,7 +85,31 @@ public class MyFragment extends BaseFragment {
 
     @Override
     protected void init() {
+        RequestParams params = new RequestParams(RequestUrls.getMyData());
+        params.setConnectTimeout(5000);
+        params.addBodyParameter("token", new DbConfig(getContext()).getToken());
+        Log.e(TAG, "init:  params.toString() = " + params.toString());
+        x.http().post(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
 
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
     @Override
@@ -141,6 +173,7 @@ public class MyFragment extends BaseFragment {
             public void call(Void aVoid) {
                 Intent intent = new Intent(getContext(), MyXiaofeiActivity.class);
                 intent.putExtra("page", 1);
+                intent.putExtra("isStore", 1);//1用户 2商家
                 startActivity(intent);
             }
         });
@@ -150,6 +183,7 @@ public class MyFragment extends BaseFragment {
             public void call(Void aVoid) {
                 Intent intent = new Intent(getContext(), MyXiaofeiActivity.class);
                 intent.putExtra("page", 2);
+                intent.putExtra("isStore", 1);//1用户 2商家
                 startActivity(intent);
             }
         });
@@ -159,6 +193,7 @@ public class MyFragment extends BaseFragment {
             public void call(Void aVoid) {
                 Intent intent = new Intent(getContext(), MyXiaofeiActivity.class);
                 intent.putExtra("page", 0);
+                intent.putExtra("isStore", 1);//1用户 2商家
                 startActivity(intent);
             }
         });
@@ -168,6 +203,7 @@ public class MyFragment extends BaseFragment {
             public void call(Void aVoid) {
                 Intent intent = new Intent(getContext(), MyXiaofeiActivity.class);
                 intent.putExtra("page", 1);
+                intent.putExtra("isStore", 2);//1用户 2商家
                 startActivity(intent);
             }
         });
@@ -177,6 +213,7 @@ public class MyFragment extends BaseFragment {
             public void call(Void aVoid) {
                 Intent intent = new Intent(getContext(), MyXiaofeiActivity.class);
                 intent.putExtra("page", 0);
+                intent.putExtra("isStore", 2);//1用户 2商家
                 startActivity(intent);
             }
         });

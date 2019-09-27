@@ -15,7 +15,9 @@ import com.dongdutec.ddmnc.base.BaseActivity;
 import com.dongdutec.ddmnc.db.DbConfig;
 import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.home.multitype.HomeItemViewProvider;
+import com.dongdutec.ddmnc.ui.home.multitype.NullListItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.model.HotStore;
+import com.dongdutec.ddmnc.ui.home.multitype.model.NullList;
 import com.dongdutec.ddmnc.utils.location.LocationUtils;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -52,12 +54,13 @@ public class MyStarActivity extends BaseActivity {
 
     private int total_all_page;
     private int mRows = 10;  // 设置默认一页加载10条数据
-    private int current_page;
+    private int current_page = 1;
     private boolean isLoadMore = false;
     private boolean isLoadOver = false;
     private boolean isLoadMoreSingle = false;//上拉单次标志位
     private boolean isFirstLoad = true;
     private String type;
+    private String TAG = MyStarActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,13 +89,15 @@ public class MyStarActivity extends BaseActivity {
         final RequestParams params = new RequestParams(RequestUrls.getStarList());
         params.setConnectTimeout(5000);
         params.addBodyParameter("token", new DbConfig(MyStarActivity.this).getToken());
-        params.addBodyParameter("phone", "");
-        Log.e("boomer", "onSuccess: params.toString() = " + params.toString());
+        params.addBodyParameter("page", current_page + "");
+        params.addBodyParameter("rows", mRows + "");
+        Log.e(TAG, "onSuccess: params.toString() = " + params.toString());
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
+                mHotStoreList.clear();
                 try {
-                    Log.e("boomer", "onSuccess: result = " + result);
+                    Log.e(TAG, "onSuccess: result = " + result);
                     JSONArray jsonArray = new JSONArray(result);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject object = (JSONObject) jsonArray.get(i);
@@ -110,6 +115,7 @@ public class MyStarActivity extends BaseActivity {
                         DbConfig dbConfig = new DbConfig(MyStarActivity.this);
                         double distance = LocationUtils.getDistance(dbConfig.getLongitude(), dbConfig.getLatitude(), longitude_store, latitude_store);
                         hotStore.setDistance(distance);
+                        hotStore.setStarState(object.getString("state"));
 
                         mHotStoreList.add(hotStore);
                     }
@@ -123,7 +129,8 @@ public class MyStarActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-
+                Log.e(TAG, "onError: ex.toString()" + ex.toString());
+                updataData();
             }
 
             @Override
@@ -170,7 +177,7 @@ public class MyStarActivity extends BaseActivity {
     private void updataData() {
         items.clear();
         if (mHotStoreList == null || mHotStoreList.size() == 0) {
-//            items.add(new ItemNullBean("暂无数据")); TODO
+            items.add(new NullList());
         } else {
             for (int i = 0; i < mHotStoreList.size(); i++) {
                 items.add(mHotStoreList.get(i));
@@ -197,6 +204,7 @@ public class MyStarActivity extends BaseActivity {
         main_rlv.setLayoutManager(manager);
         multiTypeAdapter = new MultiTypeAdapter(items);
         multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(getApplicationContext()));
+        multiTypeAdapter.register(NullList.class, new NullListItemViewProvider(getApplicationContext()));
         main_rlv.setAdapter(multiTypeAdapter);
         assertHasTheSameAdapter(main_rlv, multiTypeAdapter);
 

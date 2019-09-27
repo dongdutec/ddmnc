@@ -23,6 +23,7 @@ import rx.functions.Action1;
 
 public class HomeItemViewProvider extends ItemViewProvider<HotStore, HomeItemViewProvider.ViewHolder> {
     private Context context;
+    private String starState;
 
     public HomeItemViewProvider(Context context) {
         this.context = context;
@@ -37,6 +38,8 @@ public class HomeItemViewProvider extends ItemViewProvider<HotStore, HomeItemVie
 
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder holder, @NonNull final HotStore hotStore) {
+
+        starState = hotStore.getStarState();
 
         RoundedCorners roundedCorners = new RoundedCorners(10);
         RequestOptions options = RequestOptions.bitmapTransform(roundedCorners);
@@ -59,17 +62,23 @@ public class HomeItemViewProvider extends ItemViewProvider<HotStore, HomeItemVie
                 context.startActivity(intent);*/
             }
         });
-        if (hotStore.getStarState() == 0) {//不显示
-            holder.img_star.setVisibility(View.GONE);
-        }
-        if (hotStore.getStarState() == 1) {//已收藏
+        if ("1".equals(hotStore.getStarState())) {//已收藏
             holder.img_star.setVisibility(View.VISIBLE);
             holder.img_star.setImageResource(R.mipmap.star_check);
-        }
-        if (hotStore.getStarState() == 2) {//未收藏
+        } else if ("2".equals(hotStore.getStarState())) {//未收藏
             holder.img_star.setVisibility(View.VISIBLE);
             holder.img_star.setImageResource(R.mipmap.star_);
+        } else {
+            holder.img_star.setVisibility(View.GONE);
         }
+
+        //取消收藏和收藏
+        RxViewAction.clickNoDouble(holder.img_star).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+
+            }
+        });
 
     }
 

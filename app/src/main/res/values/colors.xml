@@ -68,6 +68,8 @@
     <color name="black">#333333</color>
 
 
+    <color name="cropstatus">#8a000000</color>
+    <color name="cropbar">#6a000000</color>
 
     <color name="cp_divider">#E5E5E5</color>
     <color name="cp_shadow">#AAEBEBEB</color>

@@ -23,7 +23,7 @@ public class DbConfig {
                 .setAllowTransaction(true)
                 .setDbDir(context.getFilesDir())
                 //  .setDbDir(Environment.getExternalStorageDirectory())
-                .setDbVersion(1);
+                .setDbVersion(3);
 
         return daoConfig;
     }
@@ -43,7 +43,7 @@ public class DbConfig {
             if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getPhone().equals(phone)) {
+                    if (phone.equals(user.getPhone())) {
                         return user;
                     }
                 }
@@ -63,7 +63,7 @@ public class DbConfig {
             if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getIsLogin().equals("1")) {
+                    if ("1".equals(user.getIsLogin())) {
                         return user;
                     }
                 }
@@ -83,7 +83,7 @@ public class DbConfig {
             if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getIsLogin().equals("1")) {
+                    if ("1".equals(user.getIsLogin())) {
                         return true;
                     }
                 }
@@ -103,7 +103,7 @@ public class DbConfig {
             if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getIsLogin().equals("1")) {
+                    if ("1".equals(user.getIsLogin())) {
                         String token = user.getToken();
                         return token;
                     }
@@ -124,7 +124,7 @@ public class DbConfig {
             if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getIsLogin().equals("1")) {
+                    if ("1".equals(user.getIsLogin())) {
                         int id = user.getId();
                         return id;
                     }
@@ -145,7 +145,7 @@ public class DbConfig {
             if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getIsLogin().equals("1")) {
+                    if ("1".equals(user.getIsLogin())) {
                         double latitude = user.getLatitude();
                         return latitude;
                     }
@@ -165,7 +165,7 @@ public class DbConfig {
             if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getIsLogin().equals("1")) {
+                    if ("1".equals(user.getIsLogin())) {
                         double longitude = user.getLongitude();
                         return longitude;
                     }
@@ -186,7 +186,7 @@ public class DbConfig {
             if (users != null) {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    if (user.getIsLogin().equals("1")) {
+                    if ("1".equals(user.getIsLogin())) {
                         String phone = user.getPhone();
                         return phone;
                     }

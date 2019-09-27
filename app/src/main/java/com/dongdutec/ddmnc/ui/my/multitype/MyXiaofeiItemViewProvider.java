@@ -3,6 +3,7 @@ package com.dongdutec.ddmnc.ui.my.multitype;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +15,13 @@ import android.widget.Toast;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.cell.MNCTransparentDialog;
+import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.my.multitype.model.MyXiaofei;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
+
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 import me.drakeet.multitype.ItemViewProvider;
 import rx.functions.Action1;
@@ -95,7 +101,7 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
 
     private void showYesDialog(final MyXiaofei myXiaofei) {
         mncTransDialog = new MNCTransparentDialog(context);
-        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_querenjizhang, null,false);
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_querenjizhang, null, false);
         TextView message_text = (TextView) dialogView.findViewById(R.id.message_text);
         TextView tv_quxiao = (TextView) dialogView.findViewById(R.id.tv_left);
         TextView tv_queren = (TextView) dialogView.findViewById(R.id.tv_right);
@@ -113,8 +119,40 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
         RxViewAction.clickNoDouble(tv_queren).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                Toast.makeText(context, "记账成功!", Toast.LENGTH_SHORT).show();
-                mncTransDialog.dismiss();
+
+                RequestParams params = new RequestParams(RequestUrls.storeGetJifen());
+                params.setConnectTimeout(5000);
+                params.addBodyParameter("id", "3");
+                params.addBodyParameter("mp", "50");
+                params.addBodyParameter("state", "1");
+                Log.e("Myxiaofei", "call: params.toString() = " + params.toString());
+                x.http().post(params, new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Log.e("Myxiaofei", "onSuccess: result = " + result);
+
+
+                        //test
+                        Toast.makeText(context, "记账成功!", Toast.LENGTH_SHORT).show();
+                        mncTransDialog.dismiss();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
             }
         });
 
@@ -146,8 +184,40 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
         RxViewAction.clickNoDouble(tv_queren).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                Toast.makeText(context, "取消成功!", Toast.LENGTH_SHORT).show();
-                mncTransDialog.dismiss();
+                RequestParams params = new RequestParams(RequestUrls.storeGetJifen());
+                params.setConnectTimeout(5000);
+                params.addBodyParameter("id", "4");
+                params.addBodyParameter("mp", "");
+                params.addBodyParameter("state", "2");
+                Log.e("Myxiaofei", "call: params.toString() = " + params.toString());
+                x.http().post(params, new Callback.CommonCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+
+                        Log.e("Myxiaofei", "onSuccess: result = " + result);
+
+
+                        //test
+                        Toast.makeText(context, "取消成功!", Toast.LENGTH_SHORT).show();
+                        mncTransDialog.dismiss();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+
+                    }
+                });
             }
         });
 

@@ -25,9 +25,9 @@
                 android:background="@color/theme_primary"/>
 
             <RelativeLayout
-                android:layout_marginTop="@dimen/d25"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/d25"
                 android:paddingLeft="@dimen/d10"
                 android:paddingRight="@dimen/d10">
 
@@ -44,8 +44,8 @@
                     android:id="@+id/img_city"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="-2dp"
                     android:layout_alignBottom="@+id/tv_city"
+                    android:layout_marginBottom="-2dp"
                     android:layout_toRightOf="@+id/tv_city"
                     android:src="@mipmap/xiala"/>
 
@@ -53,26 +53,28 @@
                     android:id="@+id/ll_souyisou"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/d10"
-                    android:layout_marginRight="@dimen/d10"
+                    android:layout_marginLeft="@dimen/d30"
+                    android:layout_marginRight="@dimen/d30"
                     android:layout_toLeftOf="@+id/img_saoyisao"
-                    android:background="@drawable/main_sousuo"
                     android:layout_toRightOf="@+id/tv_city"
+                    android:background="@drawable/main_sousuo"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="@dimen/d6">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="10dp"
+                        android:layout_height="@dimen/d10"
                         android:layout_marginLeft="@dimen/d10"
+                        android:layout_gravity="center_vertical"
                         android:src="@mipmap/sousuo"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/d10"
+                        android:layout_marginLeft="@dimen/d5"
                         android:text="搜一搜"
+                        android:layout_gravity="center_vertical"
                         android:textColor="@color/c"
                         android:textSize="@dimen/s12"/>
                 </LinearLayout>
@@ -83,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/d5"
+                    android:layout_marginRight="@dimen/d10"
                     android:src="@mipmap/saoma"/>
 
             </RelativeLayout>
@@ -94,4 +96,13 @@
             android:layout_height="wrap_content"/>
 
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="visible"
+        app:indicatorColor="@color/lightgray"
+        app:indicatorName="BallPulseIndicator"/>
 </FrameLayout>

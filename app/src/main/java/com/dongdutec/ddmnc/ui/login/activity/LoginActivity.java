@@ -1,8 +1,11 @@
 package com.dongdutec.ddmnc.ui.login.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -58,6 +61,21 @@ public class LoginActivity extends BaseActivity {
 
     private CodeUtils codeUtils;
 
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    private String phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -265,14 +283,14 @@ public class LoginActivity extends BaseActivity {
                 }
 
 
-
                 tv_login.setBackgroundResource(R.drawable.save_btn_gray1);
                 tv_login.setClickable(false);
 
                 //判断通过
                 //post
                 RequestParams params = new RequestParams(RequestUrls.userLogin());
-                params.addBodyParameter("phone", dt_phone.getText().toString());
+                phone = dt_phone.getText().toString();
+                params.addBodyParameter("phone", phone);
                 params.addBodyParameter("password", dt_password.getText().toString());
                 params.setConnectTimeout(5000);
                 x.http().post(params, new Callback.CommonCallback<String>() {
@@ -289,9 +307,7 @@ public class LoginActivity extends BaseActivity {
                                 //存储用户信息到本地数据库
                                 saveUserToDb(data);
 
-
-                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                finish();
+                                mHandler.sendEmptyMessageDelayed(0, 1000);
                             } else {
                                 //dialog
 
@@ -338,6 +354,7 @@ public class LoginActivity extends BaseActivity {
         User user = new User();
         try {
             user.setToken(data.getString("token"));
+            user.setPhone(phone);
             user.setIsLogin("1");
             DbConfig dbConfig = new DbConfig(getApplicationContext());
             DbManager db = dbConfig.getDbManager();

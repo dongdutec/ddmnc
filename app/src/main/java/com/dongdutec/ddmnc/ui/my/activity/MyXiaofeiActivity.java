@@ -29,6 +29,7 @@ public class MyXiaofeiActivity extends BaseActivity {
     private List<String> title_list;
     private MyPagerAdapter pagerAdapter;
     private int page;
+    private int isStore;
 
 
     @Override
@@ -37,6 +38,7 @@ public class MyXiaofeiActivity extends BaseActivity {
         setContentView(R.layout.activity_my_xiaofei);
 
         page = getIntent().getIntExtra("page", 0);
+        isStore = getIntent().getIntExtra("isStore", 0);//1用户 2商家
 
         initView();
         init();
@@ -90,12 +92,24 @@ public class MyXiaofeiActivity extends BaseActivity {
 
         ArrayList<Fragment> list_fg = new ArrayList<>();
         MyXiaofeiFragment fragment_all = new MyXiaofeiFragment();
+        Bundle bundle_all = new Bundle();
+        bundle_all.putString("state", "");
+        bundle_all.putString("isStore", isStore + "");//1用户 2商家
+        fragment_all.setArguments(bundle_all);
         list_fg.add(fragment_all);
 
         MyXiaofeiFragment fragment_daijizhang = new MyXiaofeiFragment();
+        Bundle bundle_daijizhang = new Bundle();
+        bundle_daijizhang.putString("state", "0");//0待记账 1已记账
+        bundle_daijizhang.putString("isStore", isStore + "");//1用户 2商家
+        fragment_daijizhang.setArguments(bundle_daijizhang);
         list_fg.add(fragment_daijizhang);
 
         MyXiaofeiFragment fragment_yijizhang = new MyXiaofeiFragment();
+        Bundle bundle_yijizhang = new Bundle();
+        bundle_yijizhang.putString("state", "1");//0待记账 1已记账
+        bundle_yijizhang.putString("isStore", isStore + "");//1用户 2商家
+        fragment_yijizhang.setArguments(bundle_yijizhang);
         list_fg.add(fragment_yijizhang);
 
         return list_fg;

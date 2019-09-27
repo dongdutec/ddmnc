@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -11,16 +12,27 @@ import android.widget.TextView;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
+import com.dongdutec.ddmnc.db.DbConfig;
+import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.home.multitype.HomeItemViewProvider;
+import com.dongdutec.ddmnc.ui.home.multitype.NullListItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.model.HotStore;
+import com.dongdutec.ddmnc.ui.home.multitype.model.NullList;
+import com.dongdutec.ddmnc.utils.location.LocationUtils;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import me.drakeet.multitype.MultiTypeAdapter;
 import rx.functions.Action1;
@@ -48,6 +60,7 @@ public class HistoryActivity extends BaseActivity {
     private boolean isLoadMoreSingle = false;//上拉单次标志位
     private boolean isFirstLoad = true;
     private String type;
+    private String TAG = HistoryActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +85,65 @@ public class HistoryActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        //http
+        //获取浏览历史数据
+        RequestParams params = new RequestParams(RequestUrls.getHistory());
+        params.setConnectTimeout(5000);
+        params.addBodyParameter("token", new DbConfig(HistoryActivity.this).getToken());
+        Log.e(TAG, "init: params.toString() " + params.toString());
+        x.http().post(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.e(TAG, "onSuccess:  result = " + result);
+                try {
+                    JSONArray jsonArray = new JSONArray(result);
+                    mHotStoreList.clear();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject object = (JSONObject) jsonArray.get(i);
+                        HotStore hotStore = new HotStore();
+                        hotStore.setImageUrl(object.getString("image"));
+                        hotStore.setStoreName(object.getString("shopName"));
+                        hotStore.setLocationStr(object.getString("address"));
+                        hotStore.setCount(Integer.parseInt(object.getString("count")));
+                        String advertLatitude = object.getString("latitude");
+                        String advertLongitude = object.getString("longitude");
+                        double longitude_store = Double.parseDouble(advertLongitude);
+                        double latitude_store = Double.parseDouble(advertLatitude);
+                        hotStore.setLantitude(latitude_store);
+                        hotStore.setLongitude(longitude_store);
+                        DbConfig dbConfig = new DbConfig(HistoryActivity.this);
+                        double distance = LocationUtils.getDistance(dbConfig.getLongitude(), dbConfig.getLatitude(), longitude_store, latitude_store);
+                        hotStore.setDistance(distance);
+
+                        mHotStoreList.add(hotStore);
+                    }
+
+                    updataData();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.e(TAG, "onError: " + ex.toString());
+                updataData();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+
+
+       /* //http
 
         Random ran = new Random();
         int radom = ran.nextInt(100);
@@ -90,7 +161,7 @@ public class HistoryActivity extends BaseActivity {
             }
             mHotStoreList.add(hotStore);
         }
-        updataData();
+        updataData();*/
 
 
     }
@@ -99,7 +170,7 @@ public class HistoryActivity extends BaseActivity {
     private void updataData() {
         items.clear();
         if (mHotStoreList == null || mHotStoreList.size() == 0) {
-//            items.add(new ItemNullBean("暂无数据")); TODO
+            items.add(new NullList());
         } else {
             for (int i = 0; i < mHotStoreList.size(); i++) {
                 items.add(mHotStoreList.get(i));
@@ -126,6 +197,7 @@ public class HistoryActivity extends BaseActivity {
         main_rlv.setLayoutManager(manager);
         multiTypeAdapter = new MultiTypeAdapter(items);
         multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(getApplicationContext()));
+        multiTypeAdapter.register(NullList.class, new NullListItemViewProvider(getApplicationContext()));
         main_rlv.setAdapter(multiTypeAdapter);
         assertHasTheSameAdapter(main_rlv, multiTypeAdapter);
 

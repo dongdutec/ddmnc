@@ -1,5 +1,6 @@
 package com.dongdutec.ddmnc.base;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +30,8 @@ public class BaseActivity extends AppCompatActivity {
         if (getActionBar() != null) {
             getActionBar().hide();
         }
+        //禁止横屏
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_base);
 
     }

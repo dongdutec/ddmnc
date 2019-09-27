@@ -6,17 +6,24 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseFragment;
+import com.dongdutec.ddmnc.db.DbConfig;
+import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.my.multitype.MyXiaofeiItemViewProvider;
 import com.dongdutec.ddmnc.ui.my.multitype.model.MyXiaofei;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
+
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +49,9 @@ public class MyXiaofeiFragment extends BaseFragment {
     private boolean isLoadOver = false;
     private boolean isLoadMoreSingle = false;//上拉单次标志位
     private boolean isFirstLoad = true;
+    private String TAG = MyXiaofeiFragment.class.getSimpleName();
+    private String state;
+    private String isStore;
 
 
     @Nullable
@@ -53,6 +63,10 @@ public class MyXiaofeiFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        Bundle bundle = getArguments();
+        state = bundle.getString("state", "");
+        isStore = bundle.getString("isStore", "1");
 
         initView();
         init();
@@ -67,6 +81,42 @@ public class MyXiaofeiFragment extends BaseFragment {
 
     @Override
     protected void init() {
+        //我的消费数据
+        RequestParams params = new RequestParams(RequestUrls.getMyXiaofei());
+        params.addBodyParameter("token", new DbConfig(getContext()).getToken());
+        params.addBodyParameter("state", state);//0待记账 1已记账
+        params.addBodyParameter("type", "1");//1用户 2商家
+        params.setConnectTimeout(5000);
+        Log.e(TAG, "init:  params.toString() = " + params.toString());
+        x.http().post(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.e(TAG, "onSuccess: result = " + result);
+
+
+                //1用户 2商家
+                MyXiaofei myXiaofei = new MyXiaofei();
+                myXiaofei.setIsStore(isStore);
+
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+
+
         //http
 
         Random ran = new Random();

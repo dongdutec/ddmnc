@@ -11,7 +11,7 @@ public class HotStore {
     private String storeName;
     private String locationStr;
     private int count;
-    private int starState = 0; //0 不显示  1 已收藏  2 未收藏
+    private String starState; // 1 已收藏  2 未收藏  其它 不显示
     private double lantitude;
     private double longitude;
     private double distance;
@@ -20,7 +20,7 @@ public class HotStore {
     public HotStore() {
     }
 
-    public HotStore(int storeId, String imageUrl, String storeName, String locationStr, int count, int starState, double distance, boolean isFirst,double lantitude,double longitude) {
+    public HotStore(int storeId, String imageUrl, String storeName, String locationStr, int count, String starState, double distance, boolean isFirst, double lantitude, double longitude) {
         this.storeId = storeId;
         this.imageUrl = imageUrl;
         this.storeName = storeName;
@@ -49,11 +49,11 @@ public class HotStore {
         this.longitude = longitude;
     }
 
-    public int getStarState() {
+    public String getStarState() {
         return starState;
     }
 
-    public void setStarState(int starState) {
+    public void setStarState(String starState) {
         this.starState = starState;
     }
 
