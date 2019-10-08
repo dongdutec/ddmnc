@@ -1,12 +1,16 @@
 package com.dongdutec.ddmnc.ui.home.activity;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,22 +19,32 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
+import com.dongdutec.ddmnc.db.DbConfig;
+import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.home.multitype.HomeItemViewProvider;
+import com.dongdutec.ddmnc.ui.home.multitype.NullListItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.model.HotStore;
+import com.dongdutec.ddmnc.ui.home.multitype.model.NullList;
+import com.dongdutec.ddmnc.utils.location.LocationUtils;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 import com.nex3z.flowlayout.FlowLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import me.drakeet.multitype.MultiTypeAdapter;
@@ -56,16 +70,31 @@ public class SearchActivity extends BaseActivity {
     private TextView tv_quxiao;
     private FlowLayout flow_search;
 
-    private int total_all_page;
+    private long exitTime = 0;
+
     private int mRows = 10;  // 设置默认一页加载10条数据
-    private int current_page;
-    private boolean isLoadMore = false;
-    private boolean isLoadOver = false;
-    private boolean isLoadMoreSingle = false;//上拉单次标志位
+    private int current_page = 1;
     private boolean isFirstLoad = true;
 
     private Set<String> historySet = new HashSet<String>();
     private SharedPreferences sf;
+    private String TAG = SearchActivity.class.getSimpleName();
+
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    //请求搜索数据
+                    mHotStoreList.clear();
+                    initSearch();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +105,14 @@ public class SearchActivity extends BaseActivity {
         sf = getSharedPreferences("data", MODE_PRIVATE);
 
 
-        //test存储
+       /* //test存储
         SharedPreferences.Editor editor = sf.edit();
         Set<String> hashSet = new HashSet<String>();
         hashSet.add("东度科技");
         hashSet.add("蓝海缘");
         hashSet.add("威海高区");
         editor.putStringSet("historySet", hashSet);
-        editor.apply();
+        editor.apply();*/
 
 
         initView();
@@ -93,6 +122,26 @@ public class SearchActivity extends BaseActivity {
 
     @Override
     protected void bindView() {
+        //上拉加载下拉刷新
+        main_refresh.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                isFirstLoad = false;
+                current_page++;
+                initSearch();
+                main_refresh.finishLoadMore();
+            }
+
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                mHotStoreList.clear();
+                isFirstLoad = true;
+                current_page = 1;
+                initSearch();
+                main_refresh.finishRefresh();
+                main_refresh.setEnableLoadMore(true);
+            }
+        });
         //搜索文字监听
         et_search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -103,6 +152,7 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence == null || charSequence.length() == 0) {
+                    initHistory();
                     main_refresh.setVisibility(View.GONE);
                     ll_lishi.setVisibility(View.VISIBLE);
                     tv_midsearch.setVisibility(View.VISIBLE);
@@ -110,8 +160,24 @@ public class SearchActivity extends BaseActivity {
                     main_refresh.setVisibility(View.VISIBLE);
                     ll_lishi.setVisibility(View.GONE);
                     tv_midsearch.setVisibility(View.GONE);
-                    //test
-                    init();
+
+
+                    if ((et_search.getText() != null) && (et_search.getText().length() != 0)) {
+
+                        if (((System.currentTimeMillis() - exitTime) > 1000)) {
+                            //停留时间大于1s后无需移除
+                            //记录最后一次按键时间
+                            exitTime = System.currentTimeMillis();
+                        } else {
+                            //停留时间小于1s后关闭之前搜索
+                            mHandler.removeMessages(0);
+                            //记录最后一次按键时间
+                            exitTime = System.currentTimeMillis();
+                        }
+
+                        mHandler.sendEmptyMessageDelayed(0, 1000);
+                    }
+
                 }
             }
 
@@ -146,28 +212,72 @@ public class SearchActivity extends BaseActivity {
         //历史记录
         initHistory();
 
+    }
 
-        //http
+    private void initSearch() {
+        //获取搜索数据
+        RequestParams params = new RequestParams(RequestUrls.homeSearch());
+        params.setConnectTimeout(5000);
+        params.addBodyParameter("classifyId", "");
+        params.addBodyParameter("city", "");
+        params.addBodyParameter("isNew", "");
+        params.addBodyParameter("sale", "");
+        params.addBodyParameter("shopName", et_search.getText().toString());
+        params.addBodyParameter("page", current_page + "");
+        params.addBodyParameter("rows", mRows + "");
+        Log.e(TAG, "init: params.toString() = " + params.toString());
+        x.http().post(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.e(TAG, "onSuccess: search result = " + result);
+                try {
+                    JSONArray jsonArray = new JSONArray(result);
+                    if (jsonArray.length() == 0) {//refresh
+                        main_refresh.setEnableLoadMore(false);
+                    }
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                        HotStore hotStore = new HotStore();
+                        hotStore.setImageUrl(jsonObject.getString("advertImage"));
+                        hotStore.setStoreName(jsonObject.getString("advertName"));
+                        hotStore.setLocationStr(jsonObject.getString("advertAddress"));
+                        hotStore.setCount(Integer.parseInt(jsonObject.getString("count")));
+                        String advertLatitude = jsonObject.getString("advertLatitude");
+                        String advertLongitude = jsonObject.getString("advertLongitude");
+                        double longitude_store = Double.parseDouble(advertLongitude);
+                        double latitude_store = Double.parseDouble(advertLatitude);
+                        hotStore.setLantitude(latitude_store);
+                        hotStore.setLongitude(longitude_store);
+                        double distance = LocationUtils.getDistance(new DbConfig(SearchActivity.this).getLongitude(), new DbConfig(SearchActivity.this).getLongitude(), longitude_store, latitude_store);
+                        hotStore.setDistance(distance);
 
-        Random ran = new Random();
-        int radom = ran.nextInt(100);
-        HotStore hotStore;
-        mHotStoreList.clear();
-        for (int i = 0; i < 32; i++) {
-            hotStore = new HotStore();
-            hotStore.setImageUrl("www.xxxxxxxxxxxxx");
-            hotStore.setStoreName("东度科技青岛测试店" + radom + i);
-            hotStore.setLocationStr("青岛市·黄岛区·长江路·国贸大厦");
-            hotStore.setCount(radom + i);
-            hotStore.setDistance(radom + i);
-            if (i == 0) {
-                hotStore.setFirst(true);
+                        mHotStoreList.add(hotStore);
+                    }
+                    updataData();
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
-            mHotStoreList.add(hotStore);
-        }
-        updataData();
 
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.e(TAG, "onError: ex.toString()" + ex.toString());
+                updataData();
+            }
 
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
     private void initHistory() {
@@ -191,7 +301,7 @@ public class SearchActivity extends BaseActivity {
                 RxViewAction.clickNoDouble(textView).subscribe(new Action1<Void>() {
                     @Override
                     public void call(Void aVoid) {
-                        Toast.makeText(SearchActivity.this, history, Toast.LENGTH_SHORT).show();
+                        et_search.setText(history);
                     }
                 });
 
@@ -207,7 +317,7 @@ public class SearchActivity extends BaseActivity {
     private void updataData() {
         items.clear();
         if (mHotStoreList == null || mHotStoreList.size() == 0) {
-//            items.add(new ItemNullBean("暂无数据")); TODO
+            items.add(new NullList());
         } else {
             for (int i = 0; i < mHotStoreList.size(); i++) {
                 items.add(mHotStoreList.get(i));
@@ -236,23 +346,12 @@ public class SearchActivity extends BaseActivity {
         LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         main_rlv.setLayoutManager(manager);
         multiTypeAdapter = new MultiTypeAdapter(items);
-        multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(getApplicationContext()));
+        multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(SearchActivity.this));
+        multiTypeAdapter.register(NullList.class, new NullListItemViewProvider(getApplicationContext()));
         main_rlv.setAdapter(multiTypeAdapter);
         assertHasTheSameAdapter(main_rlv, multiTypeAdapter);
 
-        main_refresh.setVisibility(View.GONE);//test
-        main_refresh.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-
-            }
-
-            @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                init();
-                main_refresh.finishRefresh(true);
-            }
-        });
+        main_refresh.setVisibility(View.GONE);//test TODO
 
     }
 }

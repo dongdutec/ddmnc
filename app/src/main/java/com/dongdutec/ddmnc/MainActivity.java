@@ -11,12 +11,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dongdutec.ddmnc.base.BaseActivity;
-import com.dongdutec.ddmnc.ui.browser.fragment.BrowserFragment;
+import com.dongdutec.ddmnc.db.DbConfig;
 import com.dongdutec.ddmnc.ui.home.activity.ScanResultActiviity;
 import com.dongdutec.ddmnc.ui.home.fragment.HomeFragment;
 import com.dongdutec.ddmnc.ui.my.fragment.MyFragment;
-import com.dongdutec.ddmnc.ui.wallet.fragment.WalletFragment;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
+import com.dongdutec.ddmnc.web.WebsFragment;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -40,6 +40,7 @@ public class MainActivity extends BaseActivity {
     int[] unselectedMipmap = {R.mipmap.home, R.mipmap.browser, R.mipmap.wallet, R.mipmap.my};
     int[] selectedMipmap = {R.mipmap.home_check, R.mipmap.browser_check, R.mipmap.wallet_check, R.mipmap.my_check};
     private long exitTime = 0;
+    private int currentPage = 0;//当前页
     private String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -71,8 +72,16 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void init() {
         fragments.add(new HomeFragment());
-        fragments.add(new BrowserFragment());
-        fragments.add(new WalletFragment());
+        WebsFragment fg_browser = new WebsFragment();
+        Bundle bundle_browser = new Bundle();
+        bundle_browser.putString("webUrl", "http://47.75.47.121:8080/mnc/browser.html?token=" + new DbConfig(MainActivity.this).getToken());
+        fg_browser.setArguments(bundle_browser);
+        fragments.add(fg_browser);
+        WebsFragment fg_wallet = new WebsFragment();
+        Bundle bundle_wallet = new Bundle();
+        bundle_wallet.putString("webUrl", "http://47.75.47.121:8080/mnc/purse.html");
+        fg_wallet.setArguments(bundle_wallet);
+        fragments.add(fg_wallet);
         fragments.add(new MyFragment());
 
         imageViews.add(homeIv);
@@ -125,6 +134,7 @@ public class MainActivity extends BaseActivity {
 
     //切换fragment性能优化,使每个fragment只实例化一次
     private void showFragment(int page) {
+        currentPage = page;
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
         // 想要显示一个fragment,先隐藏所有fragment，防止重叠
@@ -178,16 +188,35 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+
+        if (currentPage == 1) {//浏览器
+            WebsFragment browserFragment = (WebsFragment) fragments.get(1);
+            browserFragment.onBackPressed();
+            if (!browserFragment.onBackPressed()) {//不可回退时
+                backPressed();
+            }
+        } else if (currentPage == 2) {//钱包
+            WebsFragment walletFragment = (WebsFragment) fragments.get(2);
+            if (!walletFragment.onBackPressed()) {//不可回退时
+                backPressed();
+            }
+        } else {
+            backPressed();
+        }
+    }
+
+    private void backPressed() {
         if ((System.currentTimeMillis() - exitTime) > 2000) {
             Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
             //记录最后一次按键时间
             exitTime = System.currentTimeMillis();
         } else {
-            MainActivity.this.finish();
+            removeALLActivity();//移除所有Activity
             //终止虚拟机
             System.exit(0);
         }
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

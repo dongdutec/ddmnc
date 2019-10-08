@@ -35,7 +35,9 @@ import com.dongdutec.ddmnc.ui.home.multitype.MidBannerItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.MidButtonItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.MidRemenItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.NullListItemViewProvider;
+import com.dongdutec.ddmnc.ui.home.multitype.beans.BtnsBean;
 import com.dongdutec.ddmnc.ui.home.multitype.beans.MidBannerBeans;
+import com.dongdutec.ddmnc.ui.home.multitype.beans.TopBannerBeans;
 import com.dongdutec.ddmnc.ui.home.multitype.model.BigLine;
 import com.dongdutec.ddmnc.ui.home.multitype.model.HeadImg;
 import com.dongdutec.ddmnc.ui.home.multitype.model.HotStore;
@@ -77,16 +79,11 @@ public class HomeFragment extends BaseFragment {
     private MultiTypeAdapter multiTypeAdapter;
     private List<Object> items = new ArrayList<>();
     private List<HotStore> mHotStoreList = new ArrayList<>();
+    private List<BtnsBean> mBtnsBeanList = new ArrayList<>();
 
     private List<MidBannerBeans> mMidBannerBeansList = new ArrayList<>();
+    private TopBannerBeans topBannerBeans = new TopBannerBeans();
 
-    private int total_all_page;
-    private int mRows = 10;  // 设置默认一页加载10条数据
-    private int current_page;
-    private boolean isLoadMore = false;
-    private boolean isLoadOver = false;
-    private boolean isLoadMoreSingle = false;//上拉单次标志位
-    private boolean isFirstLoad = true;
 
     private LinearLayout ll_souyisou;
     private ImageView img_saoyisao;
@@ -177,6 +174,7 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                mBtnsBeanList.clear();
                 startLocaion();
                 init();
 
@@ -215,36 +213,73 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     protected void init() {
+        //获取8个按钮数据
+        RequestParams requestParams = new RequestParams(RequestUrls.getHomeBtns());
+        requestParams.setConnectTimeout(5000);
+        Log.e(TAG, "init: requestParams.toString() = " + requestParams.toString());
+        x.http().post(requestParams, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.e(TAG, "onSuccess: btns result = " + result);
+                try {
+                    JSONArray jsonArray = new JSONArray(result);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                        BtnsBean btnsBean = new BtnsBean();
+                        btnsBean.setClassifyImg(jsonObject.getString("classifyImg"));
+                        btnsBean.setClassifyName(jsonObject.getString("classifyName"));
+                        btnsBean.setId(jsonObject.getString("id"));
+                        Log.e(TAG, "onSuccess: mBtnsBeanList" + i);
+                        mBtnsBeanList.add(btnsBean);
+                    }
+                    Log.e(TAG, "onSuccess: mBtnsBeanList.size() = " + mBtnsBeanList.size());
+                    updataData();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(getContext(), "网络异常!", Toast.LENGTH_SHORT).show();
+                updataData();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
 
         //首页Banner图
-        RequestParams params = new RequestParams(RequestUrls.getHomeBanner());
+        RequestParams params = new RequestParams(RequestUrls.getHomeBannerNew());
         params.setConnectTimeout(5000);
-        params.addBodyParameter("token", new DbConfig(getContext()).getToken());
-        params.addBodyParameter("type", "1");
         Log.e(TAG, "init: params.toString() = " + params.toString());
+
         showLoading();
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                Log.e(TAG, "onSuccess: result = " + result);
+                Log.e(TAG, "onSuccess: banner result = " + result);
                 try {
-                    JSONObject jsonObject = new JSONObject(result);
-                    String msg = jsonObject.getString("msg");
-                    int code = jsonObject.getInt("code");
-                    if (code == 0) {
-                        JSONArray data = jsonObject.getJSONArray("data");
-                        mMidBannerBeansList.clear();
-                        for (int i = 0; i < data.length(); i++) {
-                            JSONObject beans = (JSONObject) data.get(i);
-                            MidBannerBeans midBannerBeans = new MidBannerBeans(beans.getString("img"), beans.getString("url"));
+                    JSONArray data = new JSONArray(result);
+                    mMidBannerBeansList.clear();
+                    for (int i = 0; i < data.length(); i++) {
+                        JSONObject beans = (JSONObject) data.get(i);
+                        if ("1".equals(beans.getString("type"))) {//type 1 置顶图 0 轮播图
+                            topBannerBeans = new TopBannerBeans(beans.getString("image"), beans.getString("url"));
+                        } else {//type 1 置顶图 0 轮播图
+                            MidBannerBeans midBannerBeans = new MidBannerBeans(beans.getString("image"), beans.getString("url"));
                             mMidBannerBeansList.add(midBannerBeans);
                         }
-                        updataData();
-
-                    } else {
-                        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-                        loading.hide();
                     }
+                    updataData();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -291,7 +326,7 @@ public class HomeFragment extends BaseFragment {
                         Log.e(TAG, "boomer onSuccess: " + jsonArray.toString());
                         JSONObject jsonObject = (JSONObject) jsonArray.get(i);
                         HotStore hotStore = new HotStore();
-                        hotStore.setImageUrl(jsonObject.getString("imageUrl"));
+                        hotStore.setImageUrl(jsonObject.getString("advertImage"));
                         hotStore.setStoreName(jsonObject.getString("advertName"));
                         hotStore.setLocationStr(jsonObject.getString("advertAddress"));
                         hotStore.setCount(Integer.parseInt(jsonObject.getString("count")));
@@ -335,8 +370,8 @@ public class HomeFragment extends BaseFragment {
 
     private void updataData() {
         items.clear();
-        items.add(new HeadImg());
-        items.add(new MidButtons());
+        items.add(new HeadImg(topBannerBeans.getImg(), topBannerBeans.getUrl()));
+        items.add(new MidButtons(mBtnsBeanList));
         items.add(new MidBanner(mMidBannerBeansList));
         items.add(new BigLine());
         items.add(new MidRemen());
@@ -382,7 +417,8 @@ public class HomeFragment extends BaseFragment {
         if (requestCode == REQUEST_CODE_PICK_CITY && resultCode == RESULT_OK) {
             if (data != null) {
                 String city = data.getStringExtra(CityPickerActivity.KEY_PICKED_CITY);
-                tv_city.setText(city);
+//                tv_city.setText(city);
+                tv_city.setText("北京");//TODO
             }
         } else {
 

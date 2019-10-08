@@ -52,13 +52,6 @@ public class HistoryActivity extends BaseActivity {
     private LinearLayout ll_state;
     private RelativeLayout rl_bar;
 
-    private int total_all_page;
-    private int mRows = 10;  // 设置默认一页加载10条数据
-    private int current_page;
-    private boolean isLoadMore = false;
-    private boolean isLoadOver = false;
-    private boolean isLoadMoreSingle = false;//上拉单次标志位
-    private boolean isFirstLoad = true;
     private String type;
     private String TAG = HistoryActivity.class.getSimpleName();
 
@@ -74,6 +67,20 @@ public class HistoryActivity extends BaseActivity {
 
     @Override
     protected void bindView() {
+        //上拉加载下拉刷新
+        main_refresh.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                main_refresh.finishLoadMore();
+                main_refresh.setEnableLoadMore(false);
+            }
+
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                init();
+                main_refresh.finishRefresh();
+            }
+        });
         //返回
         RxViewAction.clickNoDouble(bar_left_img).subscribe(new Action1<Void>() {
             @Override
@@ -196,23 +203,11 @@ public class HistoryActivity extends BaseActivity {
         LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         main_rlv.setLayoutManager(manager);
         multiTypeAdapter = new MultiTypeAdapter(items);
-        multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(getApplicationContext()));
+        multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(HistoryActivity.this));
         multiTypeAdapter.register(NullList.class, new NullListItemViewProvider(getApplicationContext()));
         main_rlv.setAdapter(multiTypeAdapter);
         assertHasTheSameAdapter(main_rlv, multiTypeAdapter);
 
-        main_refresh.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-
-            }
-
-            @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                init();
-                main_refresh.finishRefresh(true);
-            }
-        });
 
     }
 }

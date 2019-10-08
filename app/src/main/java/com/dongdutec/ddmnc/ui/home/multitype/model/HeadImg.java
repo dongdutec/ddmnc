@@ -7,8 +7,22 @@ package com.dongdutec.ddmnc.ui.home.multitype.model;
  */
 public class HeadImg {
     private String imgUrl;
+    private String webUrl;
 
     public HeadImg() {
+    }
+
+    public HeadImg(String imgUrl, String webUrl) {
+        this.imgUrl = imgUrl;
+        this.webUrl = webUrl;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
+    public void setWebUrl(String webUrl) {
+        this.webUrl = webUrl;
     }
 
     public String getImgUrl() {

@@ -5,11 +5,14 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -46,6 +49,7 @@ public class RegisterActivity extends BaseActivity {
     private EditText dt_tuijianren;
     private ImageView img_cha_tuijainren;
     private TextView tv_register;
+    private TextView tv_tiaokuan;
     private CheckBox ck_tiaokuan;
     private ImageView img_tp_yanzhengma;
 
@@ -112,6 +116,7 @@ public class RegisterActivity extends BaseActivity {
         dt_tuijianren = findViewById(R.id.dt_tuijianren);
         img_cha_tuijainren = findViewById(R.id.img_cha_tuijainren);
         tv_register = findViewById(R.id.tv_register);
+        tv_tiaokuan = findViewById(R.id.tv_tiaokuan);
         ck_tiaokuan = findViewById(R.id.ck_tiaokuan);
         img_tp_yanzhengma = findViewById(R.id.img_tp_yanzhengma);
 
@@ -141,6 +146,13 @@ public class RegisterActivity extends BaseActivity {
 
     @Override
     protected void bindView() {
+        //条款
+        RxViewAction.clickNoDouble(tv_tiaokuan).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                showTiaoKuanDialog();
+            }
+        });
         //图片验证码
         RxViewAction.clickNoDouble(img_tp_yanzhengma).subscribe(new Action1<Void>() {
             @Override
@@ -326,9 +338,12 @@ public class RegisterActivity extends BaseActivity {
                     Toast.makeText(RegisterActivity.this, "请输入正确的图片验证码!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                if (!dt_tp_tp_yanzhengma.getText().toString().equals(codeUtils.getCode())) {
-                    Log.e(TAG, "call: dt_tp_yanzhengma.getText().toString() = " + dt_tp_tp_yanzhengma.getText().toString() + " codeUtils.getCode() = " + codeUtils.getCode());
+                String code = codeUtils.getCode();
+                code = code.toUpperCase();
+                String etStr = dt_tp_tp_yanzhengma.getText().toString();
+                etStr = etStr.toUpperCase();
+                Log.e(TAG, "call: etStr = " + etStr + " code = " + code);
+                if (!etStr.equals(code)) {
                     Toast.makeText(RegisterActivity.this, "请输入正确的图片验证码!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -404,6 +419,15 @@ public class RegisterActivity extends BaseActivity {
                     Toast.makeText(RegisterActivity.this, "请输入正确的图片验证码!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                String code = codeUtils.getCode();
+                code = code.toUpperCase();
+                String etStr = dt_tp_tp_yanzhengma.getText().toString();
+                etStr = etStr.toUpperCase();
+                Log.e(TAG, "call: etStr = " + etStr + " code = " + code);
+                if (!etStr.equals(code)) {
+                    Toast.makeText(RegisterActivity.this, "请输入正确的图片验证码!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 mHandler.sendEmptyMessage(0);
 
@@ -475,5 +499,16 @@ public class RegisterActivity extends BaseActivity {
             tv_register.setBackgroundResource(R.drawable.save_btn_gray1);
             tv_register.setClickable(false);
         }
+    }
+
+
+    private void showTiaoKuanDialog() {
+        AlertDialog dialog = new AlertDialog.Builder(this).create();
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_web, null);
+        WebView dialog_web = (WebView) dialogView.findViewById(R.id.dialog_web);
+        dialog_web.loadUrl("http://47.75.47.121:8080/mnc/serviceInfo.html");
+        dialog.setTitle("服务条款");
+        dialog.setView(dialogView);
+        dialog.show();
     }
 }

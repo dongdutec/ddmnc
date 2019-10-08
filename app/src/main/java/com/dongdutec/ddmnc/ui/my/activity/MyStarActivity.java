@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
 import com.dongdutec.ddmnc.db.DbConfig;
+import com.dongdutec.ddmnc.eventbus.MyStarToRefresh;
 import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.home.multitype.HomeItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.NullListItemViewProvider;
@@ -24,6 +25,9 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,12 +56,8 @@ public class MyStarActivity extends BaseActivity {
     private LinearLayout ll_state;
     private RelativeLayout rl_bar;
 
-    private int total_all_page;
     private int mRows = 10;  // 设置默认一页加载10条数据
     private int current_page = 1;
-    private boolean isLoadMore = false;
-    private boolean isLoadOver = false;
-    private boolean isLoadMoreSingle = false;//上拉单次标志位
     private boolean isFirstLoad = true;
     private String type;
     private String TAG = MyStarActivity.class.getSimpleName();
@@ -67,13 +67,34 @@ public class MyStarActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_commen_list);
 
+        EventBus.getDefault().register(this);
+
         initView();
-        init();
+        initCommon(1, mRows);
         bindView();
     }
 
     @Override
     protected void bindView() {
+        //上拉加载下拉刷新
+        main_refresh.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                isFirstLoad = false;
+                initCommon(current_page++, mRows);
+                main_refresh.finishLoadMore();
+            }
+
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                mHotStoreList.clear();
+                isFirstLoad = true;
+                current_page = 1;
+                initCommon(1, mRows);
+                main_refresh.finishRefresh();
+                main_refresh.setEnableLoadMore(true);
+            }
+        });
         //返回
         RxViewAction.clickNoDouble(bar_left_img).subscribe(new Action1<Void>() {
             @Override
@@ -83,8 +104,7 @@ public class MyStarActivity extends BaseActivity {
         });
     }
 
-    @Override
-    protected void init() {
+    private void initCommon(int page, int rows) {
         //获取收藏列表
         final RequestParams params = new RequestParams(RequestUrls.getStarList());
         params.setConnectTimeout(5000);
@@ -95,16 +115,19 @@ public class MyStarActivity extends BaseActivity {
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                mHotStoreList.clear();
                 try {
                     Log.e(TAG, "onSuccess: result = " + result);
                     JSONArray jsonArray = new JSONArray(result);
+                    if (jsonArray.length() == 0) {//refresh
+                        main_refresh.setEnableLoadMore(false);
+                    }
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject object = (JSONObject) jsonArray.get(i);
                         HotStore hotStore = new HotStore();
                         hotStore.setImageUrl(object.getString("image"));
                         hotStore.setStoreName(object.getString("shopName"));
                         hotStore.setLocationStr(object.getString("address"));
+                        hotStore.setStoreId(object.getString("id"));
                         hotStore.setCount(Integer.parseInt(object.getString("count")));
                         String advertLatitude = object.getString("latitude");
                         String advertLongitude = object.getString("longitude");
@@ -143,40 +166,12 @@ public class MyStarActivity extends BaseActivity {
 
             }
         });
-
-
-        /*// testhttp
-
-        Random ran = new Random();
-        int radom = ran.nextInt(100);
-        HotStore hotStore;
-        mHotStoreList.clear();
-        for (int i = 0; i < 32; i++) {
-            hotStore = new HotStore();
-            hotStore.setImageUrl("www.xxxxxxxxxxxxx");
-            hotStore.setStoreName("东度科技青岛测试店" + radom + i);
-            hotStore.setLocationStr("青岛市·黄岛区·长江路·国贸大厦");
-            hotStore.setCount(radom + i);
-            hotStore.setDistance(radom + i);
-            if (i == 0) {
-                hotStore.setFirst(true);
-            }
-            if (i % 2 == 0) {
-                hotStore.setStarState(2);
-            } else {
-                hotStore.setStarState(1);
-            }
-            mHotStoreList.add(hotStore);
-        }
-        updataData();*/
-
-
     }
 
 
     private void updataData() {
         items.clear();
-        if (mHotStoreList == null || mHotStoreList.size() == 0) {
+        if ((mHotStoreList == null || mHotStoreList.size() == 0) && isFirstLoad) {
             items.add(new NullList());
         } else {
             for (int i = 0; i < mHotStoreList.size(); i++) {
@@ -203,23 +198,22 @@ public class MyStarActivity extends BaseActivity {
         LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         main_rlv.setLayoutManager(manager);
         multiTypeAdapter = new MultiTypeAdapter(items);
-        multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(getApplicationContext()));
+        multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(MyStarActivity.this));
         multiTypeAdapter.register(NullList.class, new NullListItemViewProvider(getApplicationContext()));
         main_rlv.setAdapter(multiTypeAdapter);
         assertHasTheSameAdapter(main_rlv, multiTypeAdapter);
 
-        main_refresh.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+    }
 
-            }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 
-            @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                init();
-                main_refresh.finishRefresh(true);
-            }
-        });
-
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void myStarToRefreshEvent(MyStarToRefresh event) {
+        mHotStoreList.clear();
+        initCommon(1, mRows);
     }
 }

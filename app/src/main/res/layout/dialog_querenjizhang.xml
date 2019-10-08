@@ -14,8 +14,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textColor="@color/c7"
-            android:textSize="@dimen/s16"/>
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s14"/>
     </FrameLayout>
 
     <LinearLayout

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:background="@drawable/white_coner_6"
+              android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="250dp"
+        android:layout_height="120dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d40"
+            android:background="@drawable/c_coner"
+            android:gravity="center"
+            android:text="确认记账返还MP"
+            android:textColor="@color/c16"
+            android:textSize="@dimen/s16"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/d10"
+            android:layout_marginTop="@dimen/d65"
+            android:layout_marginRight="@dimen/d10"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_marginLeft="@dimen/d20"
+                android:text="MP："
+                android:textColor="@color/c6"
+                android:textSize="@dimen/s14"/>
+
+            <EditText
+                android:id="@+id/et_mp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:cursorVisible="true"
+                android:hint="请输入给用户返还的MP数量"
+                android:inputType="number"
+                android:textColor="@color/c5"
+                android:textColorHint="@color/c5"
+                android:textCursorDrawable="@drawable/white"
+                android:textSize="@dimen/s12"/>
+        </LinearLayout>
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:layout_width="250dp"
+        android:layout_height="@dimen/d40"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/tv_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/left_bottom_c_coner"
+            android:gravity="center"
+            android:text="取消"
+            android:textColor="@color/c16"
+            android:textSize="@dimen/s16"/>
+
+        <TextView
+            android:id="@+id/tv_right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/right_bottom_blue_coner"
+            android:gravity="center"
+            android:text="确认"
+            android:textColor="@color/theme_primary"
+            android:textSize="@dimen/s16"/>
+    </LinearLayout>
+</LinearLayout>

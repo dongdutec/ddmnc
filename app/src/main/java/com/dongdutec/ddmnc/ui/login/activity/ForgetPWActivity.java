@@ -4,11 +4,14 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -43,6 +46,7 @@ public class ForgetPWActivity extends BaseActivity {
     private EditText dt_password_second;
     private CheckBox ck_yanjing_second;
     private TextView tv_queren;
+    private TextView tv_tiaokuan;
     private CheckBox ck_tiaokuan;
 
     private int numCount = 60;
@@ -103,6 +107,7 @@ public class ForgetPWActivity extends BaseActivity {
         dt_password_second = findViewById(R.id.dt_password_second);
         ck_yanjing_second = findViewById(R.id.ck_yanjing_second);
         tv_queren = findViewById(R.id.tv_queren);
+        tv_tiaokuan = findViewById(R.id.tv_tiaokuan);
         ck_tiaokuan = findViewById(R.id.ck_tiaokuan);
 
         back.setImageResource(R.mipmap.back_login);
@@ -122,6 +127,13 @@ public class ForgetPWActivity extends BaseActivity {
 
     @Override
     protected void bindView() {
+        //条款
+        RxViewAction.clickNoDouble(tv_tiaokuan).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                showTiaoKuanDialog();
+            }
+        });
         //返回
         RxViewAction.clickNoDouble(back).subscribe(new Action1<Void>() {
             @Override
@@ -431,5 +443,16 @@ public class ForgetPWActivity extends BaseActivity {
             tv_queren.setBackgroundResource(R.drawable.save_btn_gray1);
             tv_queren.setClickable(false);
         }
+    }
+
+
+    private void showTiaoKuanDialog() {
+        AlertDialog dialog = new AlertDialog.Builder(this).create();
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_web, null);
+        WebView dialog_web = (WebView) dialogView.findViewById(R.id.dialog_web);
+        dialog_web.loadUrl("http://47.75.47.121:8080/mnc/serviceInfo.html");
+        dialog.setTitle("服务条款");
+        dialog.setView(dialogView);
+        dialog.show();
     }
 }

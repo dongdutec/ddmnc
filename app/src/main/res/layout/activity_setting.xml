@@ -92,9 +92,9 @@
             android:src="@mipmap/jiantou"/>
     </RelativeLayout>
 
-    <!--联系电话-->
+    <!--意见反馈-->
     <RelativeLayout
-        android:id="@+id/rl_phone"
+        android:id="@+id/rl_suggestion"
         android:layout_width="match_parent"
         android:layout_height="@dimen/d40"
         android:layout_marginTop="0.2dp"
@@ -105,20 +105,38 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/d10"
-            android:text="联系电话"
+            android:text="意见反馈"
             android:textColor="@color/c6"
             android:textSize="@dimen/s14"/>
 
-        <TextView
-            android:id="@+id/tv_callphone"
+
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/d10"
-            android:textColor="@color/c6"
-            android:textSize="@dimen/s14"/>
+            android:src="@mipmap/jiantou"/>
     </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_exit"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/d40"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="@dimen/d10"
+            android:layout_marginRight="@dimen/d10"
+            android:layout_marginBottom="@dimen/d30"
+            android:background="@drawable/exit_btn_red"
+            android:gravity="center"
+            android:text="退出登录"
+            android:textColor="@color/theme_primary"
+            android:textSize="@dimen/s14"/>
+    </FrameLayout>
 
 
 </LinearLayout>

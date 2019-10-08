@@ -6,11 +6,14 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -60,6 +63,7 @@ public class LoginActivity extends BaseActivity {
     private String TAG = LoginActivity.class.getSimpleName();
 
     private CodeUtils codeUtils;
+    private long exitTime = 0;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -104,7 +108,7 @@ public class LoginActivity extends BaseActivity {
         tv_tiaokuan = findViewById(R.id.tv_tiaokuan);
         img_tp_yanzhengma = findViewById(R.id.img_tp_yanzhengma);
 
-        back.setImageResource(R.mipmap.back_login);
+        back.setVisibility(View.GONE);
         bar_title.setText("登录");
         bar_title.setTextColor(getResources().getColor(R.color.theme_primary));
         v_line.setVisibility(View.INVISIBLE);
@@ -130,18 +134,18 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void bindView() {
+        //条款
+        RxViewAction.clickNoDouble(tv_tiaokuan).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                showTiaoKuanDialog();
+            }
+        });
         //图片验证码
         RxViewAction.clickNoDouble(img_tp_yanzhengma).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
                 getCode();
-            }
-        });
-        //返回
-        RxViewAction.clickNoDouble(back).subscribe(new Action1<Void>() {
-            @Override
-            public void call(Void aVoid) {
-                finish();
             }
         });
         //立即注册
@@ -276,8 +280,12 @@ public class LoginActivity extends BaseActivity {
                     Toast.makeText(LoginActivity.this, "请输入正确的图片验证码!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (!dt_tp_yanzhengma.getText().toString().equals(codeUtils.getCode())) {
-                    Log.e(TAG, "call: dt_tp_yanzhengma.getText().toString() = " + dt_tp_yanzhengma.getText().toString() + " codeUtils.getCode() = " + codeUtils.getCode());
+                String code = codeUtils.getCode();
+                code = code.toUpperCase();
+                String etStr = dt_tp_yanzhengma.getText().toString();
+                etStr = etStr.toUpperCase();
+                Log.e(TAG, "call: etStr = " + etStr + " code = " + code);
+                if (!etStr.equals(code)) {
                     Toast.makeText(LoginActivity.this, "请输入正确的图片验证码!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -348,6 +356,16 @@ public class LoginActivity extends BaseActivity {
         tv_login.setClickable(false);
     }
 
+    private void showTiaoKuanDialog() {
+        AlertDialog dialog = new AlertDialog.Builder(this).create();
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_web, null);
+        WebView dialog_web = (WebView) dialogView.findViewById(R.id.dialog_web);
+        dialog_web.loadUrl("http://47.75.47.121:8080/mnc/serviceInfo.html");
+        dialog.setTitle("服务条款");
+        dialog.setView(dialogView);
+        dialog.show();
+    }
+
     //保存用户到数据库
     private void saveUserToDb(JSONObject data) {
 
@@ -379,6 +397,19 @@ public class LoginActivity extends BaseActivity {
         } else {
             tv_login.setBackgroundResource(R.drawable.save_btn_gray1);
             tv_login.setClickable(false);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if ((System.currentTimeMillis() - exitTime) > 2000) {
+            Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            //记录最后一次按键时间
+            exitTime = System.currentTimeMillis();
+        } else {
+            removeALLActivity();//移除所有Activity
+            //终止虚拟机
+            System.exit(0);
         }
     }
 }

@@ -5,13 +5,15 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-
-import com.dongdutec.ddmnc.R;
+import android.widget.Toast;
 
 public class BaseActivity extends AppCompatActivity {
+    private BaseApplication application;
+    private BaseActivity oContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +34,14 @@ public class BaseActivity extends AppCompatActivity {
         }
         //禁止横屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        setContentView(R.layout.activity_base);
+
+        //app退出控制
+        if (application == null) {
+            // 得到Application对象
+            application = (BaseApplication) getApplication();
+        }
+        oContext = this;// 把当前的上下文对象赋值给BaseActivity
+        addActivity();// 调用添加方法
 
     }
 
@@ -73,4 +82,32 @@ public class BaseActivity extends AppCompatActivity {
             window.setStatusBarColor(getResources().getColor(colorRes));
         }
     }
+
+
+    // 添加Activity方法
+    public void addActivity() {
+        application.addActivity_(oContext);// 调用BaseApplication的添加Activity方法
+    }
+
+    //销毁当个Activity方法
+    public void removeActivity() {
+        application.removeActivity_(oContext);// 调用BaseApplication的销毁单个Activity方法
+    }
+
+    //销毁所有Activity方法
+    public void removeALLActivity() {
+        application.removeALLActivity_();// 调用BaseApplication的销毁所有Activity方法
+    }
+
+    /* 把Toast定义成一个方法*/
+    public void showToast(String text) {
+        Toast.makeText(oContext, text, Toast.LENGTH_SHORT).show();
+    }
+
+    /* 把Log定义成一个方法*/
+    public void showLog(String text) {
+        Toast.makeText(oContext, text, Toast.LENGTH_SHORT).show();
+        Log.e("MNC", "show_Log: " + text);
+    }
+
 }

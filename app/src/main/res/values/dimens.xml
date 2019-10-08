@@ -5,18 +5,21 @@
     <dimen name="d40">40dp</dimen>
     <dimen name="d100">100dp</dimen>
     <dimen name="d50">50dp</dimen>
+    <dimen name="d45">45dp</dimen>
     <dimen name="d80">80dp</dimen>
     <dimen name="d60">60dp</dimen>
+    <dimen name="d65">65dp</dimen>
     <dimen name="d5">5dp</dimen>
     <dimen name="d6">6dp</dimen>
     <dimen name="d2">2dp</dimen>
     <dimen name="d15">15dp</dimen>
     <dimen name="d20">20dp</dimen>
     <dimen name="d25">25dp</dimen>
-    <dimen name="statebar">25dp</dimen>
+    <dimen name="statebar">26dp</dimen>
     <dimen name="s16">16sp</dimen>
     <dimen name="s14">14sp</dimen>
     <dimen name="s12">12sp</dimen>
+    <dimen name="s10">10sp</dimen>
 
     <!--cityPicker-->
     <dimen name="activity_horizontal_margin">16dp</dimen>

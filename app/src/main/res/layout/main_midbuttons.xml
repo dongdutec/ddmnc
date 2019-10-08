@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="@color/theme_primary"
@@ -25,16 +26,15 @@
 
             <ImageView
                 android:id="@+id/img_meishi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ms"/>
+                android:layout_width="@dimen/d45"
+                android:layout_height="@dimen/d45"/>
 
             <TextView
                 android:id="@+id/tv_meishi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="美食"
-                android:textSize="@dimen/s12"/>
+                android:text=""
+                android:textSize="@dimen/s10"/>
         </LinearLayout>
 
         <LinearLayout
@@ -47,16 +47,15 @@
 
             <ImageView
                 android:id="@+id/img_xiuxian"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/xx"/>
+                android:layout_width="@dimen/d45"
+                android:layout_height="@dimen/d45"/>
 
             <TextView
                 android:id="@+id/tv_xiuxian"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="休闲"
-                android:textSize="@dimen/s12"/>
+                android:text=""
+                android:textSize="@dimen/s10"/>
         </LinearLayout>
 
         <LinearLayout
@@ -69,16 +68,15 @@
 
             <ImageView
                 android:id="@+id/img_yule"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/yule"/>
+                android:layout_width="@dimen/d45"
+                android:layout_height="@dimen/d45"/>
 
             <TextView
                 android:id="@+id/tv_yule"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="娱乐"
-                android:textSize="@dimen/s12"/>
+                android:text=""
+                android:textSize="@dimen/s10"/>
         </LinearLayout>
 
         <LinearLayout
@@ -91,16 +89,15 @@
 
             <ImageView
                 android:id="@+id/img_xuexi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/xuexi"/>
+                android:layout_width="@dimen/d45"
+                android:layout_height="@dimen/d45"/>
 
             <TextView
                 android:id="@+id/tv_xuexi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="学习"
-                android:textSize="@dimen/s12"/>
+                android:text=""
+                android:textSize="@dimen/s10"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -122,16 +119,15 @@
 
             <ImageView
                 android:id="@+id/img_gouwu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/gouwu"/>
+                android:layout_width="@dimen/d45"
+                android:layout_height="@dimen/d45"/>
 
             <TextView
                 android:id="@+id/tv_gouwu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="购物"
-                android:textSize="@dimen/s12"/>
+                android:text=""
+                android:textSize="@dimen/s10"/>
         </LinearLayout>
 
         <LinearLayout
@@ -144,16 +140,15 @@
 
             <ImageView
                 android:id="@+id/img_dianying"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/dianying"/>
+                android:layout_width="@dimen/d45"
+                android:layout_height="@dimen/d45"/>
 
             <TextView
                 android:id="@+id/tv_dianying"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="电影"
-                android:textSize="@dimen/s12"/>
+                android:text=""
+                android:textSize="@dimen/s10"/>
         </LinearLayout>
 
         <LinearLayout
@@ -166,16 +161,15 @@
 
             <ImageView
                 android:id="@+id/img_jiudian"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/jiudian"/>
+                android:layout_width="@dimen/d45"
+                android:layout_height="@dimen/d45"/>
 
             <TextView
                 android:id="@+id/tv_jiudian"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="酒店"
-                android:textSize="@dimen/s12"/>
+                android:text=""
+                android:textSize="@dimen/s10"/>
         </LinearLayout>
 
         <LinearLayout
@@ -188,16 +182,15 @@
 
             <ImageView
                 android:id="@+id/img_gengduo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/qita"/>
+                android:layout_width="@dimen/d45"
+                android:layout_height="@dimen/d45"/>
 
             <TextView
                 android:id="@+id/tv_gengduo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="更多"
-                android:textSize="@dimen/s12"/>
+                android:text=""
+                android:textSize="@dimen/s10"/>
         </LinearLayout>
     </LinearLayout>
 

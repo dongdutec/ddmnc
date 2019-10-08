@@ -18,9 +18,9 @@
         android:id="@+id/main_listimg"
         android:layout_width="@dimen/d100"
         android:layout_height="@dimen/d80"
-        android:scaleType="fitXY"
         android:layout_marginTop="@dimen/d15"
-        android:layout_marginRight="@dimen/d5"/>
+        android:layout_marginRight="@dimen/d5"
+        android:scaleType="fitXY"/>
 
     <TextView
         android:id="@+id/main_storename"
@@ -66,6 +66,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/d2"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:text=""
             android:textColor="@color/c16"
             android:textSize="@dimen/s12"/>

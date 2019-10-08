@@ -14,20 +14,28 @@ import android.view.ViewGroup;
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseFragment;
 import com.dongdutec.ddmnc.db.DbConfig;
+import com.dongdutec.ddmnc.eventbus.MyXiaofeiToRefresh;
 import com.dongdutec.ddmnc.http.RequestUrls;
+import com.dongdutec.ddmnc.ui.home.multitype.NullListItemViewProvider;
+import com.dongdutec.ddmnc.ui.home.multitype.model.NullList;
 import com.dongdutec.ddmnc.ui.my.multitype.MyXiaofeiItemViewProvider;
 import com.dongdutec.ddmnc.ui.my.multitype.model.MyXiaofei;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import me.drakeet.multitype.MultiTypeAdapter;
 
@@ -42,12 +50,8 @@ public class MyXiaofeiFragment extends BaseFragment {
     private List<Object> items = new ArrayList<>();
     private List<MyXiaofei> mHotStoreList = new ArrayList<>();
 
-    private int total_all_page;
     private int mRows = 10;  // 设置默认一页加载10条数据
-    private int current_page;
-    private boolean isLoadMore = false;
-    private boolean isLoadOver = false;
-    private boolean isLoadMoreSingle = false;//上拉单次标志位
+    private int current_page = 1;
     private boolean isFirstLoad = true;
     private String TAG = MyXiaofeiFragment.class.getSimpleName();
     private String state;
@@ -69,40 +73,87 @@ public class MyXiaofeiFragment extends BaseFragment {
         isStore = bundle.getString("isStore", "1");
 
         initView();
-        init();
+        initCommon(1, mRows);
         bindView();
     }
 
     @Override
     protected void bindView() {
+        main_refresh.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                isFirstLoad = false;
+                initCommon(current_page++, mRows);
+                main_refresh.finishLoadMore();
+            }
 
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                mHotStoreList.clear();
+                isFirstLoad = true;
+                current_page = 1;
+                initCommon(1, mRows);
+                main_refresh.finishRefresh();
+                main_refresh.setEnableLoadMore(true);
+            }
+        });
     }
 
 
-    @Override
-    protected void init() {
+    private void initCommon(int page, int rows) {
         //我的消费数据
         RequestParams params = new RequestParams(RequestUrls.getMyXiaofei());
         params.addBodyParameter("token", new DbConfig(getContext()).getToken());
         params.addBodyParameter("state", state);//0待记账 1已记账
-        params.addBodyParameter("type", "1");//1用户 2商家
+        params.addBodyParameter("type", isStore);//1用户 2商家
+        params.addBodyParameter("page", current_page + "");
+        params.addBodyParameter("rows", mRows + "");
         params.setConnectTimeout(5000);
         Log.e(TAG, "init:  params.toString() = " + params.toString());
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 Log.e(TAG, "onSuccess: result = " + result);
+                try {
+                    JSONArray jsonArray = new JSONArray(result);
+                    if (jsonArray.length() == 0) {
+                        main_refresh.setEnableLoadMore(false);
+                    }
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        MyXiaofei myXiaofei = new MyXiaofei();
+                        JSONObject object = (JSONObject) jsonArray.get(i);
+                        try {
+                            JSONObject createTime = object.getJSONObject("createTime");
+                            myXiaofei.setTimes(createTime.getLong("time"));
+                        } catch (Exception e) {
+                            myXiaofei.setTimes(0);
+                        }
+                        myXiaofei.setAppraise(object.getString("appraise"));
+                        myXiaofei.setImgUrl(object.getString("image"));
+                        myXiaofei.setTitle("扫码快速支付");
+                        myXiaofei.setPrice(object.getDouble("money"));
+                        myXiaofei.setPhone(object.getString("phone"));
+                        myXiaofei.setOrderId(object.getString("id"));
+                        myXiaofei.setOrderState(object.getString("state"));
+                        myXiaofei.setStoreName(object.getString("shopName"));
+                        myXiaofei.setCustomerId(object.getString("customerId"));
+                        myXiaofei.setStoreId(object.getString("shopId"));
+                        //1用户 2商家
+                        myXiaofei.setIsStore(isStore);
 
+                        mHotStoreList.add(myXiaofei);
+                    }
+                    updataData();
 
-                //1用户 2商家
-                MyXiaofei myXiaofei = new MyXiaofei();
-                myXiaofei.setIsStore(isStore);
-
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-
+                Log.e(TAG, "onError: ex.toString() = " + ex.toString());
+                updataData();
             }
 
             @Override
@@ -117,32 +168,13 @@ public class MyXiaofeiFragment extends BaseFragment {
         });
 
 
-        //http
-
-        Random ran = new Random();
-        int radom = ran.nextInt(100);
-        MyXiaofei hotStore;
-        mHotStoreList.clear();
-        for (int i = 0; i < 32; i++) {
-            hotStore = new MyXiaofei();
-            hotStore.setOrderId(i + "");
-            hotStore.setOrderState("待确定");
-            hotStore.setPhone("170****5214");
-            hotStore.setPrice(i);
-            hotStore.setTimes("2019-09-12 09:51");
-            hotStore.setTitle("扫码快速支付" + i);
-            mHotStoreList.add(hotStore);
-        }
-        updataData();
-
-
     }
 
 
     private void updataData() {
         items.clear();
-        if (mHotStoreList == null || mHotStoreList.size() == 0) {
-//            items.add(new ItemNullBean("暂无数据")); TODO
+        if (((mHotStoreList == null || mHotStoreList.size() == 0) && isFirstLoad)) {
+            items.add(new NullList());
         } else {
             for (int i = 0; i < mHotStoreList.size(); i++) {
                 items.add(mHotStoreList.get(i));
@@ -161,22 +193,32 @@ public class MyXiaofeiFragment extends BaseFragment {
         main_rlv.setLayoutManager(manager);
         multiTypeAdapter = new MultiTypeAdapter(items);
         multiTypeAdapter.register(MyXiaofei.class, new MyXiaofeiItemViewProvider(getContext()));
+        multiTypeAdapter.register(NullList.class, new NullListItemViewProvider(getContext()));
         main_rlv.setAdapter(multiTypeAdapter);
         assertHasTheSameAdapter(main_rlv, multiTypeAdapter);
 
-        main_refresh.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
-            @Override
-            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-
-            }
-
-            @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                init();
-                main_refresh.finishRefresh(true);
-            }
-        });
-
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void myXiaofeiToRefreshEvent(MyXiaofeiToRefresh event) {
+        if (isStore.equals(event.getIsStore())) {
+            //刷新
+            current_page = 1;
+            mHotStoreList.clear();
+            initCommon(1, mRows);
+        }
+    }
 }

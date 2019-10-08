@@ -67,8 +67,11 @@ public class MyXiaofeiActivity extends BaseActivity {
 
         pager_.setCurrentItem(page);
 
-
-        bar_title.setText("我的消费");
+        if (isStore == 2) {
+            bar_title.setText("我是商家");
+        } else {
+            bar_title.setText("我的消费");
+        }
 
     }
 

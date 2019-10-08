@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.dongdutec.ddmnc.R;
 import com.youth.banner.loader.ImageLoader;
 
 public class GlideImageLoader extends ImageLoader {
@@ -22,7 +23,10 @@ public class GlideImageLoader extends ImageLoader {
         //Glide 加载图片
         RoundedCorners roundedCorners = new RoundedCorners(200);
         RequestOptions options = RequestOptions.bitmapTransform(roundedCorners);
-        Glide.with(context).load(path).apply(options).into(imageView);
+        Glide.with(context).load(path)
+                .apply(options)
+                .placeholder(R.mipmap.guanggao)
+                .into(imageView);
 
     }
 }

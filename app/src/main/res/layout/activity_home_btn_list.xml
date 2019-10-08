@@ -72,54 +72,6 @@
                 android:layout_marginLeft="@dimen/d2"
                 android:src="@mipmap/down"/>
         </LinearLayout>
-        <!--距离-->
-        <LinearLayout
-            android:id="@+id/ll_distance"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/choose_distance_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="距离"
-                android:textColor="@color/c6"
-                android:textSize="@dimen/s12"/>
-
-            <ImageView
-                android:id="@+id/img_distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/d2"
-                android:src="@mipmap/down"/>
-        </LinearLayout>
-        <!--价格-->
-        <LinearLayout
-            android:id="@+id/ll_price"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/choose_price_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="价格"
-                android:textColor="@color/c6"
-                android:textSize="@dimen/s12"/>
-
-            <ImageView
-                android:id="@+id/img_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/d2"
-                android:src="@mipmap/down"/>
-        </LinearLayout>
         <!--销量-->
         <LinearLayout
             android:id="@+id/ll_sellcount"
@@ -144,6 +96,10 @@
                 android:layout_marginLeft="@dimen/d2"
                 android:src="@mipmap/down"/>
         </LinearLayout>
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
     </LinearLayout>
 
     <View

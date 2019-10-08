@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.ui.home.multitype.model.HeadImg;
 
@@ -30,7 +31,9 @@ public class HeadImgItemViewProvider extends ItemViewProvider<HeadImg, HeadImgIt
 
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder holder, @NonNull final HeadImg headImg) {
-//        Glide.with(context).load(headImg.getImgUrl()).into(holder.headimg);
+        Glide.with(context).load(headImg.getImgUrl())
+                .placeholder(R.mipmap.lb)
+                .into(holder.headimg);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

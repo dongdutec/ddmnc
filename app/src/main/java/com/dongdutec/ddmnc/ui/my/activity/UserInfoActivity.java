@@ -17,6 +17,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
 import com.dongdutec.ddmnc.db.DbConfig;
+import com.dongdutec.ddmnc.eventbus.UserInfoEvent;
 import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.utils.file.UriTofilePath;
 import com.dongdutec.ddmnc.utils.image.CropImgUtil;
@@ -24,6 +25,8 @@ import com.dongdutec.ddmnc.utils.image.ImageUtils;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 import com.yalantis.ucrop.UCrop;
 
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
@@ -45,12 +48,20 @@ public class UserInfoActivity extends BaseActivity {
     private EditText et_nickname;
     private File headFile;
     private String TAG = UserInfoActivity.class.getSimpleName();
+
+    private final int CROP_WHDTH = 5;
+    private final int CROP_HEIGHT = 4;
     private String headUrl = "";
+    private String userName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_info);
+
+        Intent intent = getIntent();
+        headUrl = intent.getStringExtra("headUrl");
+        userName = intent.getStringExtra("userName");
 
         initView();
         init();
@@ -66,6 +77,15 @@ public class UserInfoActivity extends BaseActivity {
         et_nickname = findViewById(R.id.et_nickname);
 
         bar_title_text.setText("个人信息");
+
+        //设置用户数据
+        CircleCrop transformation = new CircleCrop();
+        RequestOptions requestOptions = RequestOptions.bitmapTransform(transformation);
+        Glide.with(UserInfoActivity.this).load(headUrl)
+                .placeholder(R.mipmap.touxiang)
+                .apply(requestOptions)
+                .into(userimg);
+        et_nickname.setText(userName);
     }
 
     @Override
@@ -114,7 +134,8 @@ public class UserInfoActivity extends BaseActivity {
                                 int code = object.getInt("code");
                                 String msg = object.getString("msg");
                                 if (code == 0) {
-                                    headUrl = object.getString("data");
+                                    JSONArray data = object.getJSONArray("data");
+                                    headUrl = (String) data.get(0);
                                     //第二步（修改头像）
                                     postChangeImage();
                                 } else {
@@ -211,6 +232,7 @@ public class UserInfoActivity extends BaseActivity {
                     String msg = object.getString("msg");
                     Toast.makeText(UserInfoActivity.this, msg, Toast.LENGTH_SHORT).show();
                     if (code == 0) {
+                        EventBus.getDefault().post(new UserInfoEvent());
                         finish();
                     }
 
@@ -244,14 +266,14 @@ public class UserInfoActivity extends BaseActivity {
             switch (requestCode) {
                 case CropImgUtil.TAKE_PHOTO://相机返回
                     //相机返回图片，调用裁剪的方法
-                    CropImgUtil.startUCrop(UserInfoActivity.this, CropImgUtil.imageUri, 1, 1);
+                    CropImgUtil.startUCrop(UserInfoActivity.this, CropImgUtil.imageUri, CROP_WHDTH, CROP_HEIGHT);
                     break;
                 case CropImgUtil.CHOOSE_PHOTO://相册返回
                     try {
                         if (data != null) {
                             Uri uri2 = data.getData();
                             //相册返回图片，调用裁剪的方法
-                            CropImgUtil.startUCrop(UserInfoActivity.this, uri2, 1, 1);
+                            CropImgUtil.startUCrop(UserInfoActivity.this, uri2, CROP_WHDTH, CROP_HEIGHT);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

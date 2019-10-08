@@ -17,4 +17,5 @@
     <string name="cp_locating">正在定位…</string>
     <string name="cp_located_failed">定位失败</string>
     <string name="cp_btn_cancel">取消</string>
+    <string name="web_title">MNC</string>
 </resources>

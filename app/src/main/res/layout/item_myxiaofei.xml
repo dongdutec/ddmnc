@@ -46,8 +46,9 @@
 
         <ImageView
             android:id="@+id/img_xiaofei"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/d100"
+            android:scaleType="fitXY"
+            android:layout_height="@dimen/d80"
             android:src="@mipmap/shangpintu"/>
 
         <TextView
@@ -76,6 +77,22 @@
             android:textColor="@color/c24"
             android:textSize="@dimen/s14"
             android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_pingjia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/d10"
+            android:background="@drawable/blue_stoke"
+            android:paddingLeft="@dimen/d10"
+            android:paddingTop="@dimen/d5"
+            android:paddingRight="@dimen/d10"
+            android:paddingBottom="@dimen/d5"
+            android:text="去评价"
+            android:layout_alignTop="@+id/tv_price"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/c16"
+            android:textSize="@dimen/s12"/>
 
     </RelativeLayout>
 

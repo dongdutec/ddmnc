@@ -6,7 +6,7 @@ package com.dongdutec.ddmnc.ui.home.multitype.model;
  * @创建日期 2019/9/17 12:19
  */
 public class HotStore {
-    private int storeId;
+    private String storeId;
     private String imageUrl;
     private String storeName;
     private String locationStr;
@@ -20,7 +20,7 @@ public class HotStore {
     public HotStore() {
     }
 
-    public HotStore(int storeId, String imageUrl, String storeName, String locationStr, int count, String starState, double distance, boolean isFirst, double lantitude, double longitude) {
+    public HotStore(String storeId, String imageUrl, String storeName, String locationStr, int count, String starState, double distance, boolean isFirst, double lantitude, double longitude) {
         this.storeId = storeId;
         this.imageUrl = imageUrl;
         this.storeName = storeName;
@@ -65,11 +65,11 @@ public class HotStore {
         isFirst = first;
     }
 
-    public int getStoreId() {
+    public String getStoreId() {
         return storeId;
     }
 
-    public void setStoreId(int storeId) {
+    public void setStoreId(String storeId) {
         this.storeId = storeId;
     }
 

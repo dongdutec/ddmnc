@@ -1,9 +1,11 @@
 package com.dongdutec.ddmnc.ui.home.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,16 +21,28 @@ import android.widget.TextView;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
+import com.dongdutec.ddmnc.citypicker.CityPickerActivity;
+import com.dongdutec.ddmnc.db.DbConfig;
+import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.home.multitype.HomeItemViewProvider;
+import com.dongdutec.ddmnc.ui.home.multitype.NullListItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.model.HotStore;
+import com.dongdutec.ddmnc.ui.home.multitype.model.NullList;
+import com.dongdutec.ddmnc.utils.location.LocationUtils;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import me.drakeet.multitype.MultiTypeAdapter;
 import rx.functions.Action1;
@@ -44,29 +58,29 @@ public class HomeBtnListActivity extends BaseActivity {
     private List<HotStore> mHotStoreList = new ArrayList<>();
     private ImageView bar_left_img;
     private TextView bar_title;
+    private TextView choose_city_text;
     private LinearLayout ll_state;
     private RelativeLayout rl_bar;
 
     private int total_all_page;
     private int mRows = 10;  // 设置默认一页加载10条数据
-    private int current_page;
-    private boolean isLoadMore = false;
-    private boolean isLoadOver = false;
-    private boolean isLoadMoreSingle = false;//上拉单次标志位
+    private int current_page = 1;
     private boolean isFirstLoad = true;
     private String type;
+    private String classifyId;
 
     private LinearLayout ll_choosecity;
     private ImageView img_choosecity;
     private LinearLayout ll_first;
     private ImageView img_first;
-    private LinearLayout ll_distance;
-    private ImageView img_distance;
-    private LinearLayout ll_price;
-    private ImageView img_price;
     private LinearLayout ll_sellcount;
     private ImageView img_sellcount;
     private ArrayList<String> filterData;
+    private String TAG = HomeBtnListActivity.class.getSimpleName();
+    private String city = "";
+    private String isNew = "";
+    private String sale = "";
+    private static final int REQUEST_CODE_PICK_CITY = 9913;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +88,7 @@ public class HomeBtnListActivity extends BaseActivity {
         setContentView(R.layout.activity_home_btn_list);
 
         initView();
-        init();
+        initCommon(1, mRows, city, isNew, sale);
         bindView();
     }
 
@@ -92,34 +106,37 @@ public class HomeBtnListActivity extends BaseActivity {
         RxViewAction.clickNoDouble(ll_choosecity).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                showFilterPop(0, ll_choosecity.getWidth(), img_choosecity);
+                startActivityForResult(new Intent(HomeBtnListActivity.this, CityPickerActivity.class),
+                        REQUEST_CODE_PICK_CITY);
+
+
+                //最后在城市选择器回调中调用
+                /*mHotStoreList.clear();
+                initCommon(1, mRows, city, isNew, sale);*/
             }
         });
+        //最新发布
         RxViewAction.clickNoDouble(ll_first).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                showFilterPop(ll_choosecity.getWidth(), ll_first.getWidth(), img_first);
-            }
-        });
-        //距离
-        RxViewAction.clickNoDouble(ll_distance).subscribe(new Action1<Void>() {
-            @Override
-            public void call(Void aVoid) {
-                showFilterPop(ll_choosecity.getWidth() + ll_first.getWidth(), ll_distance.getWidth(), img_distance);
-            }
-        });
-        //价格
-        RxViewAction.clickNoDouble(ll_price).subscribe(new Action1<Void>() {
-            @Override
-            public void call(Void aVoid) {
-                showFilterPop(ll_choosecity.getWidth() + ll_first.getWidth() + ll_distance.getWidth(), ll_price.getWidth(), img_price);
+                isNew = "0".equals(isNew) ? "" : "0";
+                sale = "";
+                img_first.setVisibility("0".equals(isNew) ? View.GONE : View.VISIBLE);
+                mHotStoreList.clear();
+                current_page = 1;
+                initCommon(1, mRows, city, isNew, sale);
             }
         });
         //销量
         RxViewAction.clickNoDouble(ll_sellcount).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                showFilterPop(ll_choosecity.getWidth() + ll_first.getWidth() + ll_distance.getWidth() + ll_price.getWidth(), ll_sellcount.getWidth(), img_sellcount);
+                sale = "0".equals(sale) ? "" : "0";
+                isNew = "";
+                img_sellcount.setVisibility("0".equals(sale) ? View.GONE : View.VISIBLE);
+                mHotStoreList.clear();
+                current_page = 1;
+                initCommon(1, mRows, city, isNew, sale);
             }
         });
 
@@ -190,7 +207,10 @@ public class HomeBtnListActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        //http
+
+
+
+      /*  //http
 
         Random ran = new Random();
         int radom = ran.nextInt(100);
@@ -208,16 +228,82 @@ public class HomeBtnListActivity extends BaseActivity {
             }
             mHotStoreList.add(hotStore);
         }
-        updataData();
+        updataData();*/
 
 
+    }
+
+    private void initCommon(int page, int rows, String city, String isNew, String sale) {
+        //获取收藏列表
+        final RequestParams params = new RequestParams(RequestUrls.homeSearch());
+        params.setConnectTimeout(5000);
+        params.addBodyParameter("classifyId", classifyId);
+        params.addBodyParameter("city", city);
+        params.addBodyParameter("isNew", isNew);
+        params.addBodyParameter("sale", sale);
+        params.addBodyParameter("page", current_page + "");
+        params.addBodyParameter("rows", mRows + "");
+        Log.e(TAG, "onSuccess: params.toString() = " + params.toString());
+        x.http().post(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                try {
+                    Log.e(TAG, "onSuccess: result = " + result);
+                    JSONArray jsonArray = new JSONArray(result);
+                    if (jsonArray.length() == 0) {//refresh
+                        main_refresh.setEnableLoadMore(false);
+                    }
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject object = (JSONObject) jsonArray.get(i);
+                        HotStore hotStore = new HotStore();
+                        hotStore.setImageUrl(object.getString("advertImage"));
+                        hotStore.setStoreName(object.getString("advertName"));
+                        hotStore.setLocationStr(object.getString("advertAddress"));
+                        hotStore.setStoreId(object.getString("id"));
+                        hotStore.setCount(Integer.parseInt(object.getString("count")));
+                        String advertLatitude = object.getString("advertLatitude");
+                        String advertLongitude = object.getString("advertLongitude");
+                        double longitude_store = Double.parseDouble(advertLongitude);
+                        double latitude_store = Double.parseDouble(advertLatitude);
+                        hotStore.setLantitude(latitude_store);
+                        hotStore.setLongitude(longitude_store);
+                        DbConfig dbConfig = new DbConfig(HomeBtnListActivity.this);
+                        double distance = LocationUtils.getDistance(dbConfig.getLongitude(), dbConfig.getLatitude(), longitude_store, latitude_store);
+                        hotStore.setDistance(distance);
+
+                        mHotStoreList.add(hotStore);
+                    }
+
+                    updataData();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Log.e(TAG, "onError: ex.toString()" + ex.toString());
+                updataData();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
     }
 
 
     private void updataData() {
         items.clear();
-        if (mHotStoreList == null || mHotStoreList.size() == 0) {
-//            items.add(new ItemNullBean("暂无数据")); TODO
+        if ((mHotStoreList == null || mHotStoreList.size() == 0) && isFirstLoad) {
+            items.add(new NullList());
         } else {
             for (int i = 0; i < mHotStoreList.size(); i++) {
                 items.add(mHotStoreList.get(i));
@@ -233,42 +319,79 @@ public class HomeBtnListActivity extends BaseActivity {
         main_refresh = findViewById(R.id.homebtn_refresh);
         bar_left_img = findViewById(R.id.bar_left_img);
         bar_title = findViewById(R.id.bar_title_text);
+        choose_city_text = findViewById(R.id.choose_city_text);
         ll_state = findViewById(R.id.ll_state);
         rl_bar = findViewById(R.id.rl_bar);
         ll_choosecity = findViewById(R.id.ll_choosecity);
         img_choosecity = findViewById(R.id.img_choosecity);
         ll_first = findViewById(R.id.ll_first);
         img_first = findViewById(R.id.img_first);
-        ll_distance = findViewById(R.id.ll_distance);
-        img_distance = findViewById(R.id.img_distance);
-        ll_price = findViewById(R.id.ll_price);
-        img_price = findViewById(R.id.img_price);
         ll_sellcount = findViewById(R.id.ll_sellcount);
         img_sellcount = findViewById(R.id.img_sellcount);
 
         type = getIntent().getStringExtra("type");
+        classifyId = getIntent().getStringExtra("classifyId");
         bar_title.setText(type);
 
 
         LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         main_rlv.setLayoutManager(manager);
         multiTypeAdapter = new MultiTypeAdapter(items);
-        multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(getApplicationContext()));
+        multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(HomeBtnListActivity.this));
+        multiTypeAdapter.register(NullList.class, new NullListItemViewProvider(HomeBtnListActivity.this));
         main_rlv.setAdapter(multiTypeAdapter);
         assertHasTheSameAdapter(main_rlv, multiTypeAdapter);
 
         main_refresh.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-
+                isFirstLoad = false;
+                initCommon(current_page++, mRows, city, isNew, sale);
+                main_refresh.finishLoadMore();
             }
 
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                init();
-                main_refresh.finishRefresh(true);
+                mHotStoreList.clear();
+                isFirstLoad = true;
+                current_page = 1;
+                initCommon(1, mRows, city, isNew, sale);
+                main_refresh.finishRefresh();
+                main_refresh.setEnableLoadMore(true);
             }
         });
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_CODE_PICK_CITY && resultCode == RESULT_OK) {
+            if (data != null) {
+                String city = data.getStringExtra(CityPickerActivity.KEY_PICKED_CITY);
+                choose_city_text.setText(city);
+
+                current_page = 1;
+                mHotStoreList.clear();
+                initCommon(1, mRows, city, isNew, sale);
+            } else {
+                mHotStoreList.clear();
+                current_page = 1;
+                city = "";
+                initCommon(1, mRows, city, isNew, sale);
+            }
+        } else {
+            mHotStoreList.clear();
+            current_page = 1;
+            city = "";
+            initCommon(1, mRows, city, isNew, sale);
+        }
+    }
+
+
+    private void clearState() {
+        /*city = "";*///不能清除城市
+        isNew = "";
+        sale = "";
     }
 }
