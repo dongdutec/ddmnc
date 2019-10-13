@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
@@ -70,7 +71,7 @@ public class MyStarActivity extends BaseActivity {
         EventBus.getDefault().register(this);
 
         initView();
-        initCommon(1, mRows);
+        initCommon();
         bindView();
     }
 
@@ -81,7 +82,8 @@ public class MyStarActivity extends BaseActivity {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 isFirstLoad = false;
-                initCommon(current_page++, mRows);
+                current_page++;
+                initCommon();
                 main_refresh.finishLoadMore();
             }
 
@@ -90,7 +92,7 @@ public class MyStarActivity extends BaseActivity {
                 mHotStoreList.clear();
                 isFirstLoad = true;
                 current_page = 1;
-                initCommon(1, mRows);
+                initCommon();
                 main_refresh.finishRefresh();
                 main_refresh.setEnableLoadMore(true);
             }
@@ -104,10 +106,16 @@ public class MyStarActivity extends BaseActivity {
         });
     }
 
-    private void initCommon(int page, int rows) {
+    private void initCommon() {
+        judgeToken();
+    }
+
+    @Override
+    protected void onJudgeResult() {
         //获取收藏列表
         final RequestParams params = new RequestParams(RequestUrls.getStarList());
         params.setConnectTimeout(5000);
+        showLoadings();
         params.addBodyParameter("token", new DbConfig(MyStarActivity.this).getToken());
         params.addBodyParameter("page", current_page + "");
         params.addBodyParameter("rows", mRows + "");
@@ -127,7 +135,8 @@ public class MyStarActivity extends BaseActivity {
                         hotStore.setImageUrl(object.getString("image"));
                         hotStore.setStoreName(object.getString("shopName"));
                         hotStore.setLocationStr(object.getString("address"));
-                        hotStore.setStoreId(object.getString("id"));
+                        hotStore.setStoreId(object.getString("shopId"));
+                        hotStore.setId(object.getString("id"));
                         hotStore.setCount(Integer.parseInt(object.getString("count")));
                         String advertLatitude = object.getString("latitude");
                         String advertLongitude = object.getString("longitude");
@@ -146,6 +155,7 @@ public class MyStarActivity extends BaseActivity {
                     updataData();
 
                 } catch (JSONException e) {
+                    Toast.makeText(MyStarActivity.this, "系统异常!", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }
@@ -163,16 +173,16 @@ public class MyStarActivity extends BaseActivity {
 
             @Override
             public void onFinished() {
-
+                hideLoadings();
             }
         });
     }
-
 
     private void updataData() {
         items.clear();
         if ((mHotStoreList == null || mHotStoreList.size() == 0) && isFirstLoad) {
             items.add(new NullList());
+            main_refresh.setEnableLoadMore(false);
         } else {
             for (int i = 0; i < mHotStoreList.size(); i++) {
                 items.add(mHotStoreList.get(i));
@@ -180,6 +190,7 @@ public class MyStarActivity extends BaseActivity {
         }
         assertAllRegistered(multiTypeAdapter, items);
         multiTypeAdapter.notifyDataSetChanged();
+        hideLoadings();
     }
 
     @Override
@@ -214,6 +225,6 @@ public class MyStarActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void myStarToRefreshEvent(MyStarToRefresh event) {
         mHotStoreList.clear();
-        initCommon(1, mRows);
+        initCommon();
     }
 }

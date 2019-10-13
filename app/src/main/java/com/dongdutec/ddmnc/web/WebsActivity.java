@@ -7,11 +7,11 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsPromptResult;
@@ -25,18 +25,28 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.dongdutec.ddmnc.R;
-import com.dongdutec.ddmnc.base.BaseWebBarActivity;
-import com.wang.avi.AVLoadingIndicatorView;
+import com.dongdutec.ddmnc.base.BaseActivity;
+import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.io.File;
 
-public class WebsActivity extends BaseWebBarActivity implements ReWebChomeClient.OpenFileChooserCallBack {
+import rx.functions.Action1;
+
+public class WebsActivity extends BaseActivity implements ReWebChomeClient.OpenFileChooserCallBack {
     private WebView activity_web;
-    private String webUrl;
-    private AVLoadingIndicatorView loading;
+    private ImageView bar_left_img;
+    private TextView bar_title_text;
+    private String webUrl = "";
+    private String title = "";
     private String TAG = WebsActivity.class.getSimpleName();
+    private boolean resumeFlag = true;
 
 
     private static final int REQUEST_CODE_PICK_IMAGE = 0;
@@ -44,6 +54,7 @@ public class WebsActivity extends BaseWebBarActivity implements ReWebChomeClient
     private Intent mSourceIntent;
     private ValueCallback<Uri> mUploadMsg;
     private ValueCallback<Uri[]> mUploadMsg5Plus;
+    private SmartRefreshLayout main_refresh;
 
 
     @Override
@@ -53,9 +64,10 @@ public class WebsActivity extends BaseWebBarActivity implements ReWebChomeClient
 
         Intent intent = getIntent();
         webUrl = intent.getStringExtra("webUrl");
+        title = intent.getStringExtra("title");
         Log.e(TAG, "onCreate: webUrl = " + webUrl);
 
-        //设置是否显示标题栏
+        /*//设置是否显示标题栏
         showTitleBar(true);
         //是否显示左侧文字
         showBackwardView(R.string.web_title, true);
@@ -73,7 +85,7 @@ public class WebsActivity extends BaseWebBarActivity implements ReWebChomeClient
             public void onClick(View view) {
                 finish();
             }
-        });
+        });*/
 
 
         initView();
@@ -82,14 +94,14 @@ public class WebsActivity extends BaseWebBarActivity implements ReWebChomeClient
         setData();
     }
 
-    private String buildTransaction(final String type) {
+    /*private String buildTransaction(final String type) {
         return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
-    }
+    }*/
 
 
-    @Override
+   /* @Override
     public void onForward(View forwardView) {
-    }
+    }*/
 
     private void setData() {
 
@@ -110,7 +122,7 @@ public class WebsActivity extends BaseWebBarActivity implements ReWebChomeClient
         //支持自动加载图片
         settings.setLoadsImagesAutomatically(true);
         //设置WebView缓存模式
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         //支持启用缓存模式
         settings.setAppCacheEnabled(true);
         //设置可以访问文件
@@ -138,13 +150,32 @@ public class WebsActivity extends BaseWebBarActivity implements ReWebChomeClient
     }
 
     protected void bindView() {
+        //返回
+        RxViewAction.clickNoDouble(bar_left_img).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                finish();
+            }
+        });
+        //刷新
+        main_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
 
+                activity_web.loadUrl(webUrl);
+                refreshLayout.finishRefresh();
+            }
+        });
     }
 
     protected void initView() {
         activity_web = findViewById(R.id.activity_web);
-        loading = findViewById(R.id.loading);
+        main_refresh = findViewById(R.id.main_refresh);
+        bar_left_img = findViewById(R.id.bar_left_img);
+        bar_title_text = findViewById(R.id.bar_title_text);
 
+        main_refresh.setEnableLoadMore(false);
+        bar_title_text.setText(title);
     }
 
 
@@ -205,7 +236,7 @@ public class WebsActivity extends BaseWebBarActivity implements ReWebChomeClient
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            showLoading();
+            showLoadings();
         }
 
         /**
@@ -217,7 +248,7 @@ public class WebsActivity extends BaseWebBarActivity implements ReWebChomeClient
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            hindLoading();
+            hideLoadings();
 
         }
 
@@ -441,14 +472,6 @@ public class WebsActivity extends BaseWebBarActivity implements ReWebChomeClient
         return false;
     }
 
-    public void showLoading() {
-        loading.show();
-    }
-
-    public void hindLoading() {
-        loading.hide();
-    }
-
 
     private void fixDirPath() {
         String path = ImageUtil.getDirPath();
@@ -461,7 +484,7 @@ public class WebsActivity extends BaseWebBarActivity implements ReWebChomeClient
     public void showOptions() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setOnCancelListener(new ReOnCancelListener());
-        alertDialog.setTitle("操作");
+        alertDialog.setTitle("选择图片");
         alertDialog.setItems(R.array.options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

@@ -3,6 +3,7 @@ package com.dongdutec.ddmnc.ui.home.activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ public class GaoDeMapActivity extends BaseActivity {
     private double latitude;
     private double longitude;
     private String storeName;
+    private String TAG = GaoDeMapActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +40,14 @@ public class GaoDeMapActivity extends BaseActivity {
         latitude = intent.getDoubleExtra("latitude", 39.906901);
         longitude = intent.getDoubleExtra("longitude", 116.397972);
         storeName = intent.getStringExtra("storeName");
+        Log.e(TAG, "onCreate:  latitude = " + latitude);
+        Log.e(TAG, "onCreate:  longitude = " + longitude);
 
         LatLng latLng = new LatLng(latitude, longitude);
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
                 .title(storeName)
-                .draggable(true)
+                .draggable(false)
                 .visible(true);
         BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_dingwei1));
         markerOptions.icon(bitmapDescriptor);

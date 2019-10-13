@@ -97,12 +97,4 @@
 
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
-    <com.wang.avi.AVLoadingIndicatorView
-        android:id="@+id/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="visible"
-        app:indicatorColor="@color/lightgray"
-        app:indicatorName="BallPulseIndicator"/>
 </FrameLayout>

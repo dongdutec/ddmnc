@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseFragment;
@@ -73,7 +74,7 @@ public class MyXiaofeiFragment extends BaseFragment {
         isStore = bundle.getString("isStore", "1");
 
         initView();
-        initCommon(1, mRows);
+        initCommon();
         bindView();
     }
 
@@ -83,7 +84,8 @@ public class MyXiaofeiFragment extends BaseFragment {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 isFirstLoad = false;
-                initCommon(current_page++, mRows);
+                current_page++;
+                initCommon();
                 main_refresh.finishLoadMore();
             }
 
@@ -92,7 +94,7 @@ public class MyXiaofeiFragment extends BaseFragment {
                 mHotStoreList.clear();
                 isFirstLoad = true;
                 current_page = 1;
-                initCommon(1, mRows);
+                initCommon();
                 main_refresh.finishRefresh();
                 main_refresh.setEnableLoadMore(true);
             }
@@ -100,7 +102,12 @@ public class MyXiaofeiFragment extends BaseFragment {
     }
 
 
-    private void initCommon(int page, int rows) {
+    private void initCommon() {
+        judgeToken();
+    }
+
+    @Override
+    protected void onJudgeResult() {
         //我的消费数据
         RequestParams params = new RequestParams(RequestUrls.getMyXiaofei());
         params.addBodyParameter("token", new DbConfig(getContext()).getToken());
@@ -109,6 +116,7 @@ public class MyXiaofeiFragment extends BaseFragment {
         params.addBodyParameter("page", current_page + "");
         params.addBodyParameter("rows", mRows + "");
         params.setConnectTimeout(5000);
+        showLoadings();
         Log.e(TAG, "init:  params.toString() = " + params.toString());
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
@@ -146,6 +154,7 @@ public class MyXiaofeiFragment extends BaseFragment {
                     updataData();
 
                 } catch (JSONException e) {
+                    Toast.makeText(getActivity(), "系统异常!", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }
@@ -158,23 +167,20 @@ public class MyXiaofeiFragment extends BaseFragment {
 
             @Override
             public void onCancelled(CancelledException cex) {
-
             }
 
             @Override
             public void onFinished() {
-
+                hideLoadings();
             }
         });
-
-
     }
-
 
     private void updataData() {
         items.clear();
         if (((mHotStoreList == null || mHotStoreList.size() == 0) && isFirstLoad)) {
             items.add(new NullList());
+            main_refresh.setEnableLoadMore(false);
         } else {
             for (int i = 0; i < mHotStoreList.size(); i++) {
                 items.add(mHotStoreList.get(i));
@@ -182,6 +188,7 @@ public class MyXiaofeiFragment extends BaseFragment {
         }
         assertAllRegistered(multiTypeAdapter, items);
         multiTypeAdapter.notifyDataSetChanged();
+        hideLoadings();
     }
 
     @Override
@@ -218,7 +225,7 @@ public class MyXiaofeiFragment extends BaseFragment {
             //刷新
             current_page = 1;
             mHotStoreList.clear();
-            initCommon(1, mRows);
+            initCommon();
         }
     }
 }

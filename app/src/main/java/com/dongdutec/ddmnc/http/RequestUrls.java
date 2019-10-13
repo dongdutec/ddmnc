@@ -14,6 +14,16 @@ public class RequestUrls {
 
 
     /**
+     * 验证token
+     * 传参 token
+     *
+     * @return
+     */
+    public static String getJudgeToken() {
+        return CommonUrl + "api/customer/searchToken.do";
+    }
+
+    /**
      * 获取验证码
      *
      * @return
@@ -38,15 +48,6 @@ public class RequestUrls {
      */
     public static String userLogin() {
         return CommonUrl + "api/common/login.do";
-    }
-
-    /**
-     * 首页Banner图 已弃
-     *
-     * @return
-     */
-    public static String getHomeBanner() {
-        return CommonUrl + "api/customer/selectSysBanner.do";
     }
 
     /**
@@ -87,7 +88,8 @@ public class RequestUrls {
     }
 
     /**
-     * 我的收藏列表
+     * 我的收藏列表token认证
+     * shopId
      *
      * @return
      */
@@ -96,17 +98,18 @@ public class RequestUrls {
     }
 
     /**
-     * 更改收藏状态
-     * id, state
+     * 改变收藏状态token认证
+     * 请求  state (1 收藏  2取消)  id   token
+     * 返参
      *
      * @return
      */
-    public static String updataStartState() {
+    public static String changeStarState() {
         return CommonUrl + "api/customer/updateCollect.do";
     }
 
     /**
-     * 修改昵称
+     * 修改昵称token认证
      * 传参
      * token   
      * customerName   string  昵称
@@ -118,7 +121,7 @@ public class RequestUrls {
     }
 
     /**
-     * 修改用户头像
+     * 修改用户头像token认证
      * 传参
      * token
      * headImg  string  用户头像
@@ -130,7 +133,7 @@ public class RequestUrls {
     }
 
     /**
-     * 上传文件
+     * 上传文件token认证
      * file
      *
      * @return
@@ -140,7 +143,8 @@ public class RequestUrls {
     }
 
     /**
-     * 浏览历史
+     * 浏览历史token认证
+     * shopId
      *
      * @return
      */
@@ -149,7 +153,8 @@ public class RequestUrls {
     }
 
     /**
-     * 我的页面数据
+     * 我的页面数据token认证
+     * 特殊返参：isAdv//0 已过审  1 审核中  2 已下架  3 普通用户
      *
      * @return
      */
@@ -158,7 +163,7 @@ public class RequestUrls {
     }
 
     /**
-     * 我的消费（商家/个人）
+     * 我的消费（商家/个人）token认证
      * <p>
      * <p>
      * 返参
@@ -172,7 +177,7 @@ public class RequestUrls {
     }
 
     /**
-     * 商家确认记账返回积分
+     * 商家确认/取消记账返回积分token认证
      * String id, String mp , String state(1 记账 2 取消记账)
      * <p>
      * 返参 直接返回    成功/失败 （无需解析）
@@ -184,7 +189,7 @@ public class RequestUrls {
     }
 
     /**
-     * 用户去评价
+     * 用户去评价token认证
      * String token, String shopId , String remake ,String id
      * <p>
      * 返参 直接返回    成功/失败 （无需解析）
@@ -220,13 +225,14 @@ public class RequestUrls {
     }
 
     /**
-     * 改变收藏状态
-     * 请求  state (1 收藏  2取消)  id   token
+     * 商家管理页面
+     * 传参 token
+     * <p>
      * 返参
      *
      * @return
      */
-    public static String changeStarState() {
-        return CommonUrl + "api/customer/updateCollect.do";
+    public static String getStoreManage() {
+        return CommonUrl + "api/customer/searchAdvUser.do";
     }
 }

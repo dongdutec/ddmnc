@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="300dp"
+              android:layout_height="400dp"
+              android:background="@drawable/white_coner_6"
+              android:orientation="vertical">
+
+    <WebView
+        android:id="@+id/web"
+        android:layout_width="300dp"
+        android:layout_height="360dp"/>
+
+
+    <TextView
+        android:id="@+id/tv_right"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="@drawable/blue2_coner"
+        android:gravity="center"
+        android:text="确认"
+        android:textColor="@color/theme_primary"
+        android:textSize="@dimen/s14"/>
+
+</LinearLayout>

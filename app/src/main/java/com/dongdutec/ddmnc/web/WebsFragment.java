@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -29,10 +30,14 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseFragment;
-import com.wang.avi.AVLoadingIndicatorView;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.io.File;
 
@@ -41,9 +46,12 @@ import static com.lzy.okgo.utils.HttpUtils.runOnUiThread;
 public class WebsFragment extends BaseFragment implements ReWebChomeClient.OpenFileChooserCallBack {
 
     private WebView activity_web;
-    private String webUrl;
-    private AVLoadingIndicatorView loading;
+    private ImageView bar_left_img;
+    private TextView bar_title_text;
+    private String webUrl = "";
+    private String title = "";
     private String TAG = WebsFragment.class.getSimpleName();
+    private boolean resumeFlag = true;
 
 
     private static final int REQUEST_CODE_PICK_IMAGE = 0;
@@ -51,6 +59,7 @@ public class WebsFragment extends BaseFragment implements ReWebChomeClient.OpenF
     private Intent mSourceIntent;
     private ValueCallback<Uri> mUploadMsg;
     private ValueCallback<Uri[]> mUploadMsg5Plus;
+    private SmartRefreshLayout main_refresh;
 
     @Nullable
     @Override
@@ -64,6 +73,7 @@ public class WebsFragment extends BaseFragment implements ReWebChomeClient.OpenF
 
         Bundle arguments = getArguments();
         webUrl = arguments.getString("webUrl");
+        title = arguments.getString("title");
         Log.e(TAG, "onCreate: webUrl = " + webUrl);
 
         initView();
@@ -91,7 +101,7 @@ public class WebsFragment extends BaseFragment implements ReWebChomeClient.OpenF
         //支持自动加载图片
         settings.setLoadsImagesAutomatically(true);
         //设置WebView缓存模式
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         //支持启用缓存模式
         settings.setAppCacheEnabled(true);
         //设置可以访问文件
@@ -119,12 +129,25 @@ public class WebsFragment extends BaseFragment implements ReWebChomeClient.OpenF
     }
 
     protected void bindView() {
+        main_refresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
 
+                activity_web.loadUrl(webUrl);
+                refreshLayout.finishRefresh();
+            }
+        });
     }
 
     protected void initView() {
         activity_web = getView().findViewById(R.id.webs);
-        loading = getView().findViewById(R.id.loading);
+        main_refresh = getView().findViewById(R.id.main_refresh);
+        bar_left_img = getView().findViewById(R.id.bar_left_img);
+        bar_title_text = getView().findViewById(R.id.bar_title_text);
+
+        main_refresh.setEnableLoadMore(false);
+        bar_left_img.setVisibility(View.GONE);
+        bar_title_text.setText(title);
 
     }
 
@@ -186,7 +209,7 @@ public class WebsFragment extends BaseFragment implements ReWebChomeClient.OpenF
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            showLoading();
+            showLoadings();
         }
 
         /**
@@ -198,7 +221,7 @@ public class WebsFragment extends BaseFragment implements ReWebChomeClient.OpenF
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            hindLoading();
+            hideLoadings();
 
         }
 
@@ -413,14 +436,6 @@ public class WebsFragment extends BaseFragment implements ReWebChomeClient.OpenF
         } else {
             return false;
         }
-    }
-
-    public void showLoading() {
-        loading.show();
-    }
-
-    public void hindLoading() {
-        loading.hide();
     }
 
 

@@ -24,6 +24,8 @@ import org.json.JSONObject;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.util.HashSet;
+
 public class LaunchActivity extends BaseActivity {
 
     public boolean isHasPermission = true;
@@ -38,7 +40,7 @@ public class LaunchActivity extends BaseActivity {
 
             switch (msg.what) {
                 case GO_NEXT://权限申请成功回调后
-                    //判断是否是首次进入 1.(初次进入)开启并监测下载服务Service并开始计时  2.(再次进入)开启后台下载服务Service
+                    //判断是否是首次进入
                     SharedPreferences sf = getSharedPreferences("data", MODE_PRIVATE);//判断是否是第一次进入
                     boolean isFirstIn = sf.getBoolean("isFirstIn", true);
                     if (isFirstIn) {//初次进入
@@ -46,7 +48,7 @@ public class LaunchActivity extends BaseActivity {
                         finish();
 
                     } else {//再次进入
-
+                        Log.e(TAG, "initHistory: historySet.toString() = " + getSharedPreferences("data", MODE_PRIVATE).getStringSet("historySet", new HashSet<String>()).toString());
                         RequestParams params = new RequestParams(RequestUrls.judgelogin());
                         params.setConnectTimeout(5000);
                         params.addBodyParameter("token", new DbConfig(LaunchActivity.this).getToken());
@@ -54,12 +56,11 @@ public class LaunchActivity extends BaseActivity {
                         x.http().post(params, new org.xutils.common.Callback.CommonCallback<String>() {
                             @Override
                             public void onSuccess(String result) {
-                                Log.e(TAG, "onSuccess: result = " + result);
+                                Log.e(TAG, "handleMessage onSuccess: result = " + result);
                                 try {
                                     JSONObject jsonObject = new JSONObject(result);
                                     int code = jsonObject.getInt("code");
                                     String message = jsonObject.getString("msg");
-                                    Toast.makeText(LaunchActivity.this, message, Toast.LENGTH_SHORT).show();
 
                                     if (code == 0) {
                                         //自动登录成功
@@ -67,6 +68,7 @@ public class LaunchActivity extends BaseActivity {
                                         finish();
 
                                     } else {
+                                        Toast.makeText(LaunchActivity.this, "登录信息失效，请重新登录!", Toast.LENGTH_SHORT).show();
                                         //登录信息失效 跳转登录页面
                                         startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
                                         finish();

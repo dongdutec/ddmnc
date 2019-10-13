@@ -4,14 +4,12 @@ import android.content.Context;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
 import com.dongdutec.ddmnc.R;
-import com.youth.banner.loader.ImageLoader;
+import com.dongdutec.ddmnc.cell.circleimageview.CircleImageView;
 
-public class GlideImageLoader extends ImageLoader {
+public class GlideImageLoader extends CircleImageViewImageLoader {
     @Override
-    public void displayImage(Context context, Object path, ImageView imageView) {
+    public void displayImage(Context context, Object path, CircleImageView imageView) {
         /**
          注意：
          1.图片加载器由自己选择，这里不限制，只是提供几种使用方法
@@ -21,10 +19,12 @@ public class GlideImageLoader extends ImageLoader {
          */
 
         //Glide 加载图片
-        RoundedCorners roundedCorners = new RoundedCorners(200);
-        RequestOptions options = RequestOptions.bitmapTransform(roundedCorners);
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        imageView.setRoundHeight(120);
+        imageView.setRoundWidth(120);
+        /*RoundedCorners roundedCorners = new RoundedCorners(120);
+        RequestOptions options = RequestOptions.bitmapTransform(roundedCorners);*/
         Glide.with(context).load(path)
-                .apply(options)
                 .placeholder(R.mipmap.guanggao)
                 .into(imageView);
 

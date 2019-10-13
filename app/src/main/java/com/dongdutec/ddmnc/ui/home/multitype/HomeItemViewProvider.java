@@ -1,6 +1,7 @@
 package com.dongdutec.ddmnc.ui.home.multitype;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -11,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,17 +21,22 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.dongdutec.ddmnc.R;
+import com.dongdutec.ddmnc.base.BaseActivity;
 import com.dongdutec.ddmnc.cell.MNCTransparentDialog;
 import com.dongdutec.ddmnc.db.DbConfig;
-import com.dongdutec.ddmnc.eventbus.MyStarToRefresh;
+import com.dongdutec.ddmnc.db.model.User;
+import com.dongdutec.ddmnc.http.HtmlUrls;
 import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.home.activity.GaoDeMapActivity;
 import com.dongdutec.ddmnc.ui.home.multitype.model.HotStore;
+import com.dongdutec.ddmnc.ui.login.activity.LoginActivity;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 import com.dongdutec.ddmnc.web.WebsActivity;
 
-import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
+import org.xutils.ex.DbException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -49,9 +54,15 @@ public class HomeItemViewProvider extends ItemViewProvider<HotStore, HomeItemVie
     private String starState;
     private MNCTransparentDialog mncTransDialog;
     private SharedPreferences sf;
+    private boolean isSearch = false;
 
     public HomeItemViewProvider(Context context) {
         this.context = context;
+    }
+
+    public HomeItemViewProvider(Context context, boolean isSearch) {
+        this.context = context;
+        this.isSearch = isSearch;
     }
 
     @NonNull
@@ -84,18 +95,27 @@ public class HomeItemViewProvider extends ItemViewProvider<HotStore, HomeItemVie
             @Override
             public void call(Void aVoid) {
                 Intent intent = new Intent(context, WebsActivity.class);
-                intent.putExtra("webUrl", "http://47.75.47.121:8080/mnc/storeDetail.html?shopId=" + hotStore.getStoreId() + "&token=" + new DbConfig(context).getToken());
-                Log.e("biner", "call: " + "http://47.75.47.121:8080/mnc/storeDetail.html?shopId=" + hotStore.getStoreId() + "&token=" + new DbConfig(context).getToken());
+                intent.putExtra("title", "商家详情");
+                intent.putExtra("webUrl", HtmlUrls.getStoreDetail() + "?shopId=" + hotStore.getStoreId() + "&token=" + new DbConfig(context).getToken());
 
                 sf = context.getSharedPreferences("data", MODE_PRIVATE);
-                //test存储
-                SharedPreferences.Editor editor = sf.edit();
-                Set<String> hashSet = sf.getStringSet("historySet", new HashSet<String>());
-                if (!hashSet.contains(hotStore.getStoreName())) {
-                    hashSet.add(hotStore.getStoreName());
+                if (isSearch) {
+                    //搜索历史存储
+                    SharedPreferences.Editor editor = sf.edit();
+                    try {
+                        Set<String> set = new HashSet<>(sf.getStringSet("historySet", new HashSet<String>()));
+                        if (!set.contains(hotStore.getStoreName())) {
+                            set.add(hotStore.getStoreName());
+                        }
+                        editor.putStringSet("historySet", set);
+                    } catch (NullPointerException e) {
+                        Set<String> set = new HashSet<>();
+                        set.add(hotStore.getStoreName());
+                        editor.putStringSet("historySet", set);
+                    }
+                    editor.apply();
+
                 }
-                editor.putStringSet("historySet", hashSet);
-                editor.apply();
 
                 context.startActivity(intent);
             }
@@ -122,9 +142,9 @@ public class HomeItemViewProvider extends ItemViewProvider<HotStore, HomeItemVie
             @Override
             public void call(Void aVoid) {
                 Intent intent = new Intent(context, GaoDeMapActivity.class);
-                intent.putExtra("lattitude", hotStore.getLantitude());
+                intent.putExtra("latitude", hotStore.getLantitude());
                 intent.putExtra("longitude", hotStore.getLongitude());
-                intent.putExtra("storeName",hotStore.getStoreName());
+                intent.putExtra("storeName", hotStore.getStoreName());
                 context.startActivity(intent);
             }
         });
@@ -166,7 +186,6 @@ public class HomeItemViewProvider extends ItemViewProvider<HotStore, HomeItemVie
     private void showStarDialog(final HotStore hotStore, final ViewHolder holder) {
         mncTransDialog = new MNCTransparentDialog(context);
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_querenjizhang, null, false);
-        final EditText et_mp = (EditText) dialogView.findViewById(R.id.et_mp);
         TextView message_text = (TextView) dialogView.findViewById(R.id.message_text);
         TextView tv_quxiao = (TextView) dialogView.findViewById(R.id.tv_left);
         final TextView tv_queren = (TextView) dialogView.findViewById(R.id.tv_right);
@@ -188,39 +207,37 @@ public class HomeItemViewProvider extends ItemViewProvider<HotStore, HomeItemVie
         RxViewAction.clickNoDouble(tv_queren).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                tv_queren.setClickable(false);
-                RequestParams params = new RequestParams(RequestUrls.changeStarState());
+
+                RequestParams params = new RequestParams(RequestUrls.getJudgeToken());
                 params.setConnectTimeout(5000);
-                params.addBodyParameter("id", hotStore.getStoreId() + "");
                 params.addBodyParameter("token", new DbConfig(context).getToken());
-                params.addBodyParameter("state", "1".equals(starState) ? "2" : "1");
-                Log.e("HomeItemViewProvider", "call: params.toString() = " + params.toString());
+                Log.e("judgeToken", "judgeToken:  params.toString() = " + params.toString());
                 x.http().post(params, new Callback.CommonCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e("HomeItemViewProvider", "onSuccess: result = " + result);
+                        Log.e("judgeToken", "onSuccess: " + result);
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            int state = jsonObject.getInt("state");
+                            if (state == 0) {
 
-                        if ("取消成功".equals(result) || "收藏成功".equals(result)) {
-                            Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
-                            mncTransDialog.dismiss();
+                                posting(hotStore, holder);
 
-                            //通知Fragment刷新
-                            EventBus.getDefault().post(new MyStarToRefresh());
-                            if ("1".equals(starState)) {
-                                starState = "2";
-                                holder.img_star.setImageResource(R.mipmap.star_);
                             } else {
-                                starState = "1";
-                                holder.img_star.setImageResource(R.mipmap.star_);
+                                //退出登录
+                                showTokenDownDialog();
                             }
-                        }
 
+
+                        } catch (JSONException e) {
+                            Toast.makeText(context, "系统异常!", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
                     }
 
                     @Override
                     public void onError(Throwable ex, boolean isOnCallback) {
                         Toast.makeText(context, "网络异常!", Toast.LENGTH_SHORT).show();
-                        tv_queren.setClickable(true);
                     }
 
                     @Override
@@ -242,5 +259,100 @@ public class HomeItemViewProvider extends ItemViewProvider<HotStore, HomeItemVie
         window.setGravity(Gravity.CENTER);//设置对话框显示在屏幕中间
         window.setWindowAnimations(R.style.dialog_style);//添加动画
         window.setContentView(dialogView);
+    }
+
+    private void showTokenDownDialog() {
+        final MNCTransparentDialog mncTransDialog = new MNCTransparentDialog(context);
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_tokendown, null, false);
+        TextView message_text = (TextView) dialogView.findViewById(R.id.message_text);
+        message_text.setText(R.string.tokendown);
+        final TextView tv_queren = (TextView) dialogView.findViewById(R.id.tv_right);
+        //确认
+        RxViewAction.clickNoDouble(tv_queren).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                mncTransDialog.dismiss();
+            }
+        });
+        //退出登录
+        mncTransDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                DbConfig dbConfig = new DbConfig(context);
+                User user = dbConfig.getUser();
+                if (user != null) {
+                    try {
+                        user.setIsLogin("0");
+                        dbConfig.getDbManager().saveOrUpdate(user);
+                        context.startActivity(new Intent(context, LoginActivity.class));
+                    } catch (DbException e) {
+                        e.printStackTrace();
+                        context.startActivity(new Intent(context, LoginActivity.class));
+                    }
+                }
+            }
+        });
+        mncTransDialog.show();
+        Window window = mncTransDialog.getWindow();//对话框窗口
+        window.setGravity(Gravity.CENTER);//设置对话框显示在屏幕中间
+        window.setWindowAnimations(R.style.dialog_style);//添加动画
+        window.setContentView(dialogView);
+
+    }
+
+    private void posting(HotStore hotStore, final ViewHolder holder) {
+        RequestParams params = new RequestParams(RequestUrls.changeStarState());
+        params.setConnectTimeout(5000);
+        ((BaseActivity) context).showLoadings();
+        params.addBodyParameter("id", hotStore.getId() + "");
+        params.addBodyParameter("token", new DbConfig(context).getToken());
+        params.addBodyParameter("state", "1".equals(starState) ? "2" : "1");
+        Log.e("HomeItemViewProvider", "call: params.toString() = " + params.toString());
+        x.http().post(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.e("HomeItemViewProvider", "onSuccess: result = " + result);
+
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    String state = jsonObject.getString("state");
+                    if ("0".equals(state)) {
+                        Toast.makeText(context, "1".equals(starState) ? "取消收藏成功!" : "收藏成功!", Toast.LENGTH_SHORT).show();
+                        mncTransDialog.dismiss();
+
+                        //通知Fragment刷新
+                        //EventBus.getDefault().post(new MyStarToRefresh());
+                        if ("1".equals(starState)) {
+                            starState = "2";
+                            holder.img_star.setImageResource(R.mipmap.star_);
+                        } else {
+                            starState = "1";
+                            holder.img_star.setImageResource(R.mipmap.star_check);
+                        }
+                    } else {
+                        Toast.makeText(context, "系统异常!", Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(context, "网络异常!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                ((BaseActivity) context).hideLoadings();
+            }
+        });
     }
 }

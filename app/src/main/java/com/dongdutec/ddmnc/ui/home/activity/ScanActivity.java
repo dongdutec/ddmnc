@@ -5,23 +5,52 @@ import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
+import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 import com.journeyapps.barcodescanner.CaptureManager;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
+import rx.functions.Action1;
+
 public class ScanActivity extends BaseActivity {
+    private ImageView bar_left_img;
+    private TextView bar_title_text;
+    private TextView bar_right_text;
     private CaptureManager capture;
     private ImageButton buttonLed;
     private DecoratedBarcodeView barcodeScannerView;
     private boolean bTorch = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         barcodeScannerView = initializeContent();
         buttonLed = findViewById(R.id.button_led);
+        bar_left_img = findViewById(R.id.bar_left_img);
+        bar_title_text = findViewById(R.id.bar_title_text);
+        bar_right_text = findViewById(R.id.bar_right_text);
+        //返回
+        RxViewAction.clickNoDouble(bar_left_img).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                finish();
+            }
+        });
+        bar_title_text.setText("扫一扫");
+        /*bar_right_text.setText("相册");
+        //相册
+        RxViewAction.clickNoDouble(bar_right_text).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Toast.makeText(ScanActivity.this, "相册", Toast.LENGTH_SHORT).show();
+            }
+        });*/
+
         /*根据闪光灯状态设置imagebutton*/
         barcodeScannerView.setTorchListener(new DecoratedBarcodeView.TorchListener() {
             @Override
@@ -41,7 +70,7 @@ public class ScanActivity extends BaseActivity {
         buttonLed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(bTorch){
+                if (bTorch) {
                     barcodeScannerView.setTorchOff();
                 } else {
                     barcodeScannerView.setTorchOn();
@@ -58,8 +87,6 @@ public class ScanActivity extends BaseActivity {
     }
 
 
-
-
     /**
      * Override to use a different layout.
      *
@@ -67,7 +94,7 @@ public class ScanActivity extends BaseActivity {
      */
     protected DecoratedBarcodeView initializeContent() {
         setContentView(R.layout.activity_scan);
-        return (DecoratedBarcodeView)findViewById(R.id.dbv);
+        return (DecoratedBarcodeView) findViewById(R.id.dbv);
     }
 
     @Override

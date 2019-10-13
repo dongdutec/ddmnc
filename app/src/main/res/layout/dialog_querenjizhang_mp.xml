@@ -14,7 +14,7 @@
             android:layout_height="@dimen/d40"
             android:background="@drawable/c_coner"
             android:gravity="center"
-            android:text="确认记账返还MP"
+            android:text="确认记账返还Mtoken"
             android:textColor="@color/c16"
             android:textSize="@dimen/s16"/>
 
@@ -31,7 +31,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:layout_marginLeft="@dimen/d20"
-                android:text="MP："
+                android:text="Mtoken："
                 android:textColor="@color/c6"
                 android:textSize="@dimen/s14"/>
 

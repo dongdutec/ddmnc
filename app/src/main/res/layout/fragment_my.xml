@@ -40,15 +40,15 @@
 
                 <ImageView
                     android:id="@+id/img_message"
-                    android:layout_alignParentRight="true"
                     android:layout_width="@dimen/d50"
-                    android:layout_height="@dimen/d50"/>
+                    android:layout_height="@dimen/d50"
+                    android:layout_alignParentRight="true"/>
 
 
                 <ImageView
                     android:id="@+id/userimg"
-                    android:layout_width="@dimen/d50"
-                    android:layout_height="@dimen/d50"
+                    android:layout_width="@dimen/d60"
+                    android:layout_height="@dimen/d60"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="@dimen/d20"
                     android:src="@mipmap/touxiang"/>
@@ -76,40 +76,45 @@
                     android:layout_toRightOf="@+id/username"
                     android:src="@mipmap/xiugai"/>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/d40"
-                    android:layout_alignParentBottom="true">
-
-                    <View
-                        android:id="@+id/mid"
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:layout_centerHorizontal="true"
-                        android:background="@color/transparent"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/username"
+                    android:layout_marginTop="@dimen/d15"
+                    android:layout_centerHorizontal="true">
 
                     <TextView
                         android:id="@+id/user"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_toLeftOf="@+id/mid"
-                        android:background="@color/main_sousuo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/d5"
+                        android:background="@drawable/stroke_white"
                         android:gravity="center"
-                        android:text="普通用户"
+                        android:maxLines="1"
+                        android:paddingLeft="@dimen/d5"
+                        android:paddingTop="@dimen/d1"
+                        android:paddingRight="@dimen/d5"
+                        android:paddingBottom="@dimen/d1"
+                        android:text="@string/user"
                         android:textColor="@color/theme_primary"
-                        android:textSize="@dimen/s14"/>
+                        android:textSize="@dimen/s12"/>
 
                     <TextView
                         android:id="@+id/store"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_toRightOf="@+id/mid"
-                        android:background="@color/main_sousuo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/d5"
+                        android:background="@drawable/stroke_white"
                         android:gravity="center"
-                        android:text="认证商家"
+                        android:maxLines="1"
+                        android:paddingLeft="@dimen/d5"
+                        android:paddingTop="@dimen/d1"
+                        android:paddingRight="@dimen/d5"
+                        android:paddingBottom="@dimen/d1"
+                        android:text="@string/store"
                         android:textColor="@color/theme_primary"
-                        android:textSize="@dimen/s14"/>
-                </RelativeLayout>
+                        android:textSize="@dimen/s12"/>
+                </LinearLayout>
             </RelativeLayout>
             <!--货币-->
             <RelativeLayout
@@ -134,7 +139,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="MP"
+                        android:text="Mtoken"
                         android:textColor="@color/c7"
                         android:textSize="@dimen/s12"/>
 
@@ -238,6 +243,7 @@
                     android:src="@mipmap/sjrz"/>
 
                 <TextView
+                    android:id="@+id/store_mid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -388,10 +394,10 @@
                 android:id="@+id/ll_wssj_all"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:layout_marginBottom="@dimen/d10"
                 android:background="@color/theme_primary"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <RelativeLayout
                     android:id="@+id/rl_wssj"

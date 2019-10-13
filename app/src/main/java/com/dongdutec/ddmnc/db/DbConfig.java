@@ -23,7 +23,7 @@ public class DbConfig {
                 .setAllowTransaction(true)
                 .setDbDir(context.getFilesDir())
                 //  .setDbDir(Environment.getExternalStorageDirectory())
-                .setDbVersion(5);
+                .setDbVersion(8);
 
         return daoConfig;
     }
@@ -115,6 +115,27 @@ public class DbConfig {
         return null;
     }
 
+    public String getCitys() {
+        DbManager.DaoConfig daoConfig = getDaoConfig();
+        DbManager db = x.getDb(daoConfig);
+        try {
+            List<User> users = db.selector(User.class)
+                    .findAll();
+            if (users != null) {
+                for (int i = 0; i < users.size(); i++) {
+                    User user = users.get(i);
+                    if ("1".equals(user.getIsLogin())) {
+                        String citys = user.getCity();
+                        return citys;
+                    }
+                }
+            }
+
+        } catch (DbException e) {
+        }
+        return "北京";
+    }
+
     public int getId() {
         DbManager.DaoConfig daoConfig = getDaoConfig();
         DbManager db = x.getDb(daoConfig);
@@ -156,6 +177,7 @@ public class DbConfig {
         }
         return 0;
     }
+
     public double getLongitude() {
         DbManager.DaoConfig daoConfig = getDaoConfig();
         DbManager db = x.getDb(daoConfig);

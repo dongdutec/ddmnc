@@ -12,6 +12,7 @@ import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
 import com.dongdutec.ddmnc.db.DbConfig;
 import com.dongdutec.ddmnc.db.model.User;
+import com.dongdutec.ddmnc.http.HtmlUrls;
 import com.dongdutec.ddmnc.ui.login.activity.LoginActivity;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 import com.dongdutec.ddmnc.web.WebsActivity;
@@ -79,7 +80,8 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void call(Void aVoid) {
                 Intent intent = new Intent(SettingActivity.this, WebsActivity.class);
-                intent.putExtra("webUrl", "http://47.75.47.121:8080/mnc/platform.html");
+                intent.putExtra("webUrl", HtmlUrls.getPlatforms());
+                intent.putExtra("title", "平台简介");
                 startActivity(intent);
             }
         });
@@ -95,7 +97,8 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void call(Void aVoid) {
                 Intent intent = new Intent(SettingActivity.this, WebsActivity.class);
-                intent.putExtra("webUrl", "http://47.75.47.121:8080/mnc/changePhone.html?oldPhone=" + new DbConfig(SettingActivity.this).getPhone());
+                intent.putExtra("title", "修改手机号");
+                intent.putExtra("webUrl", HtmlUrls.getChangePhone()+"?oldPhone=" + new DbConfig(SettingActivity.this).getPhone());
                 startActivity(intent);
             }
         });

@@ -66,6 +66,7 @@ public class SearchActivity extends BaseActivity {
     private EditText et_search;
     private LinearLayout ll_lishi;
     private TextView tv_midsearch;
+    private ImageView iv_midsearch;
     private ImageView img_delete;
     private TextView tv_quxiao;
     private FlowLayout flow_search;
@@ -76,7 +77,7 @@ public class SearchActivity extends BaseActivity {
     private int current_page = 1;
     private boolean isFirstLoad = true;
 
-    private Set<String> historySet = new HashSet<String>();
+    private Set<String> historySet;
     private SharedPreferences sf;
     private String TAG = SearchActivity.class.getSimpleName();
 
@@ -103,16 +104,6 @@ public class SearchActivity extends BaseActivity {
 
 
         sf = getSharedPreferences("data", MODE_PRIVATE);
-
-
-       /* //test存储
-        SharedPreferences.Editor editor = sf.edit();
-        Set<String> hashSet = new HashSet<String>();
-        hashSet.add("东度科技");
-        hashSet.add("蓝海缘");
-        hashSet.add("威海高区");
-        editor.putStringSet("historySet", hashSet);
-        editor.apply();*/
 
 
         initView();
@@ -156,10 +147,12 @@ public class SearchActivity extends BaseActivity {
                     main_refresh.setVisibility(View.GONE);
                     ll_lishi.setVisibility(View.VISIBLE);
                     tv_midsearch.setVisibility(View.VISIBLE);
+                    iv_midsearch.setVisibility(View.VISIBLE);
                 } else {
                     main_refresh.setVisibility(View.VISIBLE);
                     ll_lishi.setVisibility(View.GONE);
                     tv_midsearch.setVisibility(View.GONE);
+                    iv_midsearch.setVisibility(View.GONE);
 
 
                     if ((et_search.getText() != null) && (et_search.getText().length() != 0)) {
@@ -215,9 +208,15 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void initSearch() {
+        judgeToken();
+    }
+
+    @Override
+    protected void onJudgeResult() {
         //获取搜索数据
         RequestParams params = new RequestParams(RequestUrls.homeSearch());
         params.setConnectTimeout(5000);
+        showLoadings();
         params.addBodyParameter("classifyId", "");
         params.addBodyParameter("city", "");
         params.addBodyParameter("isNew", "");
@@ -242,13 +241,14 @@ public class SearchActivity extends BaseActivity {
                         hotStore.setStoreName(jsonObject.getString("advertName"));
                         hotStore.setLocationStr(jsonObject.getString("advertAddress"));
                         hotStore.setCount(Integer.parseInt(jsonObject.getString("count")));
+                        hotStore.setStoreId(jsonObject.getString("id"));
                         String advertLatitude = jsonObject.getString("advertLatitude");
                         String advertLongitude = jsonObject.getString("advertLongitude");
                         double longitude_store = Double.parseDouble(advertLongitude);
                         double latitude_store = Double.parseDouble(advertLatitude);
                         hotStore.setLantitude(latitude_store);
                         hotStore.setLongitude(longitude_store);
-                        double distance = LocationUtils.getDistance(new DbConfig(SearchActivity.this).getLongitude(), new DbConfig(SearchActivity.this).getLongitude(), longitude_store, latitude_store);
+                        double distance = LocationUtils.getDistance(new DbConfig(SearchActivity.this).getLongitude(), new DbConfig(SearchActivity.this).getLatitude(), longitude_store, latitude_store);
                         hotStore.setDistance(distance);
 
                         mHotStoreList.add(hotStore);
@@ -275,14 +275,16 @@ public class SearchActivity extends BaseActivity {
 
             @Override
             public void onFinished() {
-
+                hideLoadings();
             }
         });
     }
 
     private void initHistory() {
         //历史记录
+        historySet = new HashSet<String>();
         historySet = sf.getStringSet("historySet", new HashSet<String>());
+        Log.e(TAG, "initHistory: historySet.toString() = " + historySet.toString());
         flow_search.removeAllViews();
         if (historySet.size() > 0) {
             for (final String history : historySet) {
@@ -318,6 +320,7 @@ public class SearchActivity extends BaseActivity {
         items.clear();
         if (mHotStoreList == null || mHotStoreList.size() == 0) {
             items.add(new NullList());
+            main_refresh.setEnableLoadMore(false);
         } else {
             for (int i = 0; i < mHotStoreList.size(); i++) {
                 items.add(mHotStoreList.get(i));
@@ -325,6 +328,7 @@ public class SearchActivity extends BaseActivity {
         }
         assertAllRegistered(multiTypeAdapter, items);
         multiTypeAdapter.notifyDataSetChanged();
+        hideLoadings();
     }
 
     @Override
@@ -338,6 +342,7 @@ public class SearchActivity extends BaseActivity {
         et_search = findViewById(R.id.et_search);
         ll_lishi = findViewById(R.id.ll_lishi);
         tv_midsearch = findViewById(R.id.tv_midsearch);
+        iv_midsearch = findViewById(R.id.iv_midsearch);
         img_delete = findViewById(R.id.img_delete);
         tv_quxiao = findViewById(R.id.tv_quxiao);
         flow_search = findViewById(R.id.flow_search);
@@ -346,12 +351,12 @@ public class SearchActivity extends BaseActivity {
         LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         main_rlv.setLayoutManager(manager);
         multiTypeAdapter = new MultiTypeAdapter(items);
-        multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(SearchActivity.this));
-        multiTypeAdapter.register(NullList.class, new NullListItemViewProvider(getApplicationContext()));
+        multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(SearchActivity.this, true));
+        multiTypeAdapter.register(NullList.class, new NullListItemViewProvider(SearchActivity.this));
         main_rlv.setAdapter(multiTypeAdapter);
         assertHasTheSameAdapter(main_rlv, multiTypeAdapter);
 
-        main_refresh.setVisibility(View.GONE);//test TODO
+        main_refresh.setVisibility(View.GONE);
 
     }
 }

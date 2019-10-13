@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -22,12 +23,13 @@ import com.dongdutec.ddmnc.base.BaseFragment;
 import com.dongdutec.ddmnc.cell.CustomScrollView;
 import com.dongdutec.ddmnc.db.DbConfig;
 import com.dongdutec.ddmnc.eventbus.UserInfoEvent;
+import com.dongdutec.ddmnc.http.HtmlUrls;
 import com.dongdutec.ddmnc.http.RequestUrls;
-import com.dongdutec.ddmnc.ui.my.activity.DailiActivity;
 import com.dongdutec.ddmnc.ui.my.activity.HistoryActivity;
 import com.dongdutec.ddmnc.ui.my.activity.MyStarActivity;
 import com.dongdutec.ddmnc.ui.my.activity.MyXiaofeiActivity;
 import com.dongdutec.ddmnc.ui.my.activity.SettingActivity;
+import com.dongdutec.ddmnc.ui.my.activity.StoreManageActivity;
 import com.dongdutec.ddmnc.ui.my.activity.UserInfoActivity;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 import com.dongdutec.ddmnc.web.WebsActivity;
@@ -68,6 +70,7 @@ public class MyFragment extends BaseFragment {
     private LinearLayout ll_store_all;
     private LinearLayout ll_wssj_all;
     private TextView store;
+    private TextView store_mid;
     private LinearLayout ll_qianbao;
     private RelativeLayout rl_sjrz;
     private RefreshLayout myfg_refresh;
@@ -78,7 +81,7 @@ public class MyFragment extends BaseFragment {
     private double mncCoin;
     private double mp;
     private int vermicelli;
-    private boolean isStorFlag = false;
+    private String isAdv = "3"; //0 已过审  1 审核中  2 已下架  3 普通用户
     private String shopId = "";
 
     @Nullable
@@ -120,6 +123,7 @@ public class MyFragment extends BaseFragment {
         ll_store_all = getView().findViewById(R.id.ll_store_all);
         ll_wssj_all = getView().findViewById(R.id.ll_wssj_all);
         store = getView().findViewById(R.id.store);
+        store_mid = getView().findViewById(R.id.store_mid);
         ll_qianbao = getView().findViewById(R.id.ll_qianbao);
         rl_sjrz = getView().findViewById(R.id.rl_sjrz);
         myfg_refresh = getView().findViewById(R.id.myfg_refresh);
@@ -131,10 +135,16 @@ public class MyFragment extends BaseFragment {
 
     @Override
     protected void init() {
+        judgeToken();
+    }
+
+    @Override
+    protected void onJudgeResult() {
         RequestParams params = new RequestParams(RequestUrls.getMyData());
         params.setConnectTimeout(5000);
         params.addBodyParameter("token", new DbConfig(getContext()).getToken());
         Log.e(TAG, "init:  params.toString() = " + params.toString());
+        showLoadings();
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -145,12 +155,11 @@ public class MyFragment extends BaseFragment {
                     userName = jsonObject.getString("userName");
                     mncCoin = jsonObject.getDouble("mncCoin");
                     mp = jsonObject.getDouble("mp");
+                    isAdv = jsonObject.getString("isAdv");
                     vermicelli = jsonObject.getInt("vermicelli");
                     try {
                         shopId = jsonObject.getString("shopId");
-                        isStorFlag = true;
                     } catch (Exception e) {
-                        isStorFlag = false;
                     }
 
                     //设置我的信息
@@ -164,14 +173,19 @@ public class MyFragment extends BaseFragment {
                     tv_mnc.setText(mncCoin + "");
                     tv_mp.setText(mp + "");
                     tv_fans.setText(vermicelli + "");
-                    if (isStorFlag) {
+                    if ("0".equals(isAdv)) {//已过审
                         ll_wssj_all.setVisibility(View.VISIBLE);
+                        store.setText("商家后台");
+                        store_mid.setText("商家后台");
                     } else {
                         ll_wssj_all.setVisibility(View.GONE);
+                        store.setText("认证商家");
+                        store_mid.setText("商家入驻");
                     }
 
 
                 } catch (JSONException e) {
+                    Toast.makeText(getActivity(), "系统异常!", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
 
@@ -179,17 +193,16 @@ public class MyFragment extends BaseFragment {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-
+                Toast.makeText(getActivity(), "系统异常!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onCancelled(CancelledException cex) {
-
             }
 
             @Override
             public void onFinished() {
-
+                hideLoadingsDelayed(500);
             }
         });
     }
@@ -201,7 +214,8 @@ public class MyFragment extends BaseFragment {
             @Override
             public void call(Void aVoid) {
                 Intent intent = new Intent(getContext(), WebsActivity.class);
-                intent.putExtra("webUrl", "http://47.75.47.121:8080/mnc/exclusive.html?token=" + new DbConfig(getContext()).getToken());
+                intent.putExtra("title", "我的专属码");
+                intent.putExtra("webUrl", HtmlUrls.getExclusives() + "?token=" + new DbConfig(getContext()).getToken() + "&phone=" + new DbConfig(getContext()).getPhone());
                 startActivity(intent);
             }
         });
@@ -209,17 +223,37 @@ public class MyFragment extends BaseFragment {
         RxViewAction.clickNoDouble(rl_sjrz).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                Intent intent = new Intent(getContext(), WebsActivity.class);
-                intent.putExtra("webUrl", "http://47.75.47.121:8080/mnc/settled.html?token=" + new DbConfig(getContext()).getToken());
-                startActivity(intent);
+                if ("0".equals(isAdv)) {//已过审
+                    startActivity(new Intent(getContext(), StoreManageActivity.class));
+                } else if ("1".equals(isAdv)) {//审核中
+                    showMessageDialog("店铺审核中...");
+                } else if ("2".equals(isAdv)) {//已下架
+                    showMessageDialog("您的店铺已下架,不可重新认证!");
+                } else {//普通用户
+                    Intent intent = new Intent(getContext(), WebsActivity.class);
+                    intent.putExtra("title", "商家入驻");
+                    intent.putExtra("webUrl", HtmlUrls.getSettled() + "?token=" + new DbConfig(getContext()).getToken());
+                    startActivity(intent);
+                }
+
             }
         });
         RxViewAction.clickNoDouble(store).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                Intent intent = new Intent(getContext(), WebsActivity.class);
-                intent.putExtra("webUrl", "http://47.75.47.121:8080/mnc/settled.html?token=" + new DbConfig(getContext()).getToken());
-                startActivity(intent);
+                if ("0".equals(isAdv)) {//已过审
+                    startActivity(new Intent(getContext(), StoreManageActivity.class));
+                } else if ("1".equals(isAdv)) {//审核中
+                    showMessageDialog("店铺审核中...");
+                } else if ("2".equals(isAdv)) {//已下架
+                    showMessageDialog("您的店铺已下架,不可重新认证!");
+                } else {//普通用户
+                    Intent intent = new Intent(getContext(), WebsActivity.class);
+                    intent.putExtra("title", "商家入驻");
+                    intent.putExtra("webUrl", HtmlUrls.getSettled() + "?token=" + new DbConfig(getContext()).getToken());
+                    startActivity(intent);
+                }
+
             }
         });
         //我的钱包
@@ -227,7 +261,8 @@ public class MyFragment extends BaseFragment {
             @Override
             public void call(Void aVoid) {
                 Intent intent = new Intent(getContext(), WebsActivity.class);
-                intent.putExtra("webUrl", "http://47.75.47.121:8080/mnc/purse.html");
+                intent.putExtra("title", "我的钱包");
+                intent.putExtra("webUrl", HtmlUrls.getPurse() + "?token=" + new DbConfig(getContext()).getToken());
                 startActivity(intent);
             }
         });
@@ -236,7 +271,8 @@ public class MyFragment extends BaseFragment {
             @Override
             public void call(Void aVoid) {
                 Intent intent = new Intent(getContext(), WebsActivity.class);
-                intent.putExtra("webUrl", "http://47.75.47.121:8080/mnc/message.html?token=" + new DbConfig(getContext()).getToken());
+                intent.putExtra("title", "消息");
+                intent.putExtra("webUrl", HtmlUrls.getMessages() + "?token=" + new DbConfig(getContext()).getToken());
                 startActivity(intent);
             }
         });
@@ -245,7 +281,8 @@ public class MyFragment extends BaseFragment {
             @Override
             public void call(Void aVoid) {
                 Intent intent = new Intent(getContext(), WebsActivity.class);
-                intent.putExtra("webUrl", "http://47.75.47.121:8080/mnc/businessCode.html?token=" + new DbConfig(getContext()).getToken() + "&shopId=" + shopId + "&shopName=" + userName);
+                intent.putExtra("title", "商家码");
+                intent.putExtra("webUrl", HtmlUrls.getBusinessCode() + "?token=" + new DbConfig(getContext()).getToken() + "&shopId=" + shopId);
                 startActivity(intent);
             }
         });
@@ -301,8 +338,9 @@ public class MyFragment extends BaseFragment {
         RxViewAction.clickNoDouble(ll_dailishuju).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                Intent intent = new Intent(getContext(), DailiActivity.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(getContext(), DailiActivity.class);
+                startActivity(intent);*/
+                Toast.makeText(getContext(), "敬请期待.", Toast.LENGTH_SHORT).show();
             }
         });
         //我的收藏

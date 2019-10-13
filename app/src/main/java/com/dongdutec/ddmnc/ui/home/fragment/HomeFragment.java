@@ -51,7 +51,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
-import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -94,7 +93,6 @@ public class HomeFragment extends BaseFragment {
 
     private double mLatitude = 36.263682;
     private double mLongitude = 120.307086;
-    private AVLoadingIndicatorView loading;
 
     //声明定位回调监听器
     public AMapLocationListener mLocationListener = new AMapLocationListener() {
@@ -105,8 +103,21 @@ public class HomeFragment extends BaseFragment {
 
                     mLatitude = amapLocation.getLatitude();
                     mLongitude = amapLocation.getLongitude();
+
+                    //存储User 定位城市数据
+                    DbConfig dbConfig = new DbConfig(getContext());
+                    User user = dbConfig.getUser();
+                    try {
+                        user.setCity(amapLocation.getCity().replace("市", ""));
+                        dbConfig.getDbManager().saveOrUpdate(user);
+                        tv_city.setText(amapLocation.getCity().replace("市", ""));
+
+                    } catch (DbException e) {
+                        e.printStackTrace();
+                    }
+
+
                     saveUserLocationToDb(mLatitude, mLongitude);
-                    Log.e(TAG, "boomer onLocationChanged: mLatitude = " + mLatitude + " mLongitude = " + mLongitude);
                     //获取热门推荐数据
                     getHotData();
 
@@ -193,10 +204,10 @@ public class HomeFragment extends BaseFragment {
         RxViewAction.clickNoDouble(img_saoyisao).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                /*以下是启动我们自定义的扫描活动*/
+                /*以下是启动我们自定义的扫描*/
                 IntentIntegrator intentIntegrator = new IntentIntegrator(getActivity());
                 intentIntegrator.setBeepEnabled(true);
-                /*设置启动我们自定义的扫描活动，若不设置，将启动默认活动*/
+                /*设置启动我们自定义的扫描，若不设置，将启动默认*/
                 intentIntegrator.setCaptureActivity(ScanActivity.class);
                 intentIntegrator.initiateScan();
             }
@@ -216,6 +227,7 @@ public class HomeFragment extends BaseFragment {
         //获取8个按钮数据
         RequestParams requestParams = new RequestParams(RequestUrls.getHomeBtns());
         requestParams.setConnectTimeout(5000);
+        showLoadings();
         Log.e(TAG, "init: requestParams.toString() = " + requestParams.toString());
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
@@ -229,10 +241,8 @@ public class HomeFragment extends BaseFragment {
                         btnsBean.setClassifyImg(jsonObject.getString("classifyImg"));
                         btnsBean.setClassifyName(jsonObject.getString("classifyName"));
                         btnsBean.setId(jsonObject.getString("id"));
-                        Log.e(TAG, "onSuccess: mBtnsBeanList" + i);
                         mBtnsBeanList.add(btnsBean);
                     }
-                    Log.e(TAG, "onSuccess: mBtnsBeanList.size() = " + mBtnsBeanList.size());
                     updataData();
 
                 } catch (JSONException e) {
@@ -253,7 +263,7 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onFinished() {
-
+                hideLoadingsDelayed(500);
             }
         });
 
@@ -262,7 +272,6 @@ public class HomeFragment extends BaseFragment {
         params.setConnectTimeout(5000);
         Log.e(TAG, "init: params.toString() = " + params.toString());
 
-        showLoading();
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -282,6 +291,7 @@ public class HomeFragment extends BaseFragment {
                     updataData();
 
                 } catch (JSONException e) {
+                    Toast.makeText(getActivity(), "系统异常!", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }
@@ -314,7 +324,6 @@ public class HomeFragment extends BaseFragment {
     private void getHotData() {
         RequestParams requestParams = new RequestParams(RequestUrls.homeHotList());
         requestParams.setConnectTimeout(5000);
-        showLoading();
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -322,14 +331,15 @@ public class HomeFragment extends BaseFragment {
                 try {
                     JSONArray jsonArray = new JSONArray(result);
                     mHotStoreList.clear();
+                    Log.e(TAG, "boomer onSuccess:  jsonArray.length() = " + jsonArray.length());
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        Log.e(TAG, "boomer onSuccess: " + jsonArray.toString());
                         JSONObject jsonObject = (JSONObject) jsonArray.get(i);
                         HotStore hotStore = new HotStore();
                         hotStore.setImageUrl(jsonObject.getString("advertImage"));
                         hotStore.setStoreName(jsonObject.getString("advertName"));
                         hotStore.setLocationStr(jsonObject.getString("advertAddress"));
                         hotStore.setCount(Integer.parseInt(jsonObject.getString("count")));
+                        hotStore.setStoreId(jsonObject.getString("id"));
                         String advertLatitude = jsonObject.getString("advertLatitude");
                         String advertLongitude = jsonObject.getString("advertLongitude");
                         double longitude_store = Double.parseDouble(advertLongitude);
@@ -340,12 +350,14 @@ public class HomeFragment extends BaseFragment {
                         hotStore.setDistance(distance);
 
                         mHotStoreList.add(hotStore);
+
                     }
                     updataData();
 
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Log.e(TAG, "boomer2 onSuccess:  e.toString() = " + e.toString());
                 }
             }
 
@@ -377,6 +389,7 @@ public class HomeFragment extends BaseFragment {
         items.add(new MidRemen());
         if (mHotStoreList == null || mHotStoreList.size() == 0) {
             items.add(new NullList());
+            main_refresh.setEnableLoadMore(false);
         } else {
             for (int i = 0; i < mHotStoreList.size(); i++) {
                 items.add(mHotStoreList.get(i));
@@ -384,7 +397,6 @@ public class HomeFragment extends BaseFragment {
         }
         assertAllRegistered(multiTypeAdapter, items);
         multiTypeAdapter.notifyDataSetChanged();
-        hindLoading();
     }
 
     @Override
@@ -394,7 +406,6 @@ public class HomeFragment extends BaseFragment {
         ll_souyisou = getView().findViewById(R.id.ll_souyisou);
         img_saoyisao = getView().findViewById(R.id.img_saoyisao);
         tv_city = getView().findViewById(R.id.tv_city);
-        loading = getView().findViewById(R.id.loading);
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         main_rlv.setLayoutManager(manager);
@@ -417,8 +428,18 @@ public class HomeFragment extends BaseFragment {
         if (requestCode == REQUEST_CODE_PICK_CITY && resultCode == RESULT_OK) {
             if (data != null) {
                 String city = data.getStringExtra(CityPickerActivity.KEY_PICKED_CITY);
-//                tv_city.setText(city);
-                tv_city.setText("北京");//TODO
+                tv_city.setText(city);
+
+                //存储User 定位城市数据
+                DbConfig dbConfig = new DbConfig(getContext());
+                User user = dbConfig.getUser();
+                try {
+                    user.setCity(city);
+                    dbConfig.getDbManager().saveOrUpdate(user);
+
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
             }
         } else {
 
@@ -448,13 +469,5 @@ public class HomeFragment extends BaseFragment {
         mLocationClient.setLocationOption(mLocationOption);
         //启动定位
         mLocationClient.startLocation();
-    }
-
-    public void showLoading() {
-        loading.show();
-    }
-
-    public void hindLoading() {
-        loading.hide();
     }
 }

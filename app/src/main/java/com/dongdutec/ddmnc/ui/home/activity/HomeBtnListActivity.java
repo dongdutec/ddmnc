@@ -10,6 +10,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -18,11 +20,13 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
 import com.dongdutec.ddmnc.citypicker.CityPickerActivity;
 import com.dongdutec.ddmnc.db.DbConfig;
+import com.dongdutec.ddmnc.db.model.User;
 import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.home.multitype.HomeItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.NullListItemViewProvider;
@@ -38,6 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
+import org.xutils.ex.DbException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
@@ -87,8 +92,10 @@ public class HomeBtnListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_btn_list);
 
+        city = new DbConfig(HomeBtnListActivity.this).getCitys();
+
         initView();
-        initCommon(1, mRows, city, isNew, sale);
+        initCommon();
         bindView();
     }
 
@@ -112,7 +119,7 @@ public class HomeBtnListActivity extends BaseActivity {
 
                 //最后在城市选择器回调中调用
                 /*mHotStoreList.clear();
-                initCommon(1, mRows, city, isNew, sale);*/
+                initCommon();*/
             }
         });
         //最新发布
@@ -121,10 +128,23 @@ public class HomeBtnListActivity extends BaseActivity {
             public void call(Void aVoid) {
                 isNew = "0".equals(isNew) ? "" : "0";
                 sale = "";
-                img_first.setVisibility("0".equals(isNew) ? View.GONE : View.VISIBLE);
+                int pivotType = Animation.RELATIVE_TO_SELF; // 相对于自己
+                float pivotX = 0.5f; // 取自身区域在X轴上的中心点
+                float pivotY = 0.5f; // 取自身区域在Y轴上的中心点
+                if ("0".equals(isNew)) {
+                    RotateAnimation animation = new RotateAnimation(0, 180, pivotType, pivotX, pivotType, pivotY);
+                    animation.setDuration(500);
+                    animation.setFillAfter(true);
+                    img_first.startAnimation(animation);
+                } else {
+                    RotateAnimation animation = new RotateAnimation(180, 0, pivotType, pivotX, pivotType, pivotY);
+                    animation.setDuration(500);
+                    animation.setFillAfter(true);
+                    img_first.startAnimation(animation);
+                }
                 mHotStoreList.clear();
                 current_page = 1;
-                initCommon(1, mRows, city, isNew, sale);
+                initCommon();
             }
         });
         //销量
@@ -133,10 +153,23 @@ public class HomeBtnListActivity extends BaseActivity {
             public void call(Void aVoid) {
                 sale = "0".equals(sale) ? "" : "0";
                 isNew = "";
-                img_sellcount.setVisibility("0".equals(sale) ? View.GONE : View.VISIBLE);
+                int pivotType = Animation.RELATIVE_TO_SELF; // 相对于自己
+                float pivotX = 0.5f; // 取自身区域在X轴上的中心点
+                float pivotY = 0.5f; // 取自身区域在Y轴上的中心点
+                if ("0".equals(sale)) {
+                    RotateAnimation animation = new RotateAnimation(0, 180, pivotType, pivotX, pivotType, pivotY);
+                    animation.setDuration(500);
+                    animation.setFillAfter(true);
+                    img_sellcount.startAnimation(animation);
+                } else {
+                    RotateAnimation animation = new RotateAnimation(180, 0, pivotType, pivotX, pivotType, pivotY);
+                    animation.setDuration(500);
+                    animation.setFillAfter(true);
+                    img_sellcount.startAnimation(animation);
+                }
                 mHotStoreList.clear();
                 current_page = 1;
-                initCommon(1, mRows, city, isNew, sale);
+                initCommon();
             }
         });
 
@@ -148,11 +181,10 @@ public class HomeBtnListActivity extends BaseActivity {
     private void showFilterPop(int left_x, int width, final ImageView downImg) {
         filterData = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            filterData.add("东度" + i);
+            filterData.add("abcde" + i);
         }
         View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.popupwindow, null);
 
-        // 为了演示效果，简单的设置了一些数据，实际中大家自己设置数据即可，相信大家都会。
         ListView lsvMore = (ListView) view.findViewById(R.id.lsvMore);
         lsvMore.setAdapter(new ArrayAdapter<String>(getApplicationContext(), R.layout.ll, filterData));
 
@@ -171,7 +203,7 @@ public class HomeBtnListActivity extends BaseActivity {
         window.update();
         // 以下拉的方式显示，并且可以设置显示的位置
 //        window.showAsDropDown(tvReport, 0, 20);
-        window.showAtLocation(ll_choosecity, Gravity.LEFT | Gravity.TOP, left_x, ll_choosecity.getHeight() + ll_state.getHeight() + rl_bar.getHeight() + getStatusBarHeight());//这里的50是因为我底部按钮的高度是50
+        window.showAtLocation(ll_choosecity, Gravity.LEFT | Gravity.TOP, left_x, ll_choosecity.getHeight() + ll_state.getHeight() + rl_bar.getHeight() + getStatusBarHeight());
         downImg.setVisibility(View.INVISIBLE);
         lsvMore.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -209,34 +241,17 @@ public class HomeBtnListActivity extends BaseActivity {
     protected void init() {
 
 
-
-      /*  //http
-
-        Random ran = new Random();
-        int radom = ran.nextInt(100);
-        HotStore hotStore;
-        mHotStoreList.clear();
-        for (int i = 0; i < 32; i++) {
-            hotStore = new HotStore();
-            hotStore.setImageUrl("www.xxxxxxxxxxxxx");
-            hotStore.setStoreName("东度科技青岛测试店" + radom + i);
-            hotStore.setLocationStr("青岛市·黄岛区·长江路·国贸大厦");
-            hotStore.setCount(radom + i);
-            hotStore.setDistance(radom + i);
-            if (i == 0) {
-                hotStore.setFirst(true);
-            }
-            mHotStoreList.add(hotStore);
-        }
-        updataData();*/
-
-
     }
 
-    private void initCommon(int page, int rows, String city, String isNew, String sale) {
-        //获取收藏列表
+    /**
+     * token认证回调
+     */
+    @Override
+    protected void onJudgeResult() {
+        //获取搜索数据
         final RequestParams params = new RequestParams(RequestUrls.homeSearch());
         params.setConnectTimeout(5000);
+        showLoadings();
         params.addBodyParameter("classifyId", classifyId);
         params.addBodyParameter("city", city);
         params.addBodyParameter("isNew", isNew);
@@ -277,26 +292,32 @@ public class HomeBtnListActivity extends BaseActivity {
                     updataData();
 
                 } catch (JSONException e) {
+                    Toast.makeText(HomeBtnListActivity.this, "系统异常!", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(HomeBtnListActivity.this, "系统异常!", Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "onError: ex.toString()" + ex.toString());
                 updataData();
             }
 
             @Override
             public void onCancelled(CancelledException cex) {
-
             }
 
             @Override
             public void onFinished() {
-
+                hideLoadings();
             }
         });
+    }
+
+    private void initCommon() {
+        judgeToken();
+
     }
 
 
@@ -304,6 +325,7 @@ public class HomeBtnListActivity extends BaseActivity {
         items.clear();
         if ((mHotStoreList == null || mHotStoreList.size() == 0) && isFirstLoad) {
             items.add(new NullList());
+            main_refresh.setEnableLoadMore(false);
         } else {
             for (int i = 0; i < mHotStoreList.size(); i++) {
                 items.add(mHotStoreList.get(i));
@@ -311,6 +333,7 @@ public class HomeBtnListActivity extends BaseActivity {
         }
         assertAllRegistered(multiTypeAdapter, items);
         multiTypeAdapter.notifyDataSetChanged();
+        hideLoadings();
     }
 
     @Override
@@ -333,6 +356,8 @@ public class HomeBtnListActivity extends BaseActivity {
         classifyId = getIntent().getStringExtra("classifyId");
         bar_title.setText(type);
 
+        choose_city_text.setText(city);
+
 
         LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         main_rlv.setLayoutManager(manager);
@@ -346,7 +371,8 @@ public class HomeBtnListActivity extends BaseActivity {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 isFirstLoad = false;
-                initCommon(current_page++, mRows, city, isNew, sale);
+                current_page++;
+                initCommon();
                 main_refresh.finishLoadMore();
             }
 
@@ -355,7 +381,7 @@ public class HomeBtnListActivity extends BaseActivity {
                 mHotStoreList.clear();
                 isFirstLoad = true;
                 current_page = 1;
-                initCommon(1, mRows, city, isNew, sale);
+                initCommon();
                 main_refresh.finishRefresh();
                 main_refresh.setEnableLoadMore(true);
             }
@@ -368,30 +394,37 @@ public class HomeBtnListActivity extends BaseActivity {
 
         if (requestCode == REQUEST_CODE_PICK_CITY && resultCode == RESULT_OK) {
             if (data != null) {
-                String city = data.getStringExtra(CityPickerActivity.KEY_PICKED_CITY);
-                choose_city_text.setText(city);
+                String citys = data.getStringExtra(CityPickerActivity.KEY_PICKED_CITY);
+                choose_city_text.setText(citys);
+                city = citys;
+
+                //存储User 定位城市数据
+                DbConfig dbConfig = new DbConfig(HomeBtnListActivity.this);
+                User user = dbConfig.getUser();
+                try {
+                    user.setCity(city);
+                    dbConfig.getDbManager().saveOrUpdate(user);
+
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
 
                 current_page = 1;
                 mHotStoreList.clear();
-                initCommon(1, mRows, city, isNew, sale);
+                initCommon();
             } else {
                 mHotStoreList.clear();
                 current_page = 1;
                 city = "";
-                initCommon(1, mRows, city, isNew, sale);
+                initCommon();
             }
         } else {
             mHotStoreList.clear();
             current_page = 1;
             city = "";
-            initCommon(1, mRows, city, isNew, sale);
+            initCommon();
         }
     }
 
 
-    private void clearState() {
-        /*city = "";*///不能清除城市
-        isNew = "";
-        sale = "";
-    }
 }

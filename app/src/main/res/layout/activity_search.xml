@@ -15,15 +15,15 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="32dp"
         android:layout_marginBottom="@dimen/d10">
 
         <EditText
             android:id="@+id/et_search"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/d10"
-            android:layout_marginRight="@dimen/d5"
+            android:layout_marginLeft="@dimen/d15"
+            android:layout_marginRight="@dimen/d6"
             android:layout_toLeftOf="@+id/tv_quxiao"
             android:background="@drawable/search"
             android:maxLines="1"
@@ -44,16 +44,27 @@
             android:textColor="@color/c16"
             android:textSize="@dimen/s12"/>
 
+
+        <ImageView
+            android:id="@+id/iv_midsearch"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_centerVertical="true"
+            android:scaleType="fitXY"
+            android:layout_toLeftOf="@+id/tv_midsearch"
+            android:src="@mipmap/ic_search_gray"/>
+
         <TextView
             android:id="@+id/tv_midsearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:drawableLeft="@mipmap/sousuo"
             android:gravity="center"
-            android:text=" 搜索"
+            android:text="搜索"
             android:textColor="@color/c4"
             android:textSize="@dimen/s12"/>
+
+
     </RelativeLayout>
 
     <View
@@ -77,7 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/d10"
+                android:layout_marginLeft="@dimen/d15"
                 android:text="历史搜索"
                 android:textColor="@color/c6"
                 android:textSize="@dimen/s14"

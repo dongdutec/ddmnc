@@ -27,7 +27,7 @@
         <LinearLayout
             android:id="@+id/ll_choosecity"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="2"
             android:gravity="center"
             android:orientation="horizontal"
@@ -52,7 +52,7 @@
         <LinearLayout
             android:id="@+id/ll_first"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="2"
             android:gravity="center"
             android:orientation="horizontal">
@@ -76,7 +76,7 @@
         <LinearLayout
             android:id="@+id/ll_sellcount"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="horizontal">

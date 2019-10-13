@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DDMNC</string>
+    <string name="app_name">MNC</string>
     <string name="main_home">首页</string>
     <string name="main_browser">浏览器</string>
     <string name="main_wallet">钱包</string>
@@ -18,4 +18,10 @@
     <string name="cp_located_failed">定位失败</string>
     <string name="cp_btn_cancel">取消</string>
     <string name="web_title">MNC</string>
+    <string name="scan_infomation">将二维码放入框内，即可自动扫描</string>
+    <string name="tokendown">您的登录信息失效，请重新登录!</string>
+    <string name="saoma_no">"此二维码不可用!"</string>
+    <string name="saoma_mid">"您已有推荐人!"</string>
+    <string name="user">普通用户</string>
+    <string name="store">认证商家</string>
 </resources>

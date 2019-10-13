@@ -11,6 +11,7 @@
     <dimen name="d65">65dp</dimen>
     <dimen name="d5">5dp</dimen>
     <dimen name="d6">6dp</dimen>
+    <dimen name="d1">1dp</dimen>
     <dimen name="d2">2dp</dimen>
     <dimen name="d15">15dp</dimen>
     <dimen name="d20">20dp</dimen>

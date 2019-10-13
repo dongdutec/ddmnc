@@ -4,13 +4,14 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -21,6 +22,8 @@ import android.widget.Toast;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
+import com.dongdutec.ddmnc.cell.MNCTransparentDialog;
+import com.dongdutec.ddmnc.http.HtmlUrls;
 import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 
@@ -315,6 +318,7 @@ public class ForgetPWActivity extends BaseActivity {
                 //post
                 RequestParams params = new RequestParams(RequestUrls.forgetpassword());
                 params.setConnectTimeout(5000);
+                showLoadings();
                 params.addBodyParameter("phone", dt_phone.getText().toString());
                 params.addBodyParameter("code", dt_yanzhengma.getText().toString());
                 params.addBodyParameter("password", dt_password.getText().toString());
@@ -327,16 +331,19 @@ public class ForgetPWActivity extends BaseActivity {
                             JSONObject jsonObject = new JSONObject(result);
                             String msg = jsonObject.getString("msg");
                             int code = jsonObject.getInt("code");
-                            Toast.makeText(ForgetPWActivity.this, msg, Toast.LENGTH_SHORT).show();
 
                             if (code == 0) {
+                                Toast.makeText(ForgetPWActivity.this, "密码修改成功!", Toast.LENGTH_SHORT).show();
                                 finish();
                             } else {
+                                Toast.makeText(ForgetPWActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                hideLoadings();
                                 tv_queren.setBackgroundResource(R.drawable.save_btn_blue);
                                 tv_queren.setClickable(true);
                             }
 
                         } catch (JSONException e) {
+                            Toast.makeText(ForgetPWActivity.this, "系统异常!", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
                     }
@@ -356,7 +363,7 @@ public class ForgetPWActivity extends BaseActivity {
 
                     @Override
                     public void onFinished() {
-
+                        hideLoadings();
                     }
                 });
 
@@ -447,12 +454,23 @@ public class ForgetPWActivity extends BaseActivity {
 
 
     private void showTiaoKuanDialog() {
-        AlertDialog dialog = new AlertDialog.Builder(this).create();
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_web, null);
-        WebView dialog_web = (WebView) dialogView.findViewById(R.id.dialog_web);
-        dialog_web.loadUrl("http://47.75.47.121:8080/mnc/serviceInfo.html");
-        dialog.setTitle("服务条款");
-        dialog.setView(dialogView);
-        dialog.show();
+        final MNCTransparentDialog mncTransDialog = new MNCTransparentDialog(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_web_tiaokuan, null, false);
+        final TextView tv_queren = (TextView) dialogView.findViewById(R.id.tv_right);
+        final WebView web = (WebView) dialogView.findViewById(R.id.web);
+        RxViewAction.clickNoDouble(tv_queren).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                mncTransDialog.dismiss();
+            }
+        });
+        web.loadUrl(HtmlUrls.getServiceInfo());
+        mncTransDialog.show();
+        Window window = mncTransDialog.getWindow();//对话框窗口
+        window.setGravity(Gravity.CENTER);//设置对话框显示在屏幕中间
+        window.setWindowAnimations(R.style.dialog_style);//添加动画
+        window.setContentView(dialogView);
+
+
     }
 }

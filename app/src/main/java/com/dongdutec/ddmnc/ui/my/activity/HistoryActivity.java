@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
@@ -92,9 +93,15 @@ public class HistoryActivity extends BaseActivity {
 
     @Override
     protected void init() {
+        judgeToken();
+    }
+
+    @Override
+    protected void onJudgeResult() {
         //获取浏览历史数据
         RequestParams params = new RequestParams(RequestUrls.getHistory());
         params.setConnectTimeout(5000);
+        showLoadings();
         params.addBodyParameter("token", new DbConfig(HistoryActivity.this).getToken());
         Log.e(TAG, "init: params.toString() " + params.toString());
         x.http().post(params, new Callback.CommonCallback<String>() {
@@ -111,6 +118,7 @@ public class HistoryActivity extends BaseActivity {
                         hotStore.setStoreName(object.getString("shopName"));
                         hotStore.setLocationStr(object.getString("address"));
                         hotStore.setCount(Integer.parseInt(object.getString("count")));
+                        hotStore.setStoreId(object.getString("shopId"));
                         String advertLatitude = object.getString("latitude");
                         String advertLongitude = object.getString("longitude");
                         double longitude_store = Double.parseDouble(advertLongitude);
@@ -127,6 +135,7 @@ public class HistoryActivity extends BaseActivity {
                     updataData();
 
                 } catch (JSONException e) {
+                    Toast.makeText(HistoryActivity.this, "系统异常!", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
 
@@ -145,39 +154,16 @@ public class HistoryActivity extends BaseActivity {
 
             @Override
             public void onFinished() {
-
+                hideLoadings();
             }
         });
-
-
-       /* //http
-
-        Random ran = new Random();
-        int radom = ran.nextInt(100);
-        HotStore hotStore;
-        mHotStoreList.clear();
-        for (int i = 0; i < 32; i++) {
-            hotStore = new HotStore();
-            hotStore.setImageUrl("www.xxxxxxxxxxxxx");
-            hotStore.setStoreName("东度科技青岛测试店" + radom + i);
-            hotStore.setLocationStr("青岛市·黄岛区·长江路·国贸大厦");
-            hotStore.setCount(radom + i);
-            hotStore.setDistance(radom + i);
-            if (i == 0) {
-                hotStore.setFirst(true);
-            }
-            mHotStoreList.add(hotStore);
-        }
-        updataData();*/
-
-
     }
-
 
     private void updataData() {
         items.clear();
         if (mHotStoreList == null || mHotStoreList.size() == 0) {
             items.add(new NullList());
+            main_refresh.setEnableLoadMore(false);
         } else {
             for (int i = 0; i < mHotStoreList.size(); i++) {
                 items.add(mHotStoreList.get(i));
@@ -185,6 +171,7 @@ public class HistoryActivity extends BaseActivity {
         }
         assertAllRegistered(multiTypeAdapter, items);
         multiTypeAdapter.notifyDataSetChanged();
+        hideLoadings();
     }
 
     @Override

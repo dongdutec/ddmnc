@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -12,10 +13,11 @@ import android.widget.Toast;
 
 import com.dongdutec.ddmnc.base.BaseActivity;
 import com.dongdutec.ddmnc.db.DbConfig;
-import com.dongdutec.ddmnc.ui.home.activity.ScanResultActiviity;
+import com.dongdutec.ddmnc.http.HtmlUrls;
 import com.dongdutec.ddmnc.ui.home.fragment.HomeFragment;
 import com.dongdutec.ddmnc.ui.my.fragment.MyFragment;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
+import com.dongdutec.ddmnc.web.WebsActivity;
 import com.dongdutec.ddmnc.web.WebsFragment;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -74,12 +76,14 @@ public class MainActivity extends BaseActivity {
         fragments.add(new HomeFragment());
         WebsFragment fg_browser = new WebsFragment();
         Bundle bundle_browser = new Bundle();
-        bundle_browser.putString("webUrl", "http://47.75.47.121:8080/mnc/browser.html?token=" + new DbConfig(MainActivity.this).getToken());
+        bundle_browser.putString("title", "浏览器");
+        bundle_browser.putString("webUrl", HtmlUrls.getBrowsers() + "?token=" + new DbConfig(MainActivity.this).getToken());
         fg_browser.setArguments(bundle_browser);
         fragments.add(fg_browser);
         WebsFragment fg_wallet = new WebsFragment();
         Bundle bundle_wallet = new Bundle();
-        bundle_wallet.putString("webUrl", "http://47.75.47.121:8080/mnc/purse.html");
+        bundle_wallet.putString("title", "钱包");
+        bundle_wallet.putString("webUrl", HtmlUrls.getPurse() + "?token=" + new DbConfig(MainActivity.this).getToken());
         fg_wallet.setArguments(bundle_wallet);
         fragments.add(fg_wallet);
         fragments.add(new MyFragment());
@@ -223,17 +227,42 @@ public class MainActivity extends BaseActivity {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "onActivityResult:  result.getContents() = " + result.getContents());
                 //跳转扫描结果操作页面
-                Intent intent = new Intent(MainActivity.this, ScanResultActiviity.class);
-                startActivity(intent);
+                String contents = result.getContents();
+                String flag = "";
+                String urls = "";
+                try {
+                    String substring = contents.substring(contents.length() - 5);
+                    if ("MNCDD".equals(substring)) {
+                        showMessageDialog(getString(R.string.saoma_mid));
+                        return;
+                    }
+                    if (contents != null && contents.length() > 0) {
+                        String[] arr = contents.split(",");
+                        flag = arr[0];
+                        urls = arr[1];
+                    }
+                    if (flag.equals("MNCDD")) {
+                        Intent intent = new Intent(MainActivity.this, WebsActivity.class);
+                        intent.putExtra("title", "记账");
+                        intent.putExtra("webUrl", urls + "&token=" + new DbConfig(MainActivity.this).getToken());
+                        startActivity(intent);
+                    } else {
+                        showMessageDialog(getString(R.string.saoma_no));
+                    }
+                } catch (Exception e) {
+                    showMessageDialog(getString(R.string.saoma_no));
+                }
+
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
 
     }
+
 
 }

@@ -103,6 +103,7 @@ public class DailiActivity extends BaseActivity {
         items.clear();
         if (mHotStoreList == null || mHotStoreList.size() == 0) {
 //            items.add(new ItemNullBean("暂无数据")); TODO
+            main_refresh.setEnableLoadMore(false);
         } else {
             for (int i = 0; i < mHotStoreList.size(); i++) {
                 items.add(mHotStoreList.get(i));

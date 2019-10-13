@@ -9,6 +9,7 @@ public class HotStore {
     private String storeId;
     private String imageUrl;
     private String storeName;
+    private String id;
     private String locationStr;
     private int count;
     private String starState; // 1 已收藏  2 未收藏  其它 不显示
@@ -20,17 +21,26 @@ public class HotStore {
     public HotStore() {
     }
 
-    public HotStore(String storeId, String imageUrl, String storeName, String locationStr, int count, String starState, double distance, boolean isFirst, double lantitude, double longitude) {
+    public HotStore(String storeId, String imageUrl, String storeName, String id, String locationStr, int count, String starState, double lantitude, double longitude, double distance, boolean isFirst) {
         this.storeId = storeId;
         this.imageUrl = imageUrl;
         this.storeName = storeName;
+        this.id = id;
         this.locationStr = locationStr;
         this.count = count;
         this.starState = starState;
-        this.distance = distance;
-        this.isFirst = isFirst;
         this.lantitude = lantitude;
         this.longitude = longitude;
+        this.distance = distance;
+        this.isFirst = isFirst;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public double getLantitude() {

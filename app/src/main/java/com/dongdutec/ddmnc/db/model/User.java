@@ -29,11 +29,11 @@ public class User {
     private String age;         //年龄
 
     @Column(name = "longitude")
-    private double longitude;    //经度
+    private double longitude = 116.397972;    //经度
 
 
     @Column(name = "latitude")
-    private double latitude;    //纬度
+    private double latitude = 39.906901;    //纬度
 
 
     @Column(name = "birthday")
@@ -67,6 +67,9 @@ public class User {
     @Column(name = "token")
     private String token;       //token
 
+    @Column(name = "city")
+    private String city = "北京";        //城市
+
     @Column(name = "qqinfoId")
     private String qqInfoId; //qq登陆
 
@@ -83,6 +86,14 @@ public class User {
     private int firstAddCar;
 
     public User() {
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public double getLongitude() {

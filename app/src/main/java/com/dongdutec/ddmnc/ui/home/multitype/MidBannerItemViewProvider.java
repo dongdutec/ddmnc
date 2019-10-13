@@ -1,17 +1,19 @@
 package com.dongdutec.ddmnc.ui.home.multitype;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.dongdutec.ddmnc.R;
+import com.dongdutec.ddmnc.db.DbConfig;
 import com.dongdutec.ddmnc.ui.home.multitype.beans.MidBannerBeans;
 import com.dongdutec.ddmnc.ui.home.multitype.model.MidBanner;
 import com.dongdutec.ddmnc.utils.banner.GlideImageLoader;
+import com.dongdutec.ddmnc.web.WebsActivity;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.listener.OnBannerListener;
@@ -62,7 +64,13 @@ public class MidBannerItemViewProvider extends ItemViewProvider<MidBanner, MidBa
             @Override
             public void OnBannerClick(int position) {
                 //通过jumpUrls.get(position)跳转WebView
-                Toast.makeText(context, "测试position = " + position + " web = " + jumpUrls.get(position), Toast.LENGTH_SHORT).show();
+                if (jumpUrls.get(position).length() > 0) {
+                    Intent intent = new Intent(context, WebsActivity.class);
+                    intent.putExtra("title","活动");
+                    intent.putExtra("webUrl", jumpUrls.get(position) + "?token=" + new DbConfig(context).getToken());
+                    context.startActivity(intent);
+                } else {
+                }
             }
         });
         //banner设置方法全部调用完毕时最后调用

@@ -19,6 +19,8 @@ import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
@@ -100,41 +102,56 @@ public class PingjiaActivity extends BaseActivity {
                     Toast.makeText(PingjiaActivity.this, "请输入评价!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //提交post
-                RequestParams params = new RequestParams(RequestUrls.insertDiscuss());
-                params.addBodyParameter("token", new DbConfig(PingjiaActivity.this).getToken());
-                params.addBodyParameter("shopId", shopId);
-                params.addBodyParameter("id", id);
-                params.addBodyParameter("remark", et_content.getText().toString());
-                params.setConnectTimeout(5000);
-                Log.e(TAG, "call: params.toString() = " + params.toString());
-                x.http().post(params, new Callback.CommonCallback<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        Log.e(TAG, "onSuccess: result = " + result);
-                        Toast.makeText(PingjiaActivity.this, result, Toast.LENGTH_SHORT).show();
-                        if ("成功".equals(result)) {
-                            finish();
-                            //通知Fragment刷新
-                            EventBus.getDefault().post(new MyXiaofeiToRefresh(state, isStore));
-                        }
+                judgeToken();
+            }
+        });
+    }
+
+    @Override
+    protected void onJudgeResult() {
+        //提交post
+        RequestParams params = new RequestParams(RequestUrls.insertDiscuss());
+        params.addBodyParameter("token", new DbConfig(PingjiaActivity.this).getToken());
+        params.addBodyParameter("shopId", shopId);
+        params.addBodyParameter("id", id);
+        params.addBodyParameter("remark", et_content.getText().toString());
+        params.setConnectTimeout(5000);
+        showLoadings();
+        Log.e(TAG, "call: params.toString() = " + params.toString());
+        x.http().post(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.e(TAG, "onSuccess: result = " + result);
+
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    int states = jsonObject.getInt("state");
+                    if (states == 0) {
+                        finish();
+                        //通知Fragment刷新
+                        Toast.makeText(PingjiaActivity.this, "评价成功!", Toast.LENGTH_SHORT).show();
+                        EventBus.getDefault().post(new MyXiaofeiToRefresh(state, isStore));
+                    } else {
+                        Toast.makeText(PingjiaActivity.this, "系统错误!", Toast.LENGTH_SHORT).show();
                     }
 
-                    @Override
-                    public void onError(Throwable ex, boolean isOnCallback) {
-                        Toast.makeText(PingjiaActivity.this, "网络异常!", Toast.LENGTH_SHORT).show();
-                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
 
-                    @Override
-                    public void onCancelled(CancelledException cex) {
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(PingjiaActivity.this, "网络异常!", Toast.LENGTH_SHORT).show();
+            }
 
-                    }
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
 
-                    @Override
-                    public void onFinished() {
-
-                    }
-                });
+            @Override
+            public void onFinished() {
+                hideLoadings();
             }
         });
     }

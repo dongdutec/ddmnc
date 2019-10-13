@@ -119,61 +119,70 @@ public class UserInfoActivity extends BaseActivity {
                     return;
                 }
 
-                //上传图片
-                if (headFile != null) {
-                    RequestParams params = new RequestParams(RequestUrls.uploadImage());
-                    params.addBodyParameter("token", new DbConfig(UserInfoActivity.this).getToken());
-                    params.addBodyParameter("file", headFile);
-                    Log.e(TAG, "call: params.toString() = " + params.toString());
-                    x.http().post(params, new Callback.CommonCallback<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            Log.e(TAG, "onSuccess: result1 = " + result);
-                            try {
-                                JSONObject object = new JSONObject(result);
-                                int code = object.getInt("code");
-                                String msg = object.getString("msg");
-                                if (code == 0) {
-                                    JSONArray data = object.getJSONArray("data");
-                                    headUrl = (String) data.get(0);
-                                    //第二步（修改头像）
-                                    postChangeImage();
-                                } else {
-                                    Toast.makeText(UserInfoActivity.this, msg, Toast.LENGTH_SHORT).show();
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onError(Throwable ex, boolean isOnCallback) {
-                            Toast.makeText(UserInfoActivity.this, "系统异常!", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onCancelled(CancelledException cex) {
-
-                        }
-
-                        @Override
-                        public void onFinished() {
-
-                        }
-                    });
-                } else {
-                    //第二步（修改头像）
-                    postChangeImage();
-                }
+                judgeToken();
 
             }
         });
+    }
+
+    @Override
+    protected void onJudgeResult() {
+        //上传图片
+        if (headFile != null) {
+            RequestParams params = new RequestParams(RequestUrls.uploadImage());
+            params.addBodyParameter("token", new DbConfig(UserInfoActivity.this).getToken());
+            params.addBodyParameter("file", headFile);
+            params.setConnectTimeout(5000);
+            Log.e(TAG, "call: params.toString() = " + params.toString());
+            x.http().post(params, new Callback.CommonCallback<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    Log.e(TAG, "onSuccess: result1 = " + result);
+                    try {
+                        JSONObject object = new JSONObject(result);
+                        int code = object.getInt("code");
+                        String msg = object.getString("msg");
+                        if (code == 0) {
+                            JSONArray data = object.getJSONArray("data");
+                            headUrl = (String) data.get(0);
+                            //第二步（修改头像）
+                            postChangeImage();
+                        } else {
+                            hideLoadings();
+                            Toast.makeText(UserInfoActivity.this, msg, Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onError(Throwable ex, boolean isOnCallback) {
+                    hideLoadings();
+                    Toast.makeText(UserInfoActivity.this, "系统异常!", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onCancelled(CancelledException cex) {
+
+                }
+
+                @Override
+                public void onFinished() {
+
+                }
+            });
+        } else {
+            //第二步（修改头像）
+            postChangeImage();
+        }
     }
 
     //第二步修改头像
     private void postChangeImage() {
         RequestParams params = new RequestParams(RequestUrls.changeImage());
         params.setConnectTimeout(5000);
+        showLoadings();
         params.addBodyParameter("token", new DbConfig(UserInfoActivity.this).getToken());
         params.addBodyParameter("headImg", headUrl);
         Log.e(TAG, "postChangeNickname: params.toString() = " + params.toString());
@@ -186,6 +195,7 @@ public class UserInfoActivity extends BaseActivity {
                     int code = object.getInt("code");
                     String msg = object.getString("msg");
                     if (code != 0) {
+                        hideLoadings();
                         Toast.makeText(UserInfoActivity.this, msg, Toast.LENGTH_SHORT).show();
                     } else {
                         //第三步（修改昵称）
@@ -193,6 +203,8 @@ public class UserInfoActivity extends BaseActivity {
                     }
 
                 } catch (JSONException e) {
+                    hideLoadings();
+                    Toast.makeText(UserInfoActivity.this, "系统异常!", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
 
@@ -200,6 +212,7 @@ public class UserInfoActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                hideLoadings();
                 Toast.makeText(UserInfoActivity.this, "系统异常!", Toast.LENGTH_SHORT).show();
             }
 
@@ -230,13 +243,16 @@ public class UserInfoActivity extends BaseActivity {
                     JSONObject object = new JSONObject(result);
                     int code = object.getInt("code");
                     String msg = object.getString("msg");
-                    Toast.makeText(UserInfoActivity.this, msg, Toast.LENGTH_SHORT).show();
                     if (code == 0) {
                         EventBus.getDefault().post(new UserInfoEvent());
+                        Toast.makeText(UserInfoActivity.this, "个人信息更新成功!", Toast.LENGTH_SHORT).show();
                         finish();
+                    } else {
+                        Toast.makeText(UserInfoActivity.this, msg, Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (JSONException e) {
+                    Toast.makeText(UserInfoActivity.this, "系统异常!", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
 
@@ -254,7 +270,7 @@ public class UserInfoActivity extends BaseActivity {
 
             @Override
             public void onFinished() {
-
+                hideLoadings();
             }
         });
     }

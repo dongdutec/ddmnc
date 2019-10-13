@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
                 android:id="@+id/rl_bar"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/d40">
 
     <ImageView
         android:id="@+id/bar_left_img"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/d50"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
-        android:paddingLeft="10dp"
+        android:layout_marginLeft="@dimen/d5"
+        android:paddingLeft="12dp"
         android:paddingRight="@dimen/d30"
         android:src="@mipmap/path"/>
 
@@ -17,8 +18,8 @@
         android:id="@+id/bar_left_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="-10dp"
         android:layout_centerVertical="true"
+        android:layout_marginLeft="-10dp"
         android:layout_toRightOf="@+id/bar_left_img"
         android:gravity="center_horizontal"
         android:textColor="@color/c7"
@@ -52,12 +53,13 @@
         android:text=""
         android:textColor="@color/c7"
         android:textSize="@dimen/s14"/>
+
     <View
-        android:id="@+id/v_line"
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/v_line"
         android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
         android:layout_height="0.2dp"
+        android:layout_alignParentBottom="true"
         android:background="@color/lightgray"/>
 
 
