@@ -67,6 +67,9 @@ public class User {
     @Column(name = "token")
     private String token;       //token
 
+    @Column(name = "leval")
+    private String leval;       //leval   y 正常用户   n 游客
+
     @Column(name = "city")
     private String city = "北京";        //城市
 
@@ -86,6 +89,14 @@ public class User {
     private int firstAddCar;
 
     public User() {
+    }
+
+    public String getLeval() {
+        return leval;
+    }
+
+    public void setLeval(String leval) {
+        this.leval = leval;
     }
 
     public String getCity() {

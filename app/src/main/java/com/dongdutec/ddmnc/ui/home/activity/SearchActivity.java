@@ -25,7 +25,7 @@ import com.dongdutec.ddmnc.base.BaseActivity;
 import com.dongdutec.ddmnc.db.DbConfig;
 import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.home.multitype.HomeItemViewProvider;
-import com.dongdutec.ddmnc.ui.home.multitype.NullListItemViewProvider;
+import com.dongdutec.ddmnc.ui.home.multitype.NullListLongItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.model.HotStore;
 import com.dongdutec.ddmnc.ui.home.multitype.model.NullList;
 import com.dongdutec.ddmnc.utils.location.LocationUtils;
@@ -275,7 +275,7 @@ public class SearchActivity extends BaseActivity {
 
             @Override
             public void onFinished() {
-                hideLoadings();
+                hideLoadingsDelayed(500);
             }
         });
     }
@@ -328,7 +328,6 @@ public class SearchActivity extends BaseActivity {
         }
         assertAllRegistered(multiTypeAdapter, items);
         multiTypeAdapter.notifyDataSetChanged();
-        hideLoadings();
     }
 
     @Override
@@ -352,7 +351,7 @@ public class SearchActivity extends BaseActivity {
         main_rlv.setLayoutManager(manager);
         multiTypeAdapter = new MultiTypeAdapter(items);
         multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(SearchActivity.this, true));
-        multiTypeAdapter.register(NullList.class, new NullListItemViewProvider(SearchActivity.this));
+        multiTypeAdapter.register(NullList.class, new NullListLongItemViewProvider(SearchActivity.this));
         main_rlv.setAdapter(multiTypeAdapter);
         assertHasTheSameAdapter(main_rlv, multiTypeAdapter);
 

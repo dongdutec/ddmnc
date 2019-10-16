@@ -303,13 +303,13 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
 
     private void postingyes(EditText et_mp, final TextView tv_queren, final MyXiaofei myXiaofei) {
         if (et_mp.getText() == null || et_mp.getText().length() == 0) {
-            Toast.makeText(context, "请输入给用户返还的MP数量!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "请输入返还数额!", Toast.LENGTH_SHORT).show();
             return;
         }
         tv_queren.setClickable(false);
         RequestParams params = new RequestParams(RequestUrls.storeGetJifen());
         params.setConnectTimeout(5000);
-//        ((BaseActivity)context).showLoadings();
+        ((BaseActivity) context).showLoadings();
         params.addBodyParameter("id", myXiaofei.getOrderId());
         params.addBodyParameter("mp", et_mp.getText().toString());
         params.addBodyParameter("token", new DbConfig(context).getToken());
@@ -330,8 +330,11 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
 
                         //通知Fragment刷新
                         EventBus.getDefault().post(new MyXiaofeiToRefresh(myXiaofei.getOrderState(), myXiaofei.getIsStore()));
+                    } else if (state == 2) {
+                        Toast.makeText(context, context.getString(R.string.mp_low), Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(context, "系统错误!", Toast.LENGTH_SHORT).show();
+                        ((BaseActivity) context).hideLoadings();
+                        Toast.makeText(context, context.getString(R.string.syserror), Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -343,8 +346,7 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(context, "网络异常!", Toast.LENGTH_SHORT).show();
-                tv_queren.setClickable(true);
+                Toast.makeText(context, context.getString(R.string.syserror), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -354,7 +356,8 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
 
             @Override
             public void onFinished() {
-//                ((BaseActivity)context).hideLoadings();
+                ((BaseActivity) context).hideLoadingsDelayed(1000);
+                tv_queren.setClickable(true);
             }
         });
     }
@@ -382,7 +385,7 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
 
                 RequestParams params = new RequestParams(RequestUrls.getJudgeToken());
                 params.setConnectTimeout(5000);
-                ((BaseActivity)context).showLoadings();
+                ((BaseActivity) context).showLoadings();
                 params.addBodyParameter("token", new DbConfig(context).getToken());
                 Log.e("judgeToken", "judgeToken:  params.toString() = " + params.toString());
                 x.http().post(params, new Callback.CommonCallback<String>() {
@@ -404,14 +407,14 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
 
 
                         } catch (JSONException e) {
-                            Toast.makeText(context, "系统异常!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, context.getString(R.string.syserror), Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
                     }
 
                     @Override
                     public void onError(Throwable ex, boolean isOnCallback) {
-                        Toast.makeText(context, "网络异常!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, context.getString(R.string.syserror), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -421,7 +424,6 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
 
                     @Override
                     public void onFinished() {
-                        ((BaseActivity)context).hideLoadings();
                     }
                 });
             }
@@ -439,7 +441,7 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
         tv_queren.setClickable(false);
         RequestParams params = new RequestParams(RequestUrls.storeGetJifen());
         params.setConnectTimeout(5000);
-        ((BaseActivity)context).showLoadings();
+        ((BaseActivity) context).showLoadings();
         params.addBodyParameter("id", myXiaofei.getOrderId());
         params.addBodyParameter("mp", "");
         params.addBodyParameter("state", "2");//1 记账 2 取消记账 3 评价 0 待记账
@@ -459,7 +461,7 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
                         //通知Fragment刷新
                         EventBus.getDefault().post(new MyXiaofeiToRefresh(myXiaofei.getOrderState(), myXiaofei.getIsStore()));
                     } else {
-                        Toast.makeText(context, "系统错误!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, context.getString(R.string.syserror), Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (JSONException e) {
@@ -470,8 +472,7 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(context, "网络异常!", Toast.LENGTH_SHORT).show();
-                tv_queren.setClickable(true);
+                Toast.makeText(context, context.getString(R.string.syserror), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -481,7 +482,8 @@ public class MyXiaofeiItemViewProvider extends ItemViewProvider<MyXiaofei, MyXia
 
             @Override
             public void onFinished() {
-                ((BaseActivity)context).hideLoadings();
+                ((BaseActivity) context).hideLoadingsDelayed(1000);
+                tv_queren.setClickable(true);
             }
         });
     }

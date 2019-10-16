@@ -29,7 +29,7 @@ import com.dongdutec.ddmnc.db.DbConfig;
 import com.dongdutec.ddmnc.db.model.User;
 import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.home.multitype.HomeItemViewProvider;
-import com.dongdutec.ddmnc.ui.home.multitype.NullListItemViewProvider;
+import com.dongdutec.ddmnc.ui.home.multitype.NullListLongItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.model.HotStore;
 import com.dongdutec.ddmnc.ui.home.multitype.model.NullList;
 import com.dongdutec.ddmnc.utils.location.LocationUtils;
@@ -83,8 +83,8 @@ public class HomeBtnListActivity extends BaseActivity {
     private ArrayList<String> filterData;
     private String TAG = HomeBtnListActivity.class.getSimpleName();
     private String city = "";
-    private String isNew = "";
-    private String sale = "";
+    private String isNew = "2";
+    private String sale = "2";
     private static final int REQUEST_CODE_PICK_CITY = 9913;
 
     @Override
@@ -126,21 +126,16 @@ public class HomeBtnListActivity extends BaseActivity {
         RxViewAction.clickNoDouble(ll_first).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                isNew = "0".equals(isNew) ? "" : "0";
-                sale = "";
-                int pivotType = Animation.RELATIVE_TO_SELF; // 相对于自己
-                float pivotX = 0.5f; // 取自身区域在X轴上的中心点
-                float pivotY = 0.5f; // 取自身区域在Y轴上的中心点
+                isNew = "0".equals(isNew) ? "1" : "0";
+                if ("0".equals(sale)) {
+                    turnDown(img_sellcount);
+                }
+                sale = "2";
+
                 if ("0".equals(isNew)) {
-                    RotateAnimation animation = new RotateAnimation(0, 180, pivotType, pivotX, pivotType, pivotY);
-                    animation.setDuration(500);
-                    animation.setFillAfter(true);
-                    img_first.startAnimation(animation);
+                    turnUp(img_first);
                 } else {
-                    RotateAnimation animation = new RotateAnimation(180, 0, pivotType, pivotX, pivotType, pivotY);
-                    animation.setDuration(500);
-                    animation.setFillAfter(true);
-                    img_first.startAnimation(animation);
+                    turnDown(img_first);
                 }
                 mHotStoreList.clear();
                 current_page = 1;
@@ -151,21 +146,16 @@ public class HomeBtnListActivity extends BaseActivity {
         RxViewAction.clickNoDouble(ll_sellcount).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
-                sale = "0".equals(sale) ? "" : "0";
-                isNew = "";
-                int pivotType = Animation.RELATIVE_TO_SELF; // 相对于自己
-                float pivotX = 0.5f; // 取自身区域在X轴上的中心点
-                float pivotY = 0.5f; // 取自身区域在Y轴上的中心点
+                sale = "0".equals(sale) ? "1" : "0";
+                if ("0".equals(isNew)) {
+                    turnDown(img_first);
+                }
+                isNew = "2";
+
                 if ("0".equals(sale)) {
-                    RotateAnimation animation = new RotateAnimation(0, 180, pivotType, pivotX, pivotType, pivotY);
-                    animation.setDuration(500);
-                    animation.setFillAfter(true);
-                    img_sellcount.startAnimation(animation);
+                    turnUp(img_sellcount);
                 } else {
-                    RotateAnimation animation = new RotateAnimation(180, 0, pivotType, pivotX, pivotType, pivotY);
-                    animation.setDuration(500);
-                    animation.setFillAfter(true);
-                    img_sellcount.startAnimation(animation);
+                    turnDown(img_sellcount);
                 }
                 mHotStoreList.clear();
                 current_page = 1;
@@ -173,6 +163,26 @@ public class HomeBtnListActivity extends BaseActivity {
             }
         });
 
+    }
+
+    private void turnUp(ImageView img_) {
+        int pivotType = Animation.RELATIVE_TO_SELF; // 相对于自己
+        float pivotX = 0.5f; // 取自身区域在X轴上的中心点
+        float pivotY = 0.5f; // 取自身区域在Y轴上的中心点
+        RotateAnimation animation = new RotateAnimation(0, 180, pivotType, pivotX, pivotType, pivotY);
+        animation.setDuration(500);
+        animation.setFillAfter(true);
+        img_.startAnimation(animation);
+    }
+
+    private void turnDown(ImageView img_) {
+        int pivotType = Animation.RELATIVE_TO_SELF; // 相对于自己
+        float pivotX = 0.5f; // 取自身区域在X轴上的中心点
+        float pivotY = 0.5f; // 取自身区域在Y轴上的中心点
+        RotateAnimation animation = new RotateAnimation(180, 0, pivotType, pivotX, pivotType, pivotY);
+        animation.setDuration(500);
+        animation.setFillAfter(true);
+        img_.startAnimation(animation);
     }
 
     /**
@@ -310,7 +320,7 @@ public class HomeBtnListActivity extends BaseActivity {
 
             @Override
             public void onFinished() {
-                hideLoadings();
+                hideLoadingsDelayed(500);
             }
         });
     }
@@ -333,7 +343,6 @@ public class HomeBtnListActivity extends BaseActivity {
         }
         assertAllRegistered(multiTypeAdapter, items);
         multiTypeAdapter.notifyDataSetChanged();
-        hideLoadings();
     }
 
     @Override
@@ -363,7 +372,7 @@ public class HomeBtnListActivity extends BaseActivity {
         main_rlv.setLayoutManager(manager);
         multiTypeAdapter = new MultiTypeAdapter(items);
         multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(HomeBtnListActivity.this));
-        multiTypeAdapter.register(NullList.class, new NullListItemViewProvider(HomeBtnListActivity.this));
+        multiTypeAdapter.register(NullList.class, new NullListLongItemViewProvider(HomeBtnListActivity.this));
         main_rlv.setAdapter(multiTypeAdapter);
         assertHasTheSameAdapter(main_rlv, multiTypeAdapter);
 
@@ -415,13 +424,13 @@ public class HomeBtnListActivity extends BaseActivity {
             } else {
                 mHotStoreList.clear();
                 current_page = 1;
-                city = "";
+                city = new DbConfig(HomeBtnListActivity.this).getCitys();
                 initCommon();
             }
         } else {
             mHotStoreList.clear();
             current_page = 1;
-            city = "";
+            city = new DbConfig(HomeBtnListActivity.this).getCitys();
             initCommon();
         }
     }

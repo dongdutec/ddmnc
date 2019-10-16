@@ -213,6 +213,12 @@ public class MyFragment extends BaseFragment {
         RxViewAction.clickNoDouble(ll_zhuanshuma).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
+                String leval = new DbConfig(getContext()).getLeval();
+                if (!"y".equals(leval)) {
+                    showMessageDialog(getContext().getString(R.string.low_leval));
+                    return;
+                }
+
                 Intent intent = new Intent(getContext(), WebsActivity.class);
                 intent.putExtra("title", "我的专属码");
                 intent.putExtra("webUrl", HtmlUrls.getExclusives() + "?token=" + new DbConfig(getContext()).getToken() + "&phone=" + new DbConfig(getContext()).getPhone());
@@ -223,6 +229,12 @@ public class MyFragment extends BaseFragment {
         RxViewAction.clickNoDouble(rl_sjrz).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
+                String leval = new DbConfig(getContext()).getLeval();
+                if (!"y".equals(leval)) {
+                    showMessageDialog(getContext().getString(R.string.low_leval));
+                    return;
+                }
+
                 if ("0".equals(isAdv)) {//已过审
                     startActivity(new Intent(getContext(), StoreManageActivity.class));
                 } else if ("1".equals(isAdv)) {//审核中
@@ -241,6 +253,12 @@ public class MyFragment extends BaseFragment {
         RxViewAction.clickNoDouble(store).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
+                String leval = new DbConfig(getContext()).getLeval();
+                if (!"y".equals(leval)) {
+                    showMessageDialog(getContext().getString(R.string.low_leval));
+                    return;
+                }
+
                 if ("0".equals(isAdv)) {//已过审
                     startActivity(new Intent(getContext(), StoreManageActivity.class));
                 } else if ("1".equals(isAdv)) {//审核中
@@ -262,7 +280,7 @@ public class MyFragment extends BaseFragment {
             public void call(Void aVoid) {
                 Intent intent = new Intent(getContext(), WebsActivity.class);
                 intent.putExtra("title", "我的钱包");
-                intent.putExtra("webUrl", HtmlUrls.getPurse() + "?token=" + new DbConfig(getContext()).getToken());
+                intent.putExtra("webUrl", HtmlUrls.getPurse() + "?token=" + new DbConfig(getContext()).getToken() + "&act=" + new DbConfig(getContext()).getLeval());
                 startActivity(intent);
             }
         });
@@ -311,18 +329,36 @@ public class MyFragment extends BaseFragment {
         RxViewAction.clickNoDouble(userimg).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
+                String leval = new DbConfig(getContext()).getLeval();
+                if (!"y".equals(leval)) {
+                    showMessageDialog(getContext().getString(R.string.low_leval));
+                    return;
+                }
+
                 userInfo();
             }
         });
         RxViewAction.clickNoDouble(username).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
+                String leval = new DbConfig(getContext()).getLeval();
+                if (!"y".equals(leval)) {
+                    showMessageDialog(getContext().getString(R.string.low_leval));
+                    return;
+                }
+
                 userInfo();
             }
         });
         RxViewAction.clickNoDouble(edit).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
+                String leval = new DbConfig(getContext()).getLeval();
+                if (!"y".equals(leval)) {
+                    showMessageDialog(getContext().getString(R.string.low_leval));
+                    return;
+                }
+
                 userInfo();
             }
         });
@@ -340,7 +376,7 @@ public class MyFragment extends BaseFragment {
             public void call(Void aVoid) {
                 /*Intent intent = new Intent(getContext(), DailiActivity.class);
                 startActivity(intent);*/
-                Toast.makeText(getContext(), "敬请期待.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "敬请期待", Toast.LENGTH_SHORT).show();
             }
         });
         //我的收藏

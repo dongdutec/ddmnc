@@ -14,8 +14,8 @@
             android:layout_height="@dimen/d40"
             android:background="@drawable/c_coner"
             android:gravity="center"
-            android:text="确认记账返还Mtoken"
-            android:textColor="@color/c16"
+            android:text="确认记账"
+            android:textColor="@color/c7"
             android:textSize="@dimen/s16"/>
 
         <LinearLayout
@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:layout_marginLeft="@dimen/d20"
+                android:layout_marginLeft="@dimen/d15"
                 android:text="Mtoken："
                 android:textColor="@color/c6"
                 android:textSize="@dimen/s14"/>
@@ -41,7 +41,7 @@
                 android:layout_height="match_parent"
                 android:background="@null"
                 android:cursorVisible="true"
-                android:hint="请输入给用户返还的MP数量"
+                android:hint="请输入为用户返还的数额"
                 android:inputType="number"
                 android:textColor="@color/c5"
                 android:textColorHint="@color/c5"

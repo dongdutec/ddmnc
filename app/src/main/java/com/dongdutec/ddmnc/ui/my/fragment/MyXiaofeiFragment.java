@@ -17,7 +17,7 @@ import com.dongdutec.ddmnc.base.BaseFragment;
 import com.dongdutec.ddmnc.db.DbConfig;
 import com.dongdutec.ddmnc.eventbus.MyXiaofeiToRefresh;
 import com.dongdutec.ddmnc.http.RequestUrls;
-import com.dongdutec.ddmnc.ui.home.multitype.NullListItemViewProvider;
+import com.dongdutec.ddmnc.ui.home.multitype.NullListLongItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.model.NullList;
 import com.dongdutec.ddmnc.ui.my.multitype.MyXiaofeiItemViewProvider;
 import com.dongdutec.ddmnc.ui.my.multitype.model.MyXiaofei;
@@ -171,7 +171,7 @@ public class MyXiaofeiFragment extends BaseFragment {
 
             @Override
             public void onFinished() {
-                hideLoadings();
+                hideLoadingsDelayed(500);
             }
         });
     }
@@ -188,7 +188,6 @@ public class MyXiaofeiFragment extends BaseFragment {
         }
         assertAllRegistered(multiTypeAdapter, items);
         multiTypeAdapter.notifyDataSetChanged();
-        hideLoadings();
     }
 
     @Override
@@ -200,7 +199,7 @@ public class MyXiaofeiFragment extends BaseFragment {
         main_rlv.setLayoutManager(manager);
         multiTypeAdapter = new MultiTypeAdapter(items);
         multiTypeAdapter.register(MyXiaofei.class, new MyXiaofeiItemViewProvider(getContext()));
-        multiTypeAdapter.register(NullList.class, new NullListItemViewProvider(getContext()));
+        multiTypeAdapter.register(NullList.class, new NullListLongItemViewProvider(getContext()));
         main_rlv.setAdapter(multiTypeAdapter);
         assertHasTheSameAdapter(main_rlv, multiTypeAdapter);
 

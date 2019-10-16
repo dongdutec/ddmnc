@@ -204,6 +204,13 @@ public class HomeFragment extends BaseFragment {
         RxViewAction.clickNoDouble(img_saoyisao).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
+
+                String leval = new DbConfig(getContext()).getLeval();
+                if (!"y".equals(leval)) {
+                    showMessageDialog(getContext().getString(R.string.low_leval));
+                    return;
+                }
+
                 /*以下是启动我们自定义的扫描*/
                 IntentIntegrator intentIntegrator = new IntentIntegrator(getActivity());
                 intentIntegrator.setBeepEnabled(true);

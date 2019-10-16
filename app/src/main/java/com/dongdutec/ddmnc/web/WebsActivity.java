@@ -103,9 +103,14 @@ public class WebsActivity extends BaseActivity implements ReWebChomeClient.OpenF
     public void onForward(View forwardView) {
     }*/
 
+    @Override
+    protected void onJudgeResult() {
+        activity_web.loadUrl(webUrl);
+    }
+
     private void setData() {
 
-        activity_web.loadUrl(webUrl);
+        judgeToken();
 
         activity_web.addJavascriptInterface(this, "android");
         activity_web.setWebViewClient(new SafeWebViewClient());
@@ -162,7 +167,7 @@ public class WebsActivity extends BaseActivity implements ReWebChomeClient.OpenF
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
 
-                activity_web.loadUrl(webUrl);
+                judgeToken();
                 refreshLayout.finishRefresh();
             }
         });

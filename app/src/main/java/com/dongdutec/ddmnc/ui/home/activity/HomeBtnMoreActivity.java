@@ -49,7 +49,6 @@ public class HomeBtnMoreActivity extends BaseActivity {
         mFlowLayout = findViewById(R.id.mFlowLayout);
 
         title.setText("更多分类");
-        rightImage.setImageResource(R.mipmap.sure);
         RxViewAction.clickNoDouble(back).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {

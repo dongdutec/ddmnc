@@ -65,8 +65,8 @@
                     android:background="@null"
                     android:cursorVisible="true"
                     android:hint="请输入手机号"
-                    android:maxLength="11"
                     android:inputType="number"
+                    android:maxLength="11"
                     android:textColor="@color/c5"
                     android:textColorHint="@color/c5"
                     android:textCursorDrawable="@drawable/white"
@@ -106,10 +106,10 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/d60"
                     android:background="@null"
-                    android:maxLength="11"
                     android:cursorVisible="true"
                     android:hint="请输入密码"
                     android:inputType="textPassword"
+                    android:maxLength="11"
                     android:textColor="@color/c5"
                     android:textColorHint="@color/c5"
                     android:textCursorDrawable="@drawable/white"
@@ -150,8 +150,8 @@
                     android:background="@null"
                     android:cursorVisible="true"
                     android:hint="请输入验证码"
-                    android:textColor="@color/c5"
                     android:maxLength="4"
+                    android:textColor="@color/c5"
                     android:textColorHint="@color/c5"
                     android:textCursorDrawable="@drawable/white"
                     android:textSize="@dimen/s14"/>
@@ -160,13 +160,60 @@
                     android:id="@+id/img_tp_yanzhengma"
                     android:layout_width="@dimen/d60"
                     android:layout_height="@dimen/d30"
-                    android:scaleType="fitXY"
                     android:layout_gravity="center_vertical|right"
+                    android:scaleType="fitXY"
                     android:src="@mipmap/yzm_login"/>
 
             </FrameLayout>
 
             <include layout="@layout/line"/>
+
+            <!--推荐人-->
+            <FrameLayout
+                android:id="@+id/fl_invite"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/d40"
+                android:layout_marginTop="@dimen/d10"
+                android:layout_marginBottom="@dimen/d5"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="@dimen/d50"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="推荐人"
+                    android:textColor="@color/c7"
+                    android:textSize="@dimen/s14"/>
+
+                <EditText
+                    android:id="@+id/dt_invite"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/d60"
+                    android:background="@null"
+                    android:cursorVisible="true"
+                    android:hint="请输入推荐人手机号"
+                    android:inputType="number"
+                    android:maxLength="11"
+                    android:textColor="@color/c5"
+                    android:textColorHint="@color/c5"
+                    android:textCursorDrawable="@drawable/white"
+                    android:textSize="@dimen/s14"/>
+
+                <ImageView
+                    android:id="@+id/img_cha_invite"
+                    android:layout_width="@dimen/d20"
+                    android:layout_height="@dimen/d20"
+                    android:layout_gravity="center_vertical|right"
+                    android:padding="3dp"
+                    android:src="@mipmap/guanbi"/>
+
+            </FrameLayout>
+
+            <include layout="@layout/line"/>
+
             <!--忘记密码&&立即注册-->
             <FrameLayout
                 android:layout_width="match_parent"
@@ -223,10 +270,10 @@
                         android:id="@+id/ck_tiaokuan"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="@dimen/d10"
-                        android:paddingTop="1dp"
                         android:layout_gravity="center_vertical"
-                        android:button="@drawable/ck_blue"/>
+                        android:button="@drawable/ck_blue"
+                        android:paddingLeft="@dimen/d10"
+                        android:paddingTop="1dp"/>
 
                     <TextView
                         android:layout_width="wrap_content"

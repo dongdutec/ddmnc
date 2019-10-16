@@ -1,10 +1,6 @@
 package com.dongdutec.ddmnc.ui.my.multitype.model;
 
-/**
- * @作者 董斌
- * eml.dongbinjava@163.com
- * @创建日期 2019/9/20 11:26
- */
+
 public class Daili {
     private int userId;
     private String headImgUrl;

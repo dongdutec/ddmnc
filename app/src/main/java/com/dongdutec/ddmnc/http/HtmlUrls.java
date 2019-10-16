@@ -1,10 +1,6 @@
 package com.dongdutec.ddmnc.http;
 
-/**
- * @作者 董斌
- * eml.dongbinjava@163.com
- * @创建日期 2019/10/8 18:23
- */
+
 public class HtmlUrls {
     public static String HtmlUrlRelease = "http://47.75.47.121:8080/mnc/";//正式地址
 

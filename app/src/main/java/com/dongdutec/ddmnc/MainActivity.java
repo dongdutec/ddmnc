@@ -83,7 +83,7 @@ public class MainActivity extends BaseActivity {
         WebsFragment fg_wallet = new WebsFragment();
         Bundle bundle_wallet = new Bundle();
         bundle_wallet.putString("title", "钱包");
-        bundle_wallet.putString("webUrl", HtmlUrls.getPurse() + "?token=" + new DbConfig(MainActivity.this).getToken());
+        bundle_wallet.putString("webUrl", HtmlUrls.getPurse() + "?token=" + new DbConfig(MainActivity.this).getToken() + "&act=" + new DbConfig(MainActivity.this).getLeval());
         fg_wallet.setArguments(bundle_wallet);
         fragments.add(fg_wallet);
         fragments.add(new MyFragment());

@@ -24,4 +24,7 @@
     <string name="saoma_mid">"您已有推荐人!"</string>
     <string name="user">普通用户</string>
     <string name="store">认证商家</string>
+    <string name="syserror">系统错误!</string>
+    <string name="low_leval">账号未激活,请联系平台!</string>
+    <string name="mp_low">返还Mtoken必须为当前数额的一半以上!</string>
 </resources>

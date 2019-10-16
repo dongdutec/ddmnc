@@ -1,10 +1,5 @@
 package com.dongdutec.ddmnc.utils.image;
 
-/**
- * @作者 倾春
- * eml.dongbinjava@163.com
- * @创建日期 2018/9/27 17:07
- */
 
 
 import android.Manifest;

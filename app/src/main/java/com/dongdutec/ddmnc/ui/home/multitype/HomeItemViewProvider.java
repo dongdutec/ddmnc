@@ -96,7 +96,7 @@ public class HomeItemViewProvider extends ItemViewProvider<HotStore, HomeItemVie
             public void call(Void aVoid) {
                 Intent intent = new Intent(context, WebsActivity.class);
                 intent.putExtra("title", "商家详情");
-                intent.putExtra("webUrl", HtmlUrls.getStoreDetail() + "?shopId=" + hotStore.getStoreId() + "&token=" + new DbConfig(context).getToken());
+                intent.putExtra("webUrl", HtmlUrls.getStoreDetail() + "?shopId=" + hotStore.getStoreId() + "&token=" + new DbConfig(context).getToken() + "&act=" + new DbConfig(context).getLeval());
 
                 sf = context.getSharedPreferences("data", MODE_PRIVATE);
                 if (isSearch) {

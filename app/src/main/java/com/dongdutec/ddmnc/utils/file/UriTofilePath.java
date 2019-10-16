@@ -10,11 +10,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
-/**
- * @作者 董斌
- * eml.dongbinjava@163.com
- * @创建日期 2019/9/26 17:13
- */
+
 public class UriTofilePath {
     public static String getFilePathByUri(Context context, Uri uri) {
         String path = null;

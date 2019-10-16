@@ -1,10 +1,6 @@
 package com.dongdutec.ddmnc.ui.home.multitype.beans;
 
-/**
- * @作者 董斌
- * eml.dongbinjava@163.com
- * @创建日期 2019/9/28 18:57
- */
+
 public class BtnsBean {
     private String classifyImg;
     private String classifyName;

@@ -14,11 +14,7 @@ import android.widget.TextView;
 
 import com.dongdutec.ddmnc.R;
 
-/**
- * @作者 倾春
- * eml.dongbinjava@163.com
- * @创建日期 2018/8/29 15:25
- */
+
 
 /**
  * 方法使用: ( 其中onForward()方法为右侧点击监听 )

@@ -17,7 +17,7 @@ import com.dongdutec.ddmnc.db.DbConfig;
 import com.dongdutec.ddmnc.eventbus.MyStarToRefresh;
 import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.home.multitype.HomeItemViewProvider;
-import com.dongdutec.ddmnc.ui.home.multitype.NullListItemViewProvider;
+import com.dongdutec.ddmnc.ui.home.multitype.NullListLongItemViewProvider;
 import com.dongdutec.ddmnc.ui.home.multitype.model.HotStore;
 import com.dongdutec.ddmnc.ui.home.multitype.model.NullList;
 import com.dongdutec.ddmnc.utils.location.LocationUtils;
@@ -173,7 +173,7 @@ public class MyStarActivity extends BaseActivity {
 
             @Override
             public void onFinished() {
-                hideLoadings();
+                hideLoadingsDelayed(500);
             }
         });
     }
@@ -190,7 +190,6 @@ public class MyStarActivity extends BaseActivity {
         }
         assertAllRegistered(multiTypeAdapter, items);
         multiTypeAdapter.notifyDataSetChanged();
-        hideLoadings();
     }
 
     @Override
@@ -210,7 +209,7 @@ public class MyStarActivity extends BaseActivity {
         main_rlv.setLayoutManager(manager);
         multiTypeAdapter = new MultiTypeAdapter(items);
         multiTypeAdapter.register(HotStore.class, new HomeItemViewProvider(MyStarActivity.this));
-        multiTypeAdapter.register(NullList.class, new NullListItemViewProvider(getApplicationContext()));
+        multiTypeAdapter.register(NullList.class, new NullListLongItemViewProvider(getApplicationContext()));
         main_rlv.setAdapter(multiTypeAdapter);
         assertHasTheSameAdapter(main_rlv, multiTypeAdapter);
 

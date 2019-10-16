@@ -1,10 +1,5 @@
 package com.dongdutec.ddmnc.http;
 
-/**
- * @作者 董斌
- * eml.dongbinjava@163.com
- * @创建日期 2019/9/18 9:58
- */
 public class RequestUrls {
     public static String CommonUrlRelease = "http://47.75.47.121:8080/gtl/";//正式地址
     public static String CommonUrlTest = "http://192.168.0.154:8080/gtl_war_exploded/";//测试地址

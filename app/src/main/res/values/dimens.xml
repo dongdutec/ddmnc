@@ -4,6 +4,8 @@
     <dimen name="d30">30dp</dimen>
     <dimen name="d40">40dp</dimen>
     <dimen name="d100">100dp</dimen>
+    <dimen name="d160">160dp</dimen>
+    <dimen name="d140">140dp</dimen>
     <dimen name="d50">50dp</dimen>
     <dimen name="d45">45dp</dimen>
     <dimen name="d80">80dp</dimen>
@@ -18,6 +20,7 @@
     <dimen name="d25">25dp</dimen>
     <dimen name="statebar">26dp</dimen>
     <dimen name="s16">16sp</dimen>
+    <dimen name="s18">18sp</dimen>
     <dimen name="s14">14sp</dimen>
     <dimen name="s12">12sp</dimen>
     <dimen name="s10">10sp</dimen>

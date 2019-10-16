@@ -83,7 +83,7 @@ public class BaseFragment extends Fragment {
 
     public void showLoadings() {
 
-        showLog("showLoadingsAc");
+        showLog("showLoadingsFr");
         try{
             loadingDialog.show();
         }catch (Exception e){
@@ -93,7 +93,7 @@ public class BaseFragment extends Fragment {
 
     public void hideLoadings() {
 
-        showLog("hideLoadingsAc");
+        showLog("hideLoadingsFr");
         try {
             loadingDialog.dismiss();
         }catch (Exception e){
@@ -158,8 +158,16 @@ public class BaseFragment extends Fragment {
         TextView message_text = (TextView) dialogView.findViewById(R.id.message_text);
         message_text.setText(R.string.tokendown);
         final TextView tv_queren = (TextView) dialogView.findViewById(R.id.tv_right);
+        final TextView tv_left = (TextView) dialogView.findViewById(R.id.tv_left);
         //确认
         RxViewAction.clickNoDouble(tv_queren).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                mncTransDialog.dismiss();
+            }
+        });
+        //取消
+        RxViewAction.clickNoDouble(tv_left).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
                 mncTransDialog.dismiss();
@@ -216,8 +224,16 @@ public class BaseFragment extends Fragment {
         TextView message_text = (TextView) dialogView.findViewById(R.id.message_text);
         message_text.setText(msg);
         final TextView tv_queren = (TextView) dialogView.findViewById(R.id.tv_right);
+        final TextView tv_left = (TextView) dialogView.findViewById(R.id.tv_left);
         //确认
         RxViewAction.clickNoDouble(tv_queren).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                mncTransDialog.dismiss();
+            }
+        });
+        //取消
+        RxViewAction.clickNoDouble(tv_left).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
                 mncTransDialog.dismiss();

@@ -121,9 +121,9 @@ public class BaseActivity extends AppCompatActivity {
     public void showLoadings() {
 
         showLog("showLoadingsAc");
-        try{
+        try {
             loadingDialog.show();
-        }catch (Exception e){
+        } catch (Exception e) {
             showLog(e.toString());
         }
     }
@@ -133,7 +133,7 @@ public class BaseActivity extends AppCompatActivity {
         showLog("hideLoadingsAc");
         try {
             loadingDialog.dismiss();
-        }catch (Exception e){
+        } catch (Exception e) {
             showLog(e.toString());
         }
     }
@@ -194,8 +194,16 @@ public class BaseActivity extends AppCompatActivity {
         TextView message_text = (TextView) dialogView.findViewById(R.id.message_text);
         message_text.setText(R.string.tokendown);
         final TextView tv_queren = (TextView) dialogView.findViewById(R.id.tv_right);
+        final TextView tv_left = (TextView) dialogView.findViewById(R.id.tv_left);
         //确认
         RxViewAction.clickNoDouble(tv_queren).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                mncTransDialog.dismiss();
+            }
+        });
+        //取消
+        RxViewAction.clickNoDouble(tv_left).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
                 mncTransDialog.dismiss();
@@ -285,8 +293,16 @@ public class BaseActivity extends AppCompatActivity {
         TextView message_text = (TextView) dialogView.findViewById(R.id.message_text);
         message_text.setText(msg);
         final TextView tv_queren = (TextView) dialogView.findViewById(R.id.tv_right);
+        final TextView tv_left = (TextView) dialogView.findViewById(R.id.tv_left);
         //确认
         RxViewAction.clickNoDouble(tv_queren).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                mncTransDialog.dismiss();
+            }
+        });
+        //取消
+        RxViewAction.clickNoDouble(tv_left).subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
                 mncTransDialog.dismiss();
@@ -297,6 +313,24 @@ public class BaseActivity extends AppCompatActivity {
         window.setGravity(Gravity.CENTER);//设置对话框显示在屏幕中间
         window.setWindowAnimations(R.style.dialog_style);//添加动画
         window.setContentView(dialogView);
+
+
+        /*final PromptDialogFragment dialogFragment = new PromptDialogFragment();
+        dialogFragment.setTitle(msg);
+        dialogFragment.setGravity(Gravity.CENTER);
+        dialogFragment.setOnCommitClickListener(new PromptDialogFragment.OnCommitClickListener() {
+            @Override
+            public void onCommit() {
+                dialogFragment.dimissDialog();
+            }
+        });
+        dialogFragment.setOnCancelClickListener(new PromptDialogFragment.OnCancelClickListener() {
+            @Override
+            public void onCancel() {
+                dialogFragment.dimissDialog();
+            }
+        });
+        dialogFragment.show(getSupportFragmentManager(), "logout");*/
 
     }
 

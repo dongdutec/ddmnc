@@ -23,7 +23,7 @@ public class DbConfig {
                 .setAllowTransaction(true)
                 .setDbDir(context.getFilesDir())
                 //  .setDbDir(Environment.getExternalStorageDirectory())
-                .setDbVersion(8);
+                .setDbVersion(9);
 
         return daoConfig;
     }
@@ -106,6 +106,27 @@ public class DbConfig {
                     if ("1".equals(user.getIsLogin())) {
                         String token = user.getToken();
                         return token;
+                    }
+                }
+            }
+
+        } catch (DbException e) {
+        }
+        return null;
+    }
+
+    public String getLeval() {
+        DbManager.DaoConfig daoConfig = getDaoConfig();
+        DbManager db = x.getDb(daoConfig);
+        try {
+            List<User> users = db.selector(User.class)
+                    .findAll();
+            if (users != null) {
+                for (int i = 0; i < users.size(); i++) {
+                    User user = users.get(i);
+                    if ("1".equals(user.getIsLogin())) {
+                        String leval = user.getLeval();
+                        return leval;
                     }
                 }
             }

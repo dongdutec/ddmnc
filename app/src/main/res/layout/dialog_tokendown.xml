@@ -19,14 +19,33 @@
             android:textSize="@dimen/s14"/>
     </FrameLayout>
 
-
-    <TextView
-        android:id="@+id/tv_right"
+    <LinearLayout
         android:layout_width="250dp"
-        android:layout_height="40dp"
-        android:background="@drawable/blue2_coner"
-        android:gravity="center"
-        android:text="确认"
-        android:textColor="@color/theme_primary"
-        android:textSize="@dimen/s14"/>
+        android:layout_height="@dimen/d40"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/tv_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/left_bottom_c_coner"
+            android:gravity="center"
+            android:text="取消"
+            android:textColor="@color/c16"
+            android:textSize="@dimen/s16"/>
+
+        <TextView
+            android:id="@+id/tv_right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/right_bottom_blue_coner"
+            android:gravity="center"
+            android:text="确认"
+            android:textColor="@color/theme_primary"
+            android:textSize="@dimen/s16"/>
+    </LinearLayout>
+
 </LinearLayout>

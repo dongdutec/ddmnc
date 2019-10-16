@@ -19,11 +19,7 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @作者 董斌
- * eml.dongbinjava@163.com
- * @创建日期 2019/9/16 15:37
- */
+
 public class BaseApplication extends Application {
     private List<Activity> oList;//用于存放所有启动的Activity的集合
 

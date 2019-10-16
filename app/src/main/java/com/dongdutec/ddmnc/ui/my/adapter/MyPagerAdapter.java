@@ -9,11 +9,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @作者 董斌
- * eml.dongbinjava@163.com
- * @创建日期 2019/9/20 14:54
- */
+
 public class MyPagerAdapter extends FragmentPagerAdapter {
     private List<String> title_list;
     private List<Fragment> fragments;

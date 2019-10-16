@@ -18,6 +18,7 @@ import android.webkit.WebView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +46,9 @@ import rx.functions.Action1;
 
 public class LoginActivity extends BaseActivity {
     private ImageView back;
+    private FrameLayout fl_invite;
+    private EditText dt_invite;
+    private ImageView img_cha_invite;
     private TextView bar_title;
     private View v_line;
     private TextView _tv_goregister;
@@ -63,10 +67,12 @@ public class LoginActivity extends BaseActivity {
     private boolean canLogin_password = false;
     private boolean canLogin_yanzhengma = false;
     private boolean canLogin_tiaokuan = false;
+    private boolean canLogin_invite = true;
     private String TAG = LoginActivity.class.getSimpleName();
 
     private CodeUtils codeUtils;
     private long exitTime = 0;
+    private String isMan = "";
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -97,6 +103,9 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initView() {
         back = findViewById(R.id.bar_left_img);
+        fl_invite = findViewById(R.id.fl_invite);
+        dt_invite = findViewById(R.id.dt_invite);
+        img_cha_invite = findViewById(R.id.img_cha_invite);
         bar_title = findViewById(R.id.bar_title_text);
         v_line = findViewById(R.id.v_line);
         _tv_goregister = findViewById(R.id._tv_goregister);
@@ -118,6 +127,7 @@ public class LoginActivity extends BaseActivity {
 
         ck_yanjing.setVisibility(View.GONE);
         img_cha.setVisibility(View.GONE);
+        img_cha_invite.setVisibility(View.GONE);
 
 
         getCode();
@@ -182,6 +192,7 @@ public class LoginActivity extends BaseActivity {
                     canLogin_phone = false;
                     img_cha.setVisibility(View.GONE);
                 }
+                clearPrivate();
                 changeLoginBtnState();//修改登录按钮状态
             }
 
@@ -195,6 +206,37 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void call(Void aVoid) {
                 dt_phone.setText("");
+            }
+        });
+        //输入推荐人手机号监听
+        dt_invite.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 0) {
+                    canLogin_invite = true;
+                    img_cha.setVisibility(View.VISIBLE);
+                } else {
+                    canLogin_invite = false;
+                    img_cha_invite.setVisibility(View.GONE);
+                }
+                changeLoginBtnState();//修改登录按钮状态
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        //推荐人手机号 × clear
+        RxViewAction.clickNoDouble(img_cha_invite).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                dt_invite.setText("");
             }
         });
         //输入密码监听
@@ -292,6 +334,10 @@ public class LoginActivity extends BaseActivity {
                     Toast.makeText(LoginActivity.this, "请输入正确的图片验证码!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if ((!canLogin_invite) && (dt_invite.getText().toString().length() != 11)) {
+                    Toast.makeText(LoginActivity.this, "请输入正确的邀请人手机号!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
 
                 tv_login.setBackgroundResource(R.drawable.save_btn_gray1);
@@ -303,6 +349,7 @@ public class LoginActivity extends BaseActivity {
                 phone = dt_phone.getText().toString();
                 params.addBodyParameter("phone", phone);
                 params.addBodyParameter("password", dt_password.getText().toString());
+                params.addBodyParameter("person", dt_invite.getText().toString());
                 params.setConnectTimeout(5000);
                 showLoadings();
                 Log.e(TAG, "call: " + params.toString());
@@ -316,18 +363,28 @@ public class LoginActivity extends BaseActivity {
                             int code = object.getInt("code");
                             if (code == 0) {
                                 JSONObject data = object.getJSONObject("data");
-                                //存储用户信息到本地数据库
-                                saveUserToDb(data);
+                                String isMan = data.getString("isMan");//有无推荐人
+                                if ("y".equals(isMan)) {
+                                    canLogin_invite = true;
+                                    fl_invite.setVisibility(View.GONE);
+                                    //存储用户信息到本地数据库
+                                    saveUserToDb(data);
+                                    mHandler.sendEmptyMessageDelayed(0, 1000);
+                                } else {
+                                    Toast.makeText(LoginActivity.this, "请补充推荐人信息!", Toast.LENGTH_SHORT).show();
+                                    canLogin_invite = false;
+                                    fl_invite.setVisibility(View.VISIBLE);
+                                }
 
-                                mHandler.sendEmptyMessageDelayed(0, 1000);
                             } else {
+                                hideLoadings();
                                 Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
 
-                                tv_login.setBackgroundResource(R.drawable.save_btn_blue);
-                                tv_login.setClickable(true);
+
                             }
 
                         } catch (JSONException e) {
+                            hideLoadings();
                             Toast.makeText(LoginActivity.this, "系统异常!", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
@@ -335,11 +392,10 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable ex, boolean isOnCallback) {
+                        hideLoadings();
                         Toast.makeText(LoginActivity.this, "网络异常!", Toast.LENGTH_SHORT).show();
 
 
-                        tv_login.setBackgroundResource(R.drawable.save_btn_blue);
-                        tv_login.setClickable(true);
                     }
 
                     @Override
@@ -349,7 +405,7 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void onFinished() {
-                        hideLoadings();
+                        changeLoginBtnState();
                     }
                 });
 
@@ -358,6 +414,12 @@ public class LoginActivity extends BaseActivity {
 
 
         tv_login.setClickable(false);
+    }
+
+    private void clearPrivate() {
+        fl_invite.setVisibility(View.GONE);
+        dt_invite.setText("");
+        canLogin_invite = true;
     }
 
     private void showTiaoKuanDialog() {
@@ -387,6 +449,7 @@ public class LoginActivity extends BaseActivity {
         User user = new User();
         try {
             user.setToken(data.getString("token"));
+            user.setLeval(data.getString("act"));
             user.setPhone(phone);
             user.setIsLogin("1");
             DbConfig dbConfig = new DbConfig(getApplicationContext());
@@ -405,8 +468,8 @@ public class LoginActivity extends BaseActivity {
      * 修改登录按钮显示状态
      */
     private void changeLoginBtnState() {
-        tv_login.setLinksClickable(canLogin_phone && canLogin_password && canLogin_yanzhengma && canLogin_tiaokuan);
-        if (canLogin_phone && canLogin_password && canLogin_yanzhengma && canLogin_tiaokuan) {
+        tv_login.setLinksClickable(canLogin_phone && canLogin_password && canLogin_yanzhengma && canLogin_tiaokuan && canLogin_invite);
+        if (canLogin_phone && canLogin_password && canLogin_yanzhengma && canLogin_tiaokuan && canLogin_invite) {
             tv_login.setBackgroundResource(R.drawable.save_btn_blue);
             tv_login.setClickable(true);
         } else {
