@@ -20,11 +20,45 @@ public class RequestUrls {
 
     /**
      * 获取验证码
+     * phone smsType(1注册 2忘记密码)
      *
      * @return
      */
     public static String getMsgCode() {
         return CommonUrl + "api/common/getSmsCode.do";
+    }
+
+    /**
+     * 获取验证码 new
+     * String phone, String token, String code, String  adress
+     * state = 0 成功 state 1=失败
+     *
+     * @return
+     */
+    public static String getMsgCodeNew() {
+        return CommonUrl + "api/customer/sendCode.do";
+    }
+
+    /**
+     * 修改交易所地址
+     * String phone, String token, String code, String  adress
+     * state0成功  1系统异常 2token无效 3验证码失效
+     *
+     * @return
+     */
+    public static String getChangeJYSaddress() {
+        return CommonUrl + "api/customer/updateWalletAddress.do";
+    }
+
+    /**
+     * 修改用户信息token认证
+     * 入参：token  url  name   alipay   bankCard  address
+     * 返回json: state   0：成功  1：系统异常 2：token有误
+     *
+     * @return
+     */
+    public static String changeUserInfo() {
+        return CommonUrl + "api/customer/updateInfo.do";
     }
 
     /**
@@ -103,29 +137,6 @@ public class RequestUrls {
         return CommonUrl + "api/customer/updateCollect.do";
     }
 
-    /**
-     * 修改昵称token认证
-     * 传参
-     * token   
-     * customerName   string  昵称
-     *
-     * @return
-     */
-    public static String changeNickname() {
-        return CommonUrl + "api/customer/modifyCustomerInfo.do";
-    }
-
-    /**
-     * 修改用户头像token认证
-     * 传参
-     * token
-     * headImg  string  用户头像
-     *
-     * @return
-     */
-    public static String changeImage() {
-        return CommonUrl + "api/common/modifyCustomerHead.do";
-    }
 
     /**
      * 上传文件token认证

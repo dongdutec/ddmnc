@@ -15,6 +15,7 @@ import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MarkerOptions;
 import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseActivity;
+import com.dongdutec.ddmnc.db.DbConfig;
 import com.dongdutec.ddmnc.utils.rx.rxbinding.RxViewAction;
 
 import rx.functions.Action1;
@@ -23,6 +24,7 @@ public class GaoDeMapActivity extends BaseActivity {
     private ImageView bar_left_img;
     private TextView bar_title_text;
     private MapView map;
+    private TextView tv_goguide;
     private double latitude;
     private double longitude;
     private String storeName;
@@ -68,12 +70,28 @@ public class GaoDeMapActivity extends BaseActivity {
                 finish();
             }
         });
+        //开始导航
+        RxViewAction.clickNoDouble(tv_goguide).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(GaoDeMapActivity.this, RouteMapActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("storeName", storeName);
+                bundle.putString("store_latitude", latitude + "");
+                bundle.putString("store_longitude", longitude + "");
+                bundle.putString("user_latitude", new DbConfig(GaoDeMapActivity.this).getLatitude() + "");
+                bundle.putString("user_longitude", new DbConfig(GaoDeMapActivity.this).getLongitude() + "");
+                intent.putExtras(bundle);
+                GaoDeMapActivity.this.startActivity(intent);
+            }
+        });
     }
 
     @Override
     protected void initView() {
         bar_left_img = findViewById(R.id.bar_left_img);
         bar_title_text = findViewById(R.id.bar_title_text);
+        tv_goguide = findViewById(R.id.tv_goguide);
 
         bar_title_text.setText("门店定位");
     }

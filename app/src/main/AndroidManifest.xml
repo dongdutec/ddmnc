@@ -55,6 +55,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/CityPicker.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustPan"/>
+        <activity android:name=".ui.home.activity.RouteMapActivity"/>
 
         <service android:name="com.amap.api.location.APSService"/>
 
@@ -127,6 +128,10 @@
         <activity android:name=".ui.home.activity.GaoDeMapActivity">
         </activity>
         <activity android:name=".ui.my.activity.StoreManageActivity">
+        </activity>
+        <activity android:name=".ui.my.activity.MyCodeActivity">
+        </activity>
+        <activity android:name=".ui.my.activity.ChangeJYSaddressActivity">
         </activity>
     </application>
 

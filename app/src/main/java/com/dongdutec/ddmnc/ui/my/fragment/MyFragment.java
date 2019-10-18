@@ -22,10 +22,12 @@ import com.dongdutec.ddmnc.R;
 import com.dongdutec.ddmnc.base.BaseFragment;
 import com.dongdutec.ddmnc.cell.CustomScrollView;
 import com.dongdutec.ddmnc.db.DbConfig;
+import com.dongdutec.ddmnc.eventbus.SearchMyToRefresh;
 import com.dongdutec.ddmnc.eventbus.UserInfoEvent;
 import com.dongdutec.ddmnc.http.HtmlUrls;
 import com.dongdutec.ddmnc.http.RequestUrls;
 import com.dongdutec.ddmnc.ui.my.activity.HistoryActivity;
+import com.dongdutec.ddmnc.ui.my.activity.MyCodeActivity;
 import com.dongdutec.ddmnc.ui.my.activity.MyStarActivity;
 import com.dongdutec.ddmnc.ui.my.activity.MyXiaofeiActivity;
 import com.dongdutec.ddmnc.ui.my.activity.SettingActivity;
@@ -77,7 +79,10 @@ public class MyFragment extends BaseFragment {
     private CustomScrollView scorll_my;
     private String TAG = MyFragment.class.getSimpleName();
     private String image;
-    private String userName;
+    private String userName = "";
+    private String alipay = "";
+    private String bankCard = "";
+    private String adress = "";
     private double mncCoin;
     private double mp;
     private int vermicelli;
@@ -153,6 +158,9 @@ public class MyFragment extends BaseFragment {
                     JSONObject jsonObject = new JSONObject(result);
                     image = jsonObject.getString("image");
                     userName = jsonObject.getString("userName");
+                    alipay = jsonObject.getString("alipay");
+                    bankCard = jsonObject.getString("bankCard");
+                    adress = jsonObject.getString("address");
                     mncCoin = jsonObject.getDouble("mncCoin");
                     mp = jsonObject.getDouble("mp");
                     isAdv = jsonObject.getString("isAdv");
@@ -219,10 +227,17 @@ public class MyFragment extends BaseFragment {
                     return;
                 }
 
-                Intent intent = new Intent(getContext(), WebsActivity.class);
+                /*Intent intent = new Intent(getContext(), WebsActivity.class);//h5版本暂未使用
                 intent.putExtra("title", "我的专属码");
                 intent.putExtra("webUrl", HtmlUrls.getExclusives() + "?token=" + new DbConfig(getContext()).getToken() + "&phone=" + new DbConfig(getContext()).getPhone());
-                startActivity(intent);
+                startActivity(intent);*/
+
+
+                Intent codeIntent = new Intent(getContext(), MyCodeActivity.class);
+                codeIntent.putExtra("userName", userName);
+                codeIntent.putExtra("userImage", image);
+                startActivity(codeIntent);
+
             }
         });
         //商家入驻
@@ -453,6 +468,9 @@ public class MyFragment extends BaseFragment {
         Intent intent = new Intent(getContext(), UserInfoActivity.class);
         intent.putExtra("headUrl", image);
         intent.putExtra("userName", userName);
+        intent.putExtra("adress", adress);
+        intent.putExtra("alipay", alipay);
+        intent.putExtra("bankCard", bankCard);
         startActivity(intent);
     }
 
@@ -471,5 +489,10 @@ public class MyFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void searchMytoRefreshEvent(SearchMyToRefresh event) {
+        init();
     }
 }

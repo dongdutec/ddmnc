@@ -371,6 +371,7 @@ public class LoginActivity extends BaseActivity {
                                     saveUserToDb(data);
                                     mHandler.sendEmptyMessageDelayed(0, 1000);
                                 } else {
+                                    hideLoadings();
                                     Toast.makeText(LoginActivity.this, "请补充推荐人信息!", Toast.LENGTH_SHORT).show();
                                     canLogin_invite = false;
                                     fl_invite.setVisibility(View.VISIBLE);

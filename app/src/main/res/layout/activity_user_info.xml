@@ -39,7 +39,7 @@
             android:textColor="@color/c6"
             android:textSize="@dimen/s12"/>
     </LinearLayout>
-
+    <!--昵称-->
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="@dimen/d40"
@@ -48,7 +48,7 @@
 
         <TextView
             android:id="@+id/nic"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/d100"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/d10"
@@ -60,10 +60,116 @@
             android:id="@+id/et_nickname"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/d80"
+            android:layout_marginLeft="@dimen/d30"
             android:layout_toRightOf="@+id/nic"
             android:background="@null"
             android:cursorVisible="true"
+            android:textColor="@color/c5"
+            android:textCursorDrawable="@drawable/white"
+            android:textSize="@dimen/s14"/>
+    </RelativeLayout>
+    <!--交易所地址-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/d40"
+        android:layout_marginTop="@dimen/d5"
+        android:background="@color/theme_primary">
+
+        <TextView
+            android:id="@+id/jiaoyi"
+            android:layout_width="@dimen/d100"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d10"
+            android:text="交易所地址"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s12"/>
+        <EditText
+            android:id="@+id/et_jiaoyi"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/d30"
+            android:layout_marginRight="@dimen/d60"
+            android:layout_toRightOf="@+id/jiaoyi"
+            android:gravity="center_vertical"
+            android:background="@null"
+            android:cursorVisible="true"
+            android:hint="请绑定您的交易所地址"
+            android:textColor="@color/c5"
+            android:textCursorDrawable="@drawable/white"
+            android:textSize="@dimen/s14"/>
+
+        <TextView
+            android:id="@+id/change"
+            android:layout_width="@dimen/d60"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d10"
+            android:gravity="center"
+            android:text="更换"
+            android:textColor="@color/c16"
+            android:textSize="@dimen/s12"/>
+    </RelativeLayout>
+    <!--支付宝-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/d40"
+        android:layout_marginTop="@dimen/d5"
+        android:background="@color/theme_primary">
+
+        <TextView
+            android:id="@+id/zhifubao"
+            android:layout_width="@dimen/d100"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d10"
+            android:text="支付宝"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s12"/>
+
+        <EditText
+            android:id="@+id/et_zhifubao"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/d30"
+            android:layout_toRightOf="@+id/zhifubao"
+            android:background="@null"
+            android:cursorVisible="true"
+            android:hint="请绑定您的支付宝账号"
+            android:textColor="@color/c5"
+            android:textCursorDrawable="@drawable/white"
+            android:textSize="@dimen/s14"/>
+    </RelativeLayout>
+    <!--银行卡-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/d40"
+        android:layout_marginTop="@dimen/d5"
+        android:background="@color/theme_primary">
+
+        <TextView
+            android:id="@+id/yinhangka"
+            android:layout_width="@dimen/d100"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d10"
+            android:text="银行卡"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s12"/>
+
+        <EditText
+            android:id="@+id/et_yinhangka"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/d30"
+            android:layout_toRightOf="@+id/yinhangka"
+            android:background="@null"
+            android:cursorVisible="true"
+            android:hint="请绑定持卡人本人的银行卡"
+            android:inputType="number"
+            android:maxLength="16"
+            android:maxLines="1"
             android:textColor="@color/c5"
             android:textCursorDrawable="@drawable/white"
             android:textSize="@dimen/s14"/>

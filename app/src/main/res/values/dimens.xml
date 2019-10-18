@@ -4,6 +4,8 @@
     <dimen name="d30">30dp</dimen>
     <dimen name="d40">40dp</dimen>
     <dimen name="d100">100dp</dimen>
+    <dimen name="d200">200dp</dimen>
+    <dimen name="d180">180dp</dimen>
     <dimen name="d160">160dp</dimen>
     <dimen name="d140">140dp</dimen>
     <dimen name="d50">50dp</dimen>

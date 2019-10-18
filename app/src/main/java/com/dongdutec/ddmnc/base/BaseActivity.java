@@ -188,7 +188,7 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
-    private void showTokenDownDialog() {
+    protected void showTokenDownDialog() {
         final MNCTransparentDialog mncTransDialog = new MNCTransparentDialog(BaseActivity.this);
         View dialogView = LayoutInflater.from(BaseActivity.this).inflate(R.layout.dialog_tokendown, null, false);
         TextView message_text = (TextView) dialogView.findViewById(R.id.message_text);

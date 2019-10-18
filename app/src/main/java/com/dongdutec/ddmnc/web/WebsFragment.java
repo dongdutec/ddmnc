@@ -246,6 +246,7 @@ public class WebsFragment extends BaseFragment implements ReWebChomeClient.OpenF
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
+            hideLoadings();
         }
 
         /**
@@ -258,6 +259,7 @@ public class WebsFragment extends BaseFragment implements ReWebChomeClient.OpenF
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             super.onReceivedSslError(view, handler, error);
+            hideLoadings();
         }
 
     }

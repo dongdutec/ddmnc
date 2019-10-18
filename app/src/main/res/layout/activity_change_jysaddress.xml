@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/c"
+    android:orientation="vertical"
+    tools:context=".ui.my.activity.ChangeJYSaddressActivity">
+
+    <include layout="@layout/state_bar"/>
+
+    <include layout="@layout/common_bar"/>
+
+    <!--新的交易所地址-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/d40"
+        android:layout_marginTop="@dimen/d5"
+        android:background="@color/theme_primary">
+
+        <TextView
+            android:id="@+id/ad"
+            android:layout_width="@dimen/d100"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d10"
+            android:text="新的交易所地址"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s12"/>
+
+        <EditText
+            android:id="@+id/et_newaddress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/d30"
+            android:layout_toRightOf="@+id/ad"
+            android:background="@null"
+            android:cursorVisible="true"
+            android:hint="请输入新的交易所地址"
+            android:textColor="@color/c5"
+            android:textCursorDrawable="@drawable/white"
+            android:textSize="@dimen/s14"/>
+    </RelativeLayout>
+    <!--手机号-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/d40"
+        android:layout_marginTop="@dimen/d5"
+        android:background="@color/theme_primary">
+
+        <TextView
+            android:id="@+id/ph"
+            android:layout_width="@dimen/d100"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d10"
+            android:text="手机号"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s12"/>
+
+        <TextView
+            android:id="@+id/tv_phone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/d30"
+            android:layout_toRightOf="@+id/ph"
+            android:background="@null"
+            android:gravity="center_vertical"
+            android:textColor="@color/c5"
+            android:textSize="@dimen/s14"/>
+    </RelativeLayout>
+    <!--短信验证码-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40"
+        android:layout_marginTop="@dimen/d5"
+        android:background="@color/theme_primary">
+
+        <TextView
+            android:id="@+id/co"
+            android:layout_width="@dimen/d100"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/d10"
+            android:text="验证码"
+            android:textColor="@color/c6"
+            android:textSize="@dimen/s12"/>
+
+        <EditText
+            android:id="@+id/dt_yanzhengma"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/d30"
+            android:layout_toRightOf="@+id/co"
+            android:background="@null"
+            android:cursorVisible="true"
+            android:hint="请输入验证码"
+            android:inputType="number"
+            android:maxLength="6"
+            android:maxLines="1"
+            android:textColor="@color/c5"
+            android:textCursorDrawable="@drawable/white"
+            android:textSize="@dimen/s14"/>
+
+        <TextView
+            android:id="@+id/tv_yanzhengma"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/d5"
+            android:background="@drawable/blue_coner"
+            android:gravity="center"
+            android:paddingLeft="@dimen/d5"
+            android:paddingTop="@dimen/d2"
+            android:paddingRight="@dimen/d5"
+            android:paddingBottom="@dimen/d2"
+            android:src="@mipmap/yzm_login"
+            android:text="获取验证码"
+            android:textColor="@color/theme_primary"
+            android:textSize="@dimen/s12"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/save"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/d40"
+        android:layout_marginLeft="@dimen/d10"
+        android:layout_marginTop="@dimen/d60"
+        android:layout_marginRight="@dimen/d10"
+        android:background="@drawable/save_btn_blue"
+        android:gravity="center"
+        android:text="提交"
+        android:textColor="@color/theme_primary"
+        android:textSize="@dimen/s12"/>
+</LinearLayout>

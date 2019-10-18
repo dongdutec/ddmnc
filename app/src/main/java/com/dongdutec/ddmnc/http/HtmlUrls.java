@@ -103,5 +103,25 @@ public class HtmlUrls {
         return HtmlUrlRelease + "storeDetail.html";
     }
 
+    /**
+     * 我的专属码内容
+     * 需要传参：token
+     *
+     * @return
+     */
+    public static String getMyCode() {
+        return HtmlUrlRelease + "register.html";
+    }
+
+    /**
+     * 查看下级
+     * 需要传参：token
+     *
+     * @return
+     */
+    public static String getCheck() {
+        return HtmlUrlRelease + "exclusiveUnder.html";
+    }
+
 
 }

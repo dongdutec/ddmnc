@@ -152,7 +152,7 @@ public class BaseFragment extends Fragment {
         });
     }
 
-    private void showTokenDownDialog() {
+    protected void showTokenDownDialog() {
         final MNCTransparentDialog mncTransDialog = new MNCTransparentDialog(getActivity());
         View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_tokendown, null, false);
         TextView message_text = (TextView) dialogView.findViewById(R.id.message_text);

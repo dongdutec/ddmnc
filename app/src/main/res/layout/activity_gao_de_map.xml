@@ -11,12 +11,32 @@
 
     <include layout="@layout/common_bar"/>
 
-    <com.amap.api.maps2d.MapView
-
-        android:id="@+id/map"
-
+    <FrameLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        android:layout_height="match_parent"/>
+        <com.amap.api.maps2d.MapView
+
+            android:id="@+id/map"
+
+            android:layout_width="match_parent"
+
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/tv_goguide"
+            android:layout_width="260dp"
+            android:layout_height="@dimen/d40"
+            android:paddingLeft="@dimen/d50"
+            android:paddingRight="@dimen/d50"
+            android:layout_marginLeft="@dimen/d30"
+            android:background="@drawable/blue2_coner_6"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:text="开始导航"
+            android:layout_marginBottom="@dimen/d25"
+            android:textColor="@color/theme_primary"
+            android:textSize="@dimen/s14"/>
+    </FrameLayout>
 
 </LinearLayout>

@@ -27,4 +27,6 @@
     <string name="syserror">系统错误!</string>
     <string name="low_leval">账号未激活,请联系平台!</string>
     <string name="mp_low">返还Mtoken必须为当前数额的一半以上!</string>
+    <string name="userinfo_updata">个人信息修改成功!</string>
+    <string name="message_changeaddress">确认将此交易所地址绑定此账号吗？</string>
 </resources>
